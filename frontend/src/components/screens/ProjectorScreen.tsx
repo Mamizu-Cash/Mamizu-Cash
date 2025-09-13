@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react'
-import { Avatar, Background, Button, Panel, QrCode } from '../ui/index'
-import styles from './ProjectorScreen.module.css'
-import commonStyles from './CommonScreenStyles.module.css'
-import logoWide from '../../assets/logo-wide.svg'
+import { useEffect, useState } from "react";
+import logoWide from "../../assets/logo-wide.svg";
+import { Avatar, Background, Button, Panel, QrCode } from "../ui/index";
+import commonStyles from "./CommonScreenStyles.module.css";
+import styles from "./ProjectorScreen.module.css";
 
 export type ProjectorScreenProps = {
-  brideStatus: 'completed' | 'in-progress' | 'waiting'
-  groomStatus: 'completed' | 'in-progress' | 'waiting'
-  witnessCount: number
-  networkReady: boolean
-  qrData?: string // QRコードに埋め込むデータ
-  txid?: string | null // トランザクションID
-  reactions?: { id: number; message: string; x: number }[] // リアクション配列
-}
+  brideStatus: "completed" | "in-progress" | "waiting";
+  groomStatus: "completed" | "in-progress" | "waiting";
+  witnessCount: number;
+  networkReady: boolean;
+  qrData?: string; // QRコードに埋め込むデータ
+  txid?: string | null; // トランザクションID
+  reactions?: { id: number; message: string; x: number }[]; // リアクション配列
+};
 
 export function ProjectorScreen(props: ProjectorScreenProps) {
   const {
@@ -20,28 +20,28 @@ export function ProjectorScreen(props: ProjectorScreenProps) {
     groomStatus,
     witnessCount,
     networkReady,
-    qrData = 'https://event.bitconin.aoki.app',
+    qrData = "https://event.bitconin.aoki.app",
     txid = null,
     reactions = [],
-  } = props
+  } = props;
 
-  const [currentTime, setCurrentTime] = useState('')
+  const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
     const updateTime = () => {
-      const now = new Date()
-      const timeString = now.toLocaleTimeString('ja-JP', {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString("ja-JP", {
         hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
-      setCurrentTime(timeString)
-    }
-    updateTime()
-    const interval = setInterval(updateTime, 1000)
-    return () => clearInterval(interval)
-  }, [])
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+      setCurrentTime(timeString);
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className={`${commonStyles.container} ${styles.container}`}>
@@ -51,11 +51,7 @@ export function ProjectorScreen(props: ProjectorScreenProps) {
           {/* Header Section */}
           <header className={`${styles.header}`}>
             <div className={styles.brandGroup}>
-              <img
-                src={logoWide}
-                alt="ビット婚姻"
-                className={styles.brandLogo}
-              />
+              <img src={logoWide} alt="ビット婚姻" className={styles.brandLogo} />
             </div>
             <Button variant="timeDisplay">{currentTime}</Button>
           </header>
@@ -69,23 +65,21 @@ export function ProjectorScreen(props: ProjectorScreenProps) {
                   👰
                 </Avatar>
               </div>
-              <div className={`${styles.personLabel} ${styles.brideLabel}`}>
-                新婦
-              </div>
+              <div className={`${styles.personLabel} ${styles.brideLabel}`}>新婦</div>
               <div
                 className={`${styles.personStatus} ${
-                  brideStatus === 'completed'
+                  brideStatus === "completed"
                     ? styles.statusCompleted
-                    : brideStatus === 'in-progress'
+                    : brideStatus === "in-progress"
                       ? styles.statusInProgress
-                      : ''
+                      : ""
                 }`}
               >
-                {brideStatus === 'completed'
-                  ? '署名済み'
-                  : brideStatus === 'in-progress'
-                    ? '署名中'
-                    : '未署名'}
+                {brideStatus === "completed"
+                  ? "署名済み"
+                  : brideStatus === "in-progress"
+                    ? "署名中"
+                    : "未署名"}
               </div>
             </section>
 
@@ -119,40 +113,34 @@ export function ProjectorScreen(props: ProjectorScreenProps) {
                   🤵
                 </Avatar>
               </div>
-              <div className={`${styles.personLabel} ${styles.groomLabel}`}>
-                新郎
-              </div>
+              <div className={`${styles.personLabel} ${styles.groomLabel}`}>新郎</div>
               <div
                 className={`${styles.personStatus} ${
-                  groomStatus === 'completed'
+                  groomStatus === "completed"
                     ? styles.statusCompleted
-                    : groomStatus === 'in-progress'
+                    : groomStatus === "in-progress"
                       ? styles.statusInProgress
-                      : ''
+                      : ""
                 }`}
               >
-                {groomStatus === 'completed'
-                  ? '署名済み'
-                  : groomStatus === 'in-progress'
-                    ? '署名中'
-                    : '未署名'}
+                {groomStatus === "completed"
+                  ? "署名済み"
+                  : groomStatus === "in-progress"
+                    ? "署名中"
+                    : "未署名"}
               </div>
             </section>
           </main>
           <section className={styles.bottomLabel}>
-            <div className={styles.qrInstruction}>
-              {txid ? txid : 'Scan to Witness'}
-            </div>
+            <div className={styles.qrInstruction}>{txid ? txid : "Scan to Witness"}</div>
           </section>
 
           {/* Footer Section */}
           <footer className={styles.footer}>
             <div className={styles.witnessInfo}>
-              {witnessCount > 1 ? `証人 ${witnessCount}名参加` : ''}
+              {witnessCount > 1 ? `証人 ${witnessCount}名参加` : ""}
             </div>
-            <div className={styles.networkStatus}>
-              {networkReady ? 'Network Ready' : ''}
-            </div>
+            <div className={styles.networkStatus}>{networkReady ? "Network Ready" : ""}</div>
           </footer>
         </Panel>
 
@@ -171,5 +159,5 @@ export function ProjectorScreen(props: ProjectorScreenProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

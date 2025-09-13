@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(mise ku:*)",
+      "Bash(npx biome check:*)",
+      "Bash(mise k:*)",
+      "Bash(lsb_release:*)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enabledMcpjsonServers": [
+    "memory",
+    "context7",
+    "serena"
+  ]
+}

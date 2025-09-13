@@ -1,31 +1,31 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import React from 'react'
+import type { Meta, StoryObj } from "@storybook/react";
 import {
-  UserPlus,
-  Send,
-  Save,
-  Search,
-  Twitter,
+  Camera,
   Facebook,
   MessageSquare,
-  Camera,
-} from 'lucide-react'
+  Save,
+  Search,
+  Send,
+  Twitter,
+  UserPlus,
+} from "lucide-react";
+import React from "react";
 
-import { Button, IconButton, CopyButton } from '../components/ui'
+import { Button, CopyButton, IconButton } from "../components/ui";
 
 // =================================================================
 // STORYBOOK META & STORIES
 // =================================================================
 const meta: Meta = {
-  title: 'Primitives/Button',
+  title: "Primitives/Button",
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
-}
+  tags: ["autodocs"],
+};
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 // =================================================================
 // BUTTON STORIES (Large buttons)
@@ -37,8 +37,8 @@ export const ParticipateButtonDefault: Story = {
       参加
     </Button>
   ),
-  name: 'Button - Participate (Default)',
-}
+  name: "Button - Participate (Default)",
+};
 
 export const ParticipateButtonDisabled: Story = {
   render: () => (
@@ -46,8 +46,8 @@ export const ParticipateButtonDisabled: Story = {
       参加
     </Button>
   ),
-  name: 'Button - Participate (Disabled)',
-}
+  name: "Button - Participate (Disabled)",
+};
 
 export const ParticipateButtonLoading: Story = {
   render: () => (
@@ -55,8 +55,8 @@ export const ParticipateButtonLoading: Story = {
       処理中...
     </Button>
   ),
-  name: 'Button - Participate (Loading)',
-}
+  name: "Button - Participate (Loading)",
+};
 
 export const CelebrationButtonDefault: Story = {
   render: () => (
@@ -64,8 +64,8 @@ export const CelebrationButtonDefault: Story = {
       🎊 みんなでお祝いする
     </Button>
   ),
-  name: 'Button - Celebration (Default)',
-}
+  name: "Button - Celebration (Default)",
+};
 
 export const CelebrationButtonCountdown: Story = {
   render: () => (
@@ -73,8 +73,8 @@ export const CelebrationButtonCountdown: Story = {
       🎊 みんなでお祝いする
     </Button>
   ),
-  name: 'Button - Celebration (Countdown)',
-}
+  name: "Button - Celebration (Countdown)",
+};
 
 export const CelebrationButtonDisabled: Story = {
   render: () => (
@@ -82,8 +82,8 @@ export const CelebrationButtonDisabled: Story = {
       🎊 みんなでお祝いする
     </Button>
   ),
-  name: 'Button - Celebration (Disabled)',
-}
+  name: "Button - Celebration (Disabled)",
+};
 
 export const ActionButtonPrimaryDefault: Story = {
   render: () => (
@@ -91,8 +91,8 @@ export const ActionButtonPrimaryDefault: Story = {
       この記録を共有
     </Button>
   ),
-  name: 'Button - Action Primary (Default)',
-}
+  name: "Button - Action Primary (Default)",
+};
 
 export const ActionButtonPrimaryVariant: Story = {
   render: () => (
@@ -100,8 +100,8 @@ export const ActionButtonPrimaryVariant: Story = {
       この記念を保存
     </Button>
   ),
-  name: 'Button - Action Primary (Save Memory)',
-}
+  name: "Button - Action Primary (Save Memory)",
+};
 
 export const ActionButtonSecondaryDefault: Story = {
   render: () => (
@@ -109,8 +109,8 @@ export const ActionButtonSecondaryDefault: Story = {
       エクスプローラーで確認
     </Button>
   ),
-  name: 'Button - Action Secondary (Default)',
-}
+  name: "Button - Action Secondary (Default)",
+};
 
 export const ActionButtonSecondaryVariant: Story = {
   render: () => (
@@ -118,13 +118,13 @@ export const ActionButtonSecondaryVariant: Story = {
       他のセレモニーも探す
     </Button>
   ),
-  name: 'Button - Action Secondary (Explore More)',
-}
+  name: "Button - Action Secondary (Explore More)",
+};
 
 export const TimeDisplayButton: Story = {
   render: () => <Button variant="timeDisplay">2024.03.14 15:30</Button>,
-  name: 'Button - Time Display',
-}
+  name: "Button - Time Display",
+};
 
 // =================================================================
 // ICON BUTTON STORIES (Small buttons)
@@ -132,17 +132,17 @@ export const TimeDisplayButton: Story = {
 
 export const ReactionButtonDefault: Story = {
   render: () => <IconButton>👏</IconButton>,
-  name: 'IconButton - Reaction (Default)',
-}
+  name: "IconButton - Reaction (Default)",
+};
 
 export const ReactionButtonSent: Story = {
   render: () => <IconButton sent>🎉</IconButton>,
-  name: 'IconButton - Reaction (Sent)',
-}
+  name: "IconButton - Reaction (Sent)",
+};
 
 export const ReactionButtonVariants: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
+    <div style={{ display: "flex", gap: "0.8rem", flexWrap: "wrap" }}>
       <IconButton>👏</IconButton>
       <IconButton>🎉</IconButton>
       <IconButton>❤️</IconButton>
@@ -151,8 +151,8 @@ export const ReactionButtonVariants: Story = {
       <IconButton>💐</IconButton>
     </div>
   ),
-  name: 'IconButton - Reaction (All Variants)',
-}
+  name: "IconButton - Reaction (All Variants)",
+};
 
 export const ShareButtonTwitter: Story = {
   render: () => (
@@ -160,8 +160,8 @@ export const ShareButtonTwitter: Story = {
       <Twitter size={20} color="#1da1f2" />
     </IconButton>
   ),
-  name: 'IconButton - Share (Twitter)',
-}
+  name: "IconButton - Share (Twitter)",
+};
 
 export const ShareButtonFacebook: Story = {
   render: () => (
@@ -169,8 +169,8 @@ export const ShareButtonFacebook: Story = {
       <Facebook size={20} color="#4267b2" />
     </IconButton>
   ),
-  name: 'IconButton - Share (Facebook)',
-}
+  name: "IconButton - Share (Facebook)",
+};
 
 export const ShareButtonLine: Story = {
   render: () => (
@@ -178,8 +178,8 @@ export const ShareButtonLine: Story = {
       <MessageSquare size={20} color="#00c300" />
     </IconButton>
   ),
-  name: 'IconButton - Share (Line)',
-}
+  name: "IconButton - Share (Line)",
+};
 
 export const ShareButtonInstagram: Story = {
   render: () => (
@@ -187,12 +187,12 @@ export const ShareButtonInstagram: Story = {
       <Camera size={20} color="#e4405f" />
     </IconButton>
   ),
-  name: 'IconButton - Share (Instagram)',
-}
+  name: "IconButton - Share (Instagram)",
+};
 
 export const ShareButtonsAll: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+    <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
       <IconButton>
         <Twitter size={20} color="#1da1f2" />
       </IconButton>
@@ -207,8 +207,8 @@ export const ShareButtonsAll: Story = {
       </IconButton>
     </div>
   ),
-  name: 'IconButton - Share (All Variants)',
-}
+  name: "IconButton - Share (All Variants)",
+};
 
 // =================================================================
 // COPY BUTTON STORIES
@@ -218,8 +218,8 @@ export const CopyButtonDefault: Story = {
   render: () => (
     <CopyButton textToCopy="0x7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069" />
   ),
-  name: 'CopyButton - Default',
-}
+  name: "CopyButton - Default",
+};
 
 export const CopyButtonWithCustomText: Story = {
   render: () => (
@@ -227,8 +227,8 @@ export const CopyButtonWithCustomText: Story = {
       カスタムコピー
     </CopyButton>
   ),
-  name: 'CopyButton - Custom Text',
-}
+  name: "CopyButton - Custom Text",
+};
 
 // =================================================================
 // SHOWCASE STORIES
@@ -238,22 +238,22 @@ export const AllButtonsShowcase: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '2rem',
-        minWidth: '300px',
+        display: "flex",
+        flexDirection: "column",
+        gap: "2rem",
+        minWidth: "300px",
       }}
     >
       <h3
         style={{
-          fontFamily: 'IBM Plex Sans JP',
-          color: 'var(--text-primary)',
+          fontFamily: "IBM Plex Sans JP",
+          color: "var(--text-primary)",
           margin: 0,
         }}
       >
         Large Buttons
       </h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <Button variant="groom" size="large" icon={<UserPlus size={20} />}>
           参加
         </Button>
@@ -271,8 +271,8 @@ export const AllButtonsShowcase: Story = {
 
       <h3
         style={{
-          fontFamily: 'IBM Plex Sans JP',
-          color: 'var(--text-primary)',
+          fontFamily: "IBM Plex Sans JP",
+          color: "var(--text-primary)",
           margin: 0,
         }}
       >
@@ -280,10 +280,10 @@ export const AllButtonsShowcase: Story = {
       </h3>
       <div
         style={{
-          display: 'flex',
-          gap: '0.8rem',
-          alignItems: 'center',
-          flexWrap: 'wrap',
+          display: "flex",
+          gap: "0.8rem",
+          alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         <IconButton>👏</IconButton>
@@ -296,8 +296,8 @@ export const AllButtonsShowcase: Story = {
 
       <h3
         style={{
-          fontFamily: 'IBM Plex Sans JP',
-          color: 'var(--text-primary)',
+          fontFamily: "IBM Plex Sans JP",
+          color: "var(--text-primary)",
           margin: 0,
         }}
       >
@@ -305,10 +305,10 @@ export const AllButtonsShowcase: Story = {
       </h3>
       <div
         style={{
-          display: 'flex',
-          gap: '1rem',
-          alignItems: 'center',
-          flexWrap: 'wrap',
+          display: "flex",
+          gap: "1rem",
+          alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         <IconButton>
@@ -327,19 +327,19 @@ export const AllButtonsShowcase: Story = {
 
       <h3
         style={{
-          fontFamily: 'IBM Plex Sans JP',
-          color: 'var(--text-primary)',
+          fontFamily: "IBM Plex Sans JP",
+          color: "var(--text-primary)",
           margin: 0,
         }}
       >
         Copy Button
       </h3>
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
         <span
           style={{
-            fontFamily: 'IBM Plex Mono',
-            fontSize: '0.9rem',
-            color: 'var(--text-secondary)',
+            fontFamily: "IBM Plex Mono",
+            fontSize: "0.9rem",
+            color: "var(--text-secondary)",
           }}
         >
           0x7f83b1657ff1fc...
@@ -348,8 +348,8 @@ export const AllButtonsShowcase: Story = {
       </div>
     </div>
   ),
-  name: 'All Buttons (Showcase)',
-}
+  name: "All Buttons (Showcase)",
+};
 
 // =================================================================
 // INTERACTION DEMOS
@@ -358,26 +358,26 @@ export const AllButtonsShowcase: Story = {
 export const InteractionDemo: Story = {
   render: () => {
     const [reactionSent, setReactionSent] = React.useState<{
-      [key: string]: boolean
-    }>({})
+      [key: string]: boolean;
+    }>({});
 
     const handleReactionClick = (emoji: string) => {
-      setReactionSent((prev) => ({ ...prev, [emoji]: !prev[emoji] }))
-    }
+      setReactionSent((prev) => ({ ...prev, [emoji]: !prev[emoji] }));
+    };
 
     return (
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '2rem',
-          minWidth: '300px',
+          display: "flex",
+          flexDirection: "column",
+          gap: "2rem",
+          minWidth: "300px",
         }}
       >
         <h3
           style={{
-            fontFamily: 'IBM Plex Sans JP',
-            color: 'var(--text-primary)',
+            fontFamily: "IBM Plex Sans JP",
+            color: "var(--text-primary)",
             margin: 0,
           }}
         >
@@ -387,16 +387,16 @@ export const InteractionDemo: Story = {
         <div>
           <p
             style={{
-              fontFamily: 'IBM Plex Sans JP',
-              fontSize: '0.9rem',
-              color: 'var(--text-secondary)',
-              marginBottom: '1rem',
+              fontFamily: "IBM Plex Sans JP",
+              fontSize: "0.9rem",
+              color: "var(--text-secondary)",
+              marginBottom: "1rem",
             }}
           >
             リアクションボタンをクリックしてスプラッシュ効果を確認
           </p>
-          <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
-            {['👏', '🎉', '❤️', '💕', '🌟', '💐'].map((emoji) => (
+          <div style={{ display: "flex", gap: "0.8rem", flexWrap: "wrap" }}>
+            {["👏", "🎉", "❤️", "💕", "🌟", "💐"].map((emoji) => (
               <IconButton
                 key={emoji}
                 sent={reactionSent[emoji]}
@@ -411,15 +411,15 @@ export const InteractionDemo: Story = {
         <div>
           <p
             style={{
-              fontFamily: 'IBM Plex Sans JP',
-              fontSize: '0.9rem',
-              color: 'var(--text-secondary)',
-              marginBottom: '1rem',
+              fontFamily: "IBM Plex Sans JP",
+              fontSize: "0.9rem",
+              color: "var(--text-secondary)",
+              marginBottom: "1rem",
             }}
           >
             ソーシャルシェアボタンもクリック時にエフェクトが発生
           </p>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
             <IconButton>
               <Twitter size={20} color="#1da1f2" />
             </IconButton>
@@ -438,10 +438,10 @@ export const InteractionDemo: Story = {
         <div>
           <p
             style={{
-              fontFamily: 'IBM Plex Sans JP',
-              fontSize: '0.9rem',
-              color: 'var(--text-secondary)',
-              marginBottom: '1rem',
+              fontFamily: "IBM Plex Sans JP",
+              fontSize: "0.9rem",
+              color: "var(--text-secondary)",
+              marginBottom: "1rem",
             }}
           >
             コピーボタンはクリック後に状態が変化
@@ -449,7 +449,7 @@ export const InteractionDemo: Story = {
           <CopyButton textToCopy="テストテキストがコピーされます" />
         </div>
       </div>
-    )
+    );
   },
-  name: 'Interactive Demo',
-}
+  name: "Interactive Demo",
+};

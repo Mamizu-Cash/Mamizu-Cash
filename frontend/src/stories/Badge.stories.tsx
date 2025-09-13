@@ -1,75 +1,64 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import React from 'react'
-import {
-  Crown,
-  Star,
-  Shield,
-  Zap,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  XCircle,
-  Info,
-  Users,
-} from 'lucide-react'
+import type { Meta, StoryObj } from "@storybook/react";
+import { CheckCircle, Clock, Crown, Info, Shield, Star, Users, XCircle, Zap } from "lucide-react";
+import React from "react";
 
-import { Badge } from '../components/ui/Badge/Badge'
+import { Badge } from "../components/ui/Badge/Badge";
 
 // =================================================================
 // STORYBOOK META & STORIES - Badge (Primitive Status Component)
 // =================================================================
 const meta: Meta<typeof Badge> = {
-  title: 'Primitives/Badge',
+  title: "Primitives/Badge",
   component: Badge,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: { type: 'select' },
+      control: { type: "select" },
       options: [
-        'default',
-        'primary',
-        'secondary',
-        'accent',
-        'success',
-        'warning',
-        'error',
-        'info',
-        'dark',
+        "default",
+        "primary",
+        "secondary",
+        "accent",
+        "success",
+        "warning",
+        "error",
+        "info",
+        "dark",
       ],
     },
     outline: {
-      control: 'boolean',
+      control: "boolean",
     },
     size: {
-      control: { type: 'select' },
-      options: ['small', 'medium', 'large'],
+      control: { type: "select" },
+      options: ["small", "medium", "large"],
     },
     count: {
-      control: 'boolean',
+      control: "boolean",
     },
     pill: {
-      control: 'boolean',
+      control: "boolean",
     },
     withDot: {
-      control: 'boolean',
+      control: "boolean",
     },
     pulsing: {
-      control: 'boolean',
+      control: "boolean",
     },
     interactive: {
-      control: 'boolean',
+      control: "boolean",
     },
     children: {
-      control: 'text',
+      control: "text",
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 // =================================================================
 // BASIC BADGE STORIES
@@ -77,11 +66,11 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    children: 'Default Badge',
-    variant: 'default',
-    size: 'medium',
+    children: "Default Badge",
+    variant: "default",
+    size: "medium",
   },
-}
+};
 
 export const WithIcon: Story = {
   args: {
@@ -91,35 +80,35 @@ export const WithIcon: Story = {
         Premium
       </>
     ),
-    variant: 'secondary',
-    size: 'medium',
+    variant: "secondary",
+    size: "medium",
   },
-}
+};
 
 export const Count: Story = {
   args: {
-    children: '5',
+    children: "5",
     count: true,
-    variant: 'error',
+    variant: "error",
   },
-}
+};
 
 export const Pill: Story = {
   args: {
-    children: 'New',
+    children: "New",
     pill: true,
-    variant: 'success',
+    variant: "success",
   },
-}
+};
 
 export const WithDot: Story = {
   args: {
-    children: 'Live',
+    children: "Live",
     withDot: true,
     pulsing: true,
-    variant: 'success',
+    variant: "success",
   },
-}
+};
 
 // =================================================================
 // VARIANT STORIES
@@ -129,10 +118,10 @@ export const Variants: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        gap: '1rem',
-        alignItems: 'center',
-        flexWrap: 'wrap',
+        display: "flex",
+        gap: "1rem",
+        alignItems: "center",
+        flexWrap: "wrap",
       }}
     >
       <Badge variant="default">Default</Badge>
@@ -146,17 +135,17 @@ export const Variants: Story = {
       <Badge variant="dark">Dark</Badge>
     </div>
   ),
-  name: 'Variants',
-}
+  name: "Variants",
+};
 
 export const OutlineVariants: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        gap: '1rem',
-        alignItems: 'center',
-        flexWrap: 'wrap',
+        display: "flex",
+        gap: "1rem",
+        alignItems: "center",
+        flexWrap: "wrap",
       }}
     >
       <Badge variant="default" outline>
@@ -182,8 +171,8 @@ export const OutlineVariants: Story = {
       </Badge>
     </div>
   ),
-  name: 'Outline Variants',
-}
+  name: "Outline Variants",
+};
 
 // =================================================================
 // SIZE VARIANTS
@@ -191,7 +180,7 @@ export const OutlineVariants: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+    <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
       <Badge size="small" variant="primary">
         Small
       </Badge>
@@ -203,12 +192,12 @@ export const Sizes: Story = {
       </Badge>
     </div>
   ),
-  name: 'Sizes',
-}
+  name: "Sizes",
+};
 
 export const CountSizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+    <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
       <Badge count size="small" variant="error">
         1
       </Badge>
@@ -220,8 +209,8 @@ export const CountSizes: Story = {
       </Badge>
     </div>
   ),
-  name: 'Count Sizes',
-}
+  name: "Count Sizes",
+};
 
 // =================================================================
 // SPECIAL FEATURES
@@ -231,10 +220,10 @@ export const StatusBadges: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        gap: '1rem',
-        alignItems: 'center',
-        flexWrap: 'wrap',
+        display: "flex",
+        gap: "1rem",
+        alignItems: "center",
+        flexWrap: "wrap",
       }}
     >
       <Badge variant="success" withDot>
@@ -255,23 +244,23 @@ export const StatusBadges: Story = {
       </Badge>
     </div>
   ),
-  name: 'Status Badges',
-}
+  name: "Status Badges",
+};
 
 export const NotificationBadges: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-      <div style={{ position: 'relative' }}>
+    <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+      <div style={{ position: "relative" }}>
         <div
           style={{
-            width: '48px',
-            height: '48px',
-            background: 'var(--premium-glass)',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '1px solid var(--premium-border)',
+            width: "48px",
+            height: "48px",
+            background: "var(--premium-glass)",
+            borderRadius: "12px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "1px solid var(--premium-border)",
           }}
         >
           💬
@@ -281,26 +270,26 @@ export const NotificationBadges: Story = {
           variant="error"
           size="small"
           style={{
-            position: 'absolute',
-            top: '-6px',
-            right: '-6px',
+            position: "absolute",
+            top: "-6px",
+            right: "-6px",
           }}
         >
           3
         </Badge>
       </div>
 
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: "relative" }}>
         <div
           style={{
-            width: '48px',
-            height: '48px',
-            background: 'var(--premium-glass)',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '1px solid var(--premium-border)',
+            width: "48px",
+            height: "48px",
+            background: "var(--premium-glass)",
+            borderRadius: "12px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "1px solid var(--premium-border)",
           }}
         >
           🔔
@@ -310,26 +299,26 @@ export const NotificationBadges: Story = {
           variant="accent"
           size="small"
           style={{
-            position: 'absolute',
-            top: '-6px',
-            right: '-6px',
+            position: "absolute",
+            top: "-6px",
+            right: "-6px",
           }}
         >
           12
         </Badge>
       </div>
 
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: "relative" }}>
         <div
           style={{
-            width: '48px',
-            height: '48px',
-            background: 'var(--premium-glass)',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '1px solid var(--premium-border)',
+            width: "48px",
+            height: "48px",
+            background: "var(--premium-glass)",
+            borderRadius: "12px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "1px solid var(--premium-border)",
           }}
         >
           📧
@@ -340,9 +329,9 @@ export const NotificationBadges: Story = {
           size="small"
           pulsing
           style={{
-            position: 'absolute',
-            top: '-6px',
-            right: '-6px',
+            position: "absolute",
+            top: "-6px",
+            right: "-6px",
           }}
         >
           99+
@@ -350,17 +339,17 @@ export const NotificationBadges: Story = {
       </div>
     </div>
   ),
-  name: 'Notification Badges',
-}
+  name: "Notification Badges",
+};
 
 export const PillShapes: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        gap: '1rem',
-        alignItems: 'center',
-        flexWrap: 'wrap',
+        display: "flex",
+        gap: "1rem",
+        alignItems: "center",
+        flexWrap: "wrap",
       }}
     >
       <Badge pill variant="success">
@@ -382,8 +371,8 @@ export const PillShapes: Story = {
       </Badge>
     </div>
   ),
-  name: 'Pill Shapes',
-}
+  name: "Pill Shapes",
+};
 
 // =================================================================
 // BLOCKCHAIN/CRYPTO USE CASES (from mockups)
@@ -393,17 +382,15 @@ export const CeremonyBadges: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.5rem',
-        minWidth: '400px',
+        display: "flex",
+        flexDirection: "column",
+        gap: "1.5rem",
+        minWidth: "400px",
       }}
     >
       <div>
-        <h3 style={{ margin: '0 0 1rem 0', fontFamily: 'IBM Plex Sans JP' }}>
-          セレモニー進行状況
-        </h3>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <h3 style={{ margin: "0 0 1rem 0", fontFamily: "IBM Plex Sans JP" }}>セレモニー進行状況</h3>
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <Badge variant="secondary" withDot>
             STEP 1
           </Badge>
@@ -418,10 +405,8 @@ export const CeremonyBadges: Story = {
       </div>
 
       <div>
-        <h3 style={{ margin: '0 0 1rem 0', fontFamily: 'IBM Plex Sans JP' }}>
-          証人ステータス
-        </h3>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <h3 style={{ margin: "0 0 1rem 0", fontFamily: "IBM Plex Sans JP" }}>証人ステータス</h3>
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <Badge variant="success">
             <Users size={14} />
             43名参加
@@ -437,24 +422,24 @@ export const CeremonyBadges: Story = {
       </div>
     </div>
   ),
-  name: 'Ceremony Badges (from mockup)',
-}
+  name: "Ceremony Badges (from mockup)",
+};
 
 export const BlockchainBadges: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.5rem',
-        minWidth: '400px',
+        display: "flex",
+        flexDirection: "column",
+        gap: "1.5rem",
+        minWidth: "400px",
       }}
     >
       <div>
-        <h3 style={{ margin: '0 0 1rem 0', fontFamily: 'IBM Plex Sans JP' }}>
+        <h3 style={{ margin: "0 0 1rem 0", fontFamily: "IBM Plex Sans JP" }}>
           ブロックチェーン情報
         </h3>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <Badge variant="secondary">Bitcoin Testnet</Badge>
           <Badge variant="success" withDot>
             記録完了
@@ -464,10 +449,10 @@ export const BlockchainBadges: Story = {
       </div>
 
       <div>
-        <h3 style={{ margin: '0 0 1rem 0', fontFamily: 'IBM Plex Sans JP' }}>
+        <h3 style={{ margin: "0 0 1rem 0", fontFamily: "IBM Plex Sans JP" }}>
           トランザクション状況
         </h3>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <Badge variant="warning" withDot pulsing>
             <Clock size={14} />
             承認待ち
@@ -483,31 +468,31 @@ export const BlockchainBadges: Story = {
       </div>
     </div>
   ),
-  name: 'Blockchain Badges',
-}
+  name: "Blockchain Badges",
+};
 
 export const WitnessBadges: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-        minWidth: '350px',
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+        minWidth: "350px",
       }}
     >
       <div
         style={{
-          padding: '1rem',
-          border: '1px solid var(--premium-border)',
-          borderRadius: '12px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          padding: "1rem",
+          border: "1px solid var(--premium-border)",
+          borderRadius: "12px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <span style={{ fontWeight: '500' }}>田中 太郎</span>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <span style={{ fontWeight: "500" }}>田中 太郎</span>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
           <Badge variant="primary" pill size="small">
             新郎
           </Badge>
@@ -519,16 +504,16 @@ export const WitnessBadges: Story = {
 
       <div
         style={{
-          padding: '1rem',
-          border: '1px solid var(--premium-border)',
-          borderRadius: '12px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          padding: "1rem",
+          border: "1px solid var(--premium-border)",
+          borderRadius: "12px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <span style={{ fontWeight: '500' }}>山田 花子</span>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <span style={{ fontWeight: "500" }}>山田 花子</span>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
           <Badge variant="accent" pill size="small">
             新婦
           </Badge>
@@ -540,16 +525,16 @@ export const WitnessBadges: Story = {
 
       <div
         style={{
-          padding: '1rem',
-          border: '1px solid var(--premium-border)',
-          borderRadius: '12px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          padding: "1rem",
+          border: "1px solid var(--premium-border)",
+          borderRadius: "12px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <span style={{ fontWeight: '500' }}>証人A</span>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <span style={{ fontWeight: "500" }}>証人A</span>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
           <Badge variant="secondary" pill size="small">
             <Crown size={10} />
             永遠の証人
@@ -561,8 +546,8 @@ export const WitnessBadges: Story = {
       </div>
     </div>
   ),
-  name: 'Witness Badges (from mockup)',
-}
+  name: "Witness Badges (from mockup)",
+};
 
 // =================================================================
 // INTERACTIVE STORIES
@@ -570,55 +555,49 @@ export const WitnessBadges: Story = {
 
 export const InteractiveBadges: Story = {
   render: () => {
-    const [selectedBadges, setSelectedBadges] = React.useState<string[]>([])
+    const [selectedBadges, setSelectedBadges] = React.useState<string[]>([]);
 
     const badges = [
       {
-        id: 'reactions',
-        label: 'リアクション送信',
-        variant: 'primary' as const,
+        id: "reactions",
+        label: "リアクション送信",
+        variant: "primary" as const,
       },
-      { id: 'messages', label: 'メッセージ投稿', variant: 'accent' as const },
-      { id: 'sharing', label: '記録共有', variant: 'secondary' as const },
-      { id: 'celebration', label: '一斉祝福', variant: 'success' as const },
-    ]
+      { id: "messages", label: "メッセージ投稿", variant: "accent" as const },
+      { id: "sharing", label: "記録共有", variant: "secondary" as const },
+      { id: "celebration", label: "一斉祝福", variant: "success" as const },
+    ];
 
     const toggleBadge = (badgeId: string) => {
       setSelectedBadges((prev) =>
-        prev.includes(badgeId)
-          ? prev.filter((id) => id !== badgeId)
-          : [...prev, badgeId],
-      )
-    }
+        prev.includes(badgeId) ? prev.filter((id) => id !== badgeId) : [...prev, badgeId],
+      );
+    };
 
     return (
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '2rem',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          gap: "2rem",
+          alignItems: "center",
         }}
       >
-        <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+        <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
           Click badges to toggle selection
         </p>
 
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           {badges.map((badge) => (
             <Badge
               key={badge.id}
-              variant={
-                selectedBadges.includes(badge.id) ? badge.variant : 'default'
-              }
+              variant={selectedBadges.includes(badge.id) ? badge.variant : "default"}
               outline={!selectedBadges.includes(badge.id)}
               interactive
               onClick={() => toggleBadge(badge.id)}
               style={{
-                transform: selectedBadges.includes(badge.id)
-                  ? 'scale(1.05)'
-                  : 'scale(1)',
-                transition: 'transform 0.2s ease',
+                transform: selectedBadges.includes(badge.id) ? "scale(1.05)" : "scale(1)",
+                transition: "transform 0.2s ease",
               }}
             >
               {selectedBadges.includes(badge.id) && <CheckCircle size={14} />}
@@ -629,20 +608,20 @@ export const InteractiveBadges: Story = {
 
         <div
           style={{
-            padding: '1rem',
-            background: '#f8f9fa',
-            borderRadius: '8px',
-            fontSize: '0.9rem',
+            padding: "1rem",
+            background: "#f8f9fa",
+            borderRadius: "8px",
+            fontSize: "0.9rem",
           }}
         >
-          <strong>選択中の権限:</strong>{' '}
-          {selectedBadges.length > 0 ? selectedBadges.length : 'なし'}
+          <strong>選択中の権限:</strong>{" "}
+          {selectedBadges.length > 0 ? selectedBadges.length : "なし"}
         </div>
       </div>
-    )
+    );
   },
-  name: 'Interactive Demo',
-}
+  name: "Interactive Demo",
+};
 
 // =================================================================
 // SHOWCASE STORY
@@ -652,23 +631,23 @@ export const AllBadgesShowcase: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '2rem',
-        minWidth: '500px',
+        display: "flex",
+        flexDirection: "column",
+        gap: "2rem",
+        minWidth: "500px",
       }}
     >
       <div>
         <h3
           style={{
-            fontFamily: 'IBM Plex Sans JP',
-            color: 'var(--text-primary)',
-            margin: '0 0 1rem 0',
+            fontFamily: "IBM Plex Sans JP",
+            color: "var(--text-primary)",
+            margin: "0 0 1rem 0",
           }}
         >
           Badge Variants
         </h3>
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
           <Badge variant="default">Default</Badge>
           <Badge variant="primary">Primary</Badge>
           <Badge variant="secondary">Secondary</Badge>
@@ -683,14 +662,14 @@ export const AllBadgesShowcase: Story = {
       <div>
         <h3
           style={{
-            fontFamily: 'IBM Plex Sans JP',
-            color: 'var(--text-primary)',
-            margin: '0 0 1rem 0',
+            fontFamily: "IBM Plex Sans JP",
+            color: "var(--text-primary)",
+            margin: "0 0 1rem 0",
           }}
         >
           Badge Sizes
         </h3>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
           <Badge size="small" variant="primary">
             Small
           </Badge>
@@ -706,14 +685,14 @@ export const AllBadgesShowcase: Story = {
       <div>
         <h3
           style={{
-            fontFamily: 'IBM Plex Sans JP',
-            color: 'var(--text-primary)',
-            margin: '0 0 1rem 0',
+            fontFamily: "IBM Plex Sans JP",
+            color: "var(--text-primary)",
+            margin: "0 0 1rem 0",
           }}
         >
           Special Features
         </h3>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <Badge count variant="error">
             5
           </Badge>
@@ -733,14 +712,14 @@ export const AllBadgesShowcase: Story = {
       <div>
         <h3
           style={{
-            fontFamily: 'IBM Plex Sans JP',
-            color: 'var(--text-primary)',
-            margin: '0 0 1rem 0',
+            fontFamily: "IBM Plex Sans JP",
+            color: "var(--text-primary)",
+            margin: "0 0 1rem 0",
           }}
         >
           Ceremony Use Cases
         </h3>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <Badge variant="secondary" withDot>
             STEP 2
           </Badge>
@@ -764,14 +743,14 @@ export const AllBadgesShowcase: Story = {
       <div>
         <h3
           style={{
-            fontFamily: 'IBM Plex Sans JP',
-            color: 'var(--text-primary)',
-            margin: '0 0 1rem 0',
+            fontFamily: "IBM Plex Sans JP",
+            color: "var(--text-primary)",
+            margin: "0 0 1rem 0",
           }}
         >
           Outline Variants
         </h3>
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
           <Badge variant="primary" outline>
             Primary
           </Badge>
@@ -791,5 +770,5 @@ export const AllBadgesShowcase: Story = {
       </div>
     </div>
   ),
-  name: 'All Badges (Showcase)',
-}
+  name: "All Badges (Showcase)",
+};

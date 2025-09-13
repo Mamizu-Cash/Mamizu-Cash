@@ -1,50 +1,34 @@
-import { useState } from 'react'
-import {
-  Background,
-  Button,
-  Panel,
-  Text,
-  Checkbox,
-  Spinner,
-  Badge,
-} from '../../ui/index'
-import styles from './DocumentScreen.module.css'
-import commonStyles from '../CommonScreenStyles.module.css'
-import logoWide from '../../../assets/logo-wide.svg'
-import type { ProverRole } from './WelcomeScreen'
-import { CONSTANTS } from '../../../constants'
+import { useState } from "react";
+import logoWide from "../../../assets/logo-wide.svg";
+import { CONSTANTS } from "../../../constants";
+import { Background, Badge, Button, Checkbox, Panel, Spinner, Text } from "../../ui/index";
+import commonStyles from "../CommonScreenStyles.module.css";
+import styles from "./DocumentScreen.module.css";
+import type { ProverRole } from "./WelcomeScreen";
 
 export type DocumentScreenProps = {
-  ceremonyId?: string
-  role?: ProverRole
-  documentUrl?: string
-  documentLoaded: boolean
-  documentHash: string
-  isProcessing: boolean
-  onConfirm: () => Promise<void>
-}
+  ceremonyId?: string;
+  role?: ProverRole;
+  documentUrl?: string;
+  documentLoaded: boolean;
+  documentHash: string;
+  isProcessing: boolean;
+  onConfirm: () => Promise<void>;
+};
 
 export function DocumentScreen(props: DocumentScreenProps) {
-  const {
-    ceremonyId,
-    role,
-    documentUrl,
-    documentLoaded,
-    documentHash,
-    isProcessing,
-    onConfirm,
-  } = props
-  const [confirmed, setConfirmed] = useState(false)
+  const { role, documentUrl, documentLoaded, documentHash, isProcessing, onConfirm } = props;
+  const [confirmed, setConfirmed] = useState(false);
 
   const getRoleDisplayName = (role?: ProverRole) => {
-    if (!role) return ''
-    return role === 'BRIDE' ? '新婦' : '新郎'
-  }
+    if (!role) return "";
+    return role === "BRIDE" ? "新婦" : "新郎";
+  };
 
   const getRoleColor = (role?: ProverRole) => {
-    if (!role) return 'secondary'
-    return role === 'BRIDE' ? 'accent' : 'info'
-  }
+    if (!role) return "secondary";
+    return role === "BRIDE" ? "accent" : "info";
+  };
 
   return (
     <div className={`${commonStyles.container} ${styles.container}`}>
@@ -54,11 +38,7 @@ export function DocumentScreen(props: DocumentScreenProps) {
           {/* Header Section */}
           <header className={`${commonStyles.header} ${styles.header}`}>
             <div className={styles.brandGroup}>
-              <img
-                src={logoWide}
-                alt="ビット婚姻"
-                className={styles.brandLogo}
-              />
+              <img src={logoWide} alt="ビット婚姻" className={styles.brandLogo} />
             </div>
             <div className={styles.titleSection}>
               <Text
@@ -88,20 +68,10 @@ export function DocumentScreen(props: DocumentScreenProps) {
               /* Loading State */
               <section className={styles.loadingSection}>
                 <Spinner size="large" variant="gradient" />
-                <Text
-                  variant="bodyLarge"
-                  color="secondary"
-                  align="center"
-                  weight="medium"
-                >
+                <Text variant="bodyLarge" color="secondary" align="center" weight="medium">
                   誓約文書を読み込んでいます...
                 </Text>
-                <Text
-                  variant="body"
-                  color="tertiary"
-                  align="center"
-                  className={styles.loadingNote}
-                >
+                <Text variant="body" color="tertiary" align="center" className={styles.loadingNote}>
                   文書の完全性を検証中
                 </Text>
               </section>
@@ -111,7 +81,7 @@ export function DocumentScreen(props: DocumentScreenProps) {
                 <Button
                   variant="secondary"
                   onClick={() => {
-                    window.open(documentUrl || CONSTANTS.documentUrl)
+                    window.open(documentUrl || CONSTANTS.documentUrl);
                   }}
                   className={styles.fullViewButton}
                 >
@@ -129,11 +99,7 @@ export function DocumentScreen(props: DocumentScreenProps) {
                     文書完全性証明
                   </Text>
                   <div className={styles.hashDisplay}>
-                    <Text
-                      variant="caption"
-                      color="secondary"
-                      className={styles.hashLabel}
-                    >
+                    <Text variant="caption" color="secondary" className={styles.hashLabel}>
                       SHA-256ハッシュ値:
                     </Text>
                     <Text
@@ -179,7 +145,7 @@ export function DocumentScreen(props: DocumentScreenProps) {
                     onClick={onConfirm}
                     className={styles.confirmButton}
                   >
-                    {isProcessing ? '処理中...' : '内容を確認して次へ'}
+                    {isProcessing ? "処理中..." : "内容を確認して次へ"}
                   </Button>
                 </section>
               </>
@@ -192,12 +158,7 @@ export function DocumentScreen(props: DocumentScreenProps) {
               <Text variant="caption" color="tertiary" align="center">
                 ブロックチェーン技術による永続的な記録
               </Text>
-              <Text
-                variant="caption"
-                color="brand"
-                align="center"
-                weight="medium"
-              >
+              <Text variant="caption" color="brand" align="center" weight="medium">
                 Powered by AokiApp Inc.
               </Text>
             </div>
@@ -205,5 +166,5 @@ export function DocumentScreen(props: DocumentScreenProps) {
         </Panel>
       </div>
     </div>
-  )
+  );
 }

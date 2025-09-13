@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef, Children } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { IconButton } from '../IconButton/IconButton';
-import { Text } from '../Text/Text';
-import styles from './Carousel.module.css';
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import React, { Children, useCallback, useEffect, useRef, useState } from "react";
+import { IconButton } from "../IconButton/IconButton";
+import { Text } from "../Text/Text";
+import styles from "./Carousel.module.css";
 
 // =================================================================
 // CAROUSEL TEMPLATE COMPONENT - Structured content for carousel slides
@@ -18,15 +18,11 @@ export const CarouselTemplate: React.FC<CarouselTemplateProps> = ({
   icon,
   title,
   children,
-  className = '',
+  className = "",
 }) => {
   return (
     <div className={`${styles.templateSlide} ${className}`}>
-      {icon && (
-        <div className={styles.carouselIcon}>
-          {icon}
-        </div>
-      )}
+      {icon && <div className={styles.carouselIcon}>{icon}</div>}
       <Text
         variant="label"
         weight="semibold"
@@ -59,7 +55,7 @@ export interface CarouselProps {
   pauseOnInteraction?: number;
   showIndicators?: boolean;
   showArrows?: boolean;
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
   onSlideChange?: (index: number) => void;
 }
 
@@ -67,13 +63,13 @@ export const Carousel: React.FC<CarouselProps> & {
   Template: typeof CarouselTemplate;
 } = ({
   children,
-  className = '',
+  className = "",
   autoPlay = true,
   autoPlayInterval = 5000, // 5 seconds as specified
   pauseOnInteraction = 10000, // 10 seconds pause after user interaction
   showIndicators = true,
   showArrows = false,
-  size = 'medium',
+  size = "medium",
   onSlideChange,
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -84,26 +80,26 @@ export const Carousel: React.FC<CarouselProps> & {
   // Convert children to array for consistent handling
   const slides = React.useMemo(() => {
     const childArray = Children.toArray(children);
-    
+
     // If children is already a flat array, use it directly
     // If it's nested arrays, flatten them
     const flattenedChildren: React.ReactNode[] = [];
-    
-    childArray.forEach(child => {
+
+    for (const child of childArray) {
       if (Array.isArray(child)) {
         flattenedChildren.push(...child);
       } else {
         flattenedChildren.push(child);
       }
-    });
-    
-    return flattenedChildren.filter(child => child !== null && child !== undefined);
+    }
+
+    return flattenedChildren.filter((child) => child !== null && child !== undefined);
   }, [children]);
 
   // Auto-play functionality
   const startAutoPlay = useCallback(() => {
     if (!autoPlay || slides.length <= 1) return;
-    
+
     autoPlayRef.current = window.setInterval(() => {
       if (!isPaused) {
         setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -121,26 +117,29 @@ export const Carousel: React.FC<CarouselProps> & {
   const pauseAutoPlay = useCallback(() => {
     setIsPaused(true);
     stopAutoPlay();
-    
+
     if (pauseTimeoutRef.current) {
       clearTimeout(pauseTimeoutRef.current);
     }
-    
+
     pauseTimeoutRef.current = window.setTimeout(() => {
       setIsPaused(false);
     }, pauseOnInteraction);
-  }, [pauseOnInteraction]);
+  }, [pauseOnInteraction, stopAutoPlay]);
 
   // Handle slide change
-  const goToSlide = useCallback((index: number) => {
-    if (index < 0 || index >= slides.length) return;
-    
-    setCurrentSlide(index);
-    onSlideChange?.(index);
-    if (autoPlay) {
-      pauseAutoPlay();
-    }
-  }, [slides.length, onSlideChange, autoPlay, pauseAutoPlay]);
+  const goToSlide = useCallback(
+    (index: number) => {
+      if (index < 0 || index >= slides.length) return;
+
+      setCurrentSlide(index);
+      onSlideChange?.(index);
+      if (autoPlay) {
+        pauseAutoPlay();
+      }
+    },
+    [slides.length, onSlideChange, autoPlay, pauseAutoPlay],
+  );
 
   // Navigation functions
   const goToPrevSlide = useCallback(() => {
@@ -178,11 +177,7 @@ export const Carousel: React.FC<CarouselProps> & {
     }
   }, [slides.length, currentSlide]);
 
-  const carouselClasses = [
-    styles.carousel,
-    styles[size],
-    className
-  ].filter(Boolean).join(' ');
+  const carouselClasses = [styles.carousel, styles[size], className].filter(Boolean).join(" ");
 
   if (slides.length === 0) {
     return null;
@@ -192,16 +187,20 @@ export const Carousel: React.FC<CarouselProps> & {
     <div className={carouselClasses}>
       {/* Slides Content */}
       <div className={styles.carouselContent}>
-        {slides.map((slide, index) => (
-          <div
-            key={`slide-${index}`}
-            className={`${styles.carouselSlide} ${
-              index === currentSlide ? styles.active : ''
-            }`}
-          >
-            {slide}
-          </div>
-        ))}
+        {slides.map((slide, index) => {
+          // Try to extract key from the slide if it's a React element, otherwise use index
+          const slideKey =
+            React.isValidElement(slide) && slide.key !== null ? slide.key : `slide-${index}`;
+
+          return (
+            <div
+              key={slideKey}
+              className={`${styles.carouselSlide} ${index === currentSlide ? styles.active : ""}`}
+            >
+              {slide}
+            </div>
+          );
+        })}
       </div>
 
       {/* Navigation Controls */}
@@ -221,17 +220,22 @@ export const Carousel: React.FC<CarouselProps> & {
           {/* Indicators */}
           {showIndicators && (
             <div className={styles.carouselIndicators}>
-              {slides.map((_, index) => (
-                <button
-                  key={`indicator-${index}`}
-                  className={`${styles.carouselDot} ${
-                    index === currentSlide ? styles.active : ''
-                  }`}
-                  onClick={() => goToSlide(index)}
-                  aria-label={`Go to slide ${index + 1}`}
-                  type="button"
-                />
-              ))}
+              {slides.map((slide, index) => {
+                const slideKey =
+                  React.isValidElement(slide) && slide.key !== null
+                    ? `indicator-${slide.key}`
+                    : `indicator-${index}`;
+
+                return (
+                  <button
+                    key={slideKey}
+                    className={`${styles.carouselDot} ${index === currentSlide ? styles.active : ""}`}
+                    onClick={() => goToSlide(index)}
+                    aria-label={`Go to slide ${index + 1}`}
+                    type="button"
+                  />
+                );
+              })}
             </div>
           )}
 

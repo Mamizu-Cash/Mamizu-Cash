@@ -1,44 +1,33 @@
-import { useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
-import {
-  Background,
-  Button,
-  Panel,
-  Text,
-  Input,
-  Checkbox,
-} from '../../ui/index'
-import styles from './RegisterScreen.module.css'
-import commonStyles from '../CommonScreenStyles.module.css'
-import logoWide from '../../../assets/logo-wide.svg'
-import { CONSTANTS } from '../../../constants'
+import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import logoWide from "../../../assets/logo-wide.svg";
+import { CONSTANTS } from "../../../constants";
+import { Background, Button, Checkbox, Input, Panel, Text } from "../../ui/index";
+import commonStyles from "../CommonScreenStyles.module.css";
+import styles from "./RegisterScreen.module.css";
 export type RegisterScreenProps = {
-  sessionId?: string
-  onRegister?: (data: {
-    agreed: boolean
-    nickname?: string
-    message?: string
-  }) => void
-}
+  sessionId?: string;
+  onRegister?: (data: { agreed: boolean; nickname?: string; message?: string }) => void;
+};
 
 export function RegisterScreen(props: RegisterScreenProps) {
-  const { sessionId, onRegister } = props
-  const navigate = useNavigate()
+  const { onRegister } = props;
+  const navigate = useNavigate();
 
-  const [agreed, setAgreed] = useState(false)
-  const [nickname, setNickname] = useState('')
-  const [message, setMessage] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [agreed, setAgreed] = useState(false);
+  const [nickname, setNickname] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!agreed) {
-      alert('利用規約とプライバシーポリシーへの同意が必要です')
-      return
+      alert("利用規約とプライバシーポリシーへの同意が必要です");
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
       // データを親コンポーネントに送信
@@ -46,35 +35,28 @@ export function RegisterScreen(props: RegisterScreenProps) {
         agreed,
         nickname: nickname.trim() || undefined,
         message: message.trim() || undefined,
-      })
+      });
 
       // 次の画面に遷移
-      navigate({ to: '/verifier/ceremony' })
+      navigate({ to: "/" });
     } catch (error) {
-      console.error('Registration failed:', error)
-      alert('参加登録に失敗しました。もう一度お試しください。')
+      console.error("Registration failed:", error);
+      alert("参加登録に失敗しました。もう一度お試しください。");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className={`${commonStyles.container} ${styles.container}`}>
       <Background />
       <div className={`${commonStyles.mainContainer} ${styles.mainContainer}`}>
-        <Panel
-          size="medium"
-          className={`${commonStyles.panel} ${styles.panel}`}
-        >
+        <Panel size="medium" className={`${commonStyles.panel} ${styles.panel}`}>
           {/* Header Section */}
           {/* Header Section */}
           <header className={`${commonStyles.header} ${styles.header}`}>
             <div className={styles.brandGroup}>
-              <img
-                src={logoWide}
-                alt="ビット婚姻"
-                className={styles.brandLogo}
-              />
+              <img src={logoWide} alt="ビット婚姻" className={styles.brandLogo} />
             </div>
             <div className={styles.welcomeSection}>
               <Text
@@ -102,12 +84,7 @@ export function RegisterScreen(props: RegisterScreenProps) {
           <form onSubmit={handleSubmit} className={styles.form}>
             {/* 必須項目：利用規約同意 */}
             <div className={styles.formSection}>
-              <Text
-                variant="label"
-                color="primary"
-                weight="medium"
-                className={styles.sectionTitle}
-              >
+              <Text variant="label" color="primary" weight="medium" className={styles.sectionTitle}>
                 参加にあたって
               </Text>
 
@@ -122,8 +99,8 @@ export function RegisterScreen(props: RegisterScreenProps) {
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
-                          color: '#1976d2',
-                          textDecoration: 'underline',
+                          color: "#1976d2",
+                          textDecoration: "underline",
                         }}
                       >
                         利用規約とプライバシーポリシー
@@ -138,18 +115,9 @@ export function RegisterScreen(props: RegisterScreenProps) {
 
             {/* 任意項目：ニックネーム */}
             <div className={styles.formSection}>
-              <Text
-                variant="label"
-                color="primary"
-                weight="medium"
-                className={styles.sectionTitle}
-              >
+              <Text variant="label" color="primary" weight="medium" className={styles.sectionTitle}>
                 ニックネーム
-                <Text
-                  variant="caption"
-                  color="tertiary"
-                  className={styles.optionalNote}
-                >
+                <Text variant="caption" color="tertiary" className={styles.optionalNote}>
                   任意
                 </Text>
               </Text>
@@ -166,18 +134,9 @@ export function RegisterScreen(props: RegisterScreenProps) {
 
             {/* 任意項目：お祝いメッセージ */}
             <div className={styles.formSection}>
-              <Text
-                variant="label"
-                color="primary"
-                weight="medium"
-                className={styles.sectionTitle}
-              >
+              <Text variant="label" color="primary" weight="medium" className={styles.sectionTitle}>
                 お祝いメッセージ
-                <Text
-                  variant="caption"
-                  color="tertiary"
-                  className={styles.optionalNote}
-                >
+                <Text variant="caption" color="tertiary" className={styles.optionalNote}>
                   任意
                 </Text>
               </Text>
@@ -190,12 +149,7 @@ export function RegisterScreen(props: RegisterScreenProps) {
                 rows={3}
                 className={styles.messageTextarea}
               />
-              <Text
-                variant="caption"
-                color="tertiary"
-                align="right"
-                className={styles.charCount}
-              >
+              <Text variant="caption" color="tertiary" align="right" className={styles.charCount}>
                 {message.length}/200
               </Text>
             </div>
@@ -210,7 +164,7 @@ export function RegisterScreen(props: RegisterScreenProps) {
                 disabled={!agreed || isSubmitting}
                 className={styles.submitButton}
               >
-                {isSubmitting ? '参加登録中...' : '証人として参加する'}
+                {isSubmitting ? "参加登録中..." : "証人として参加する"}
               </Button>
             </div>
 
@@ -220,12 +174,7 @@ export function RegisterScreen(props: RegisterScreenProps) {
                 <Text variant="caption" color="tertiary" align="center">
                   ブロックチェーン技術による永続的な記録
                 </Text>
-                <Text
-                  variant="caption"
-                  color="brand"
-                  align="center"
-                  weight="medium"
-                >
+                <Text variant="caption" color="brand" align="center" weight="medium">
                   Powered by AokiApp Inc.
                 </Text>
               </div>
@@ -234,5 +183,5 @@ export function RegisterScreen(props: RegisterScreenProps) {
         </Panel>
       </div>
     </div>
-  )
+  );
 }

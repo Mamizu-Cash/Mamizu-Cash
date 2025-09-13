@@ -1,43 +1,30 @@
-import { Background, Button, Panel, Text } from '../../ui/index'
-import { Twitter, Facebook, MessageSquare, Gift, Bitcoin } from 'lucide-react'
-import styles from './FinishScreen.module.css'
-import commonStyles from '../CommonScreenStyles.module.css'
+import { Bitcoin, Facebook, Gift, MessageSquare, Twitter } from "lucide-react";
+import { Background, Button, Panel, Text } from "../../ui/index";
+import commonStyles from "../CommonScreenStyles.module.css";
+import styles from "./FinishScreen.module.css";
 
 export type FinishScreenProps = {
-  nickname?: string
+  nickname?: string;
   onShare?: (
-    platform:
-      | 'twitter'
-      | 'facebook'
-      | 'line'
-      | 'misskey_misskey_io'
-      | 'misskey_key_aoki_app'
-  ) => void
-  onSaveMoments?: () => void
-}
+    platform: "twitter" | "facebook" | "line" | "misskey_misskey_io" | "misskey_key_aoki_app",
+  ) => void;
+  onSaveMoments?: () => void;
+};
 
 export function FinishScreen(props: FinishScreenProps) {
-  const { nickname, onShare, onSaveMoments } = props
+  const { nickname, onShare, onSaveMoments } = props;
 
   const handleShare = (
-    platform:
-      | 'twitter'
-      | 'facebook'
-      | 'line'
-      | 'misskey_misskey_io'
-      | 'misskey_key_aoki_app'
+    platform: "twitter" | "facebook" | "line" | "misskey_misskey_io" | "misskey_key_aoki_app",
   ) => {
-    onShare?.(platform)
-  }
+    onShare?.(platform);
+  };
 
   return (
     <div className={`${commonStyles.container} ${styles.container}`}>
       <Background />
       <div className={`${commonStyles.mainContainer} ${styles.mainContainer}`}>
-        <Panel
-          size="medium"
-          className={`${commonStyles.panel} ${styles.panel}`}
-        >
+        <Panel size="medium" className={`${commonStyles.panel} ${styles.panel}`}>
           {/* Header Section */}
           <header className={`${commonStyles.header} ${styles.header}`}>
             <div className={styles.celebrationIcons}>
@@ -54,13 +41,8 @@ export function FinishScreen(props: FinishScreenProps) {
             >
               ありがとうございました
             </Text>
-            <Text
-              variant="bodyLarge"
-              color="secondary"
-              align="center"
-              className={styles.subtitle}
-            >
-              {nickname ? `${nickname}さん、` : ''}永遠の証人として
+            <Text variant="bodyLarge" color="secondary" align="center" className={styles.subtitle}>
+              {nickname ? `${nickname}さん、` : ""}永遠の証人として
               <br />
               この特別な瞬間に立ち会っていただき、
               <br />
@@ -85,7 +67,7 @@ export function FinishScreen(props: FinishScreenProps) {
               <div className={styles.shareButtons}>
                 <Button
                   variant="secondary"
-                  onClick={() => handleShare('twitter')}
+                  onClick={() => handleShare("twitter")}
                   icon={<Twitter size={16} color="#1DA1F2" />}
                   aria-label="共有する: Twitter"
                   className={styles.shareButton}
@@ -94,7 +76,7 @@ export function FinishScreen(props: FinishScreenProps) {
                 </Button>
                 <Button
                   variant="secondary"
-                  onClick={() => handleShare('facebook')}
+                  onClick={() => handleShare("facebook")}
                   icon={<Facebook size={16} color="#1877F2" />}
                   aria-label="共有する: Facebook"
                   className={styles.shareButton}
@@ -103,7 +85,7 @@ export function FinishScreen(props: FinishScreenProps) {
                 </Button>
                 <Button
                   variant="secondary"
-                  onClick={() => handleShare('line')}
+                  onClick={() => handleShare("line")}
                   icon={<MessageSquare size={16} color="#06C755" />}
                   aria-label="共有する: LINE"
                   className={styles.shareButton}
@@ -112,7 +94,7 @@ export function FinishScreen(props: FinishScreenProps) {
                 </Button>
                 <Button
                   variant="secondary"
-                  onClick={() => handleShare('misskey_misskey_io')}
+                  onClick={() => handleShare("misskey_misskey_io")}
                   icon={<MessageSquare size={16} color="#86b300" />}
                   aria-label="共有する: Misskey (misskey.io)"
                   className={styles.shareButton}
@@ -121,7 +103,7 @@ export function FinishScreen(props: FinishScreenProps) {
                 </Button>
                 <Button
                   variant="secondary"
-                  onClick={() => handleShare('misskey_key_aoki_app')}
+                  onClick={() => handleShare("misskey_key_aoki_app")}
                   icon={<MessageSquare size={16} color="#86b300" />}
                   aria-label="共有する: Misskey (Aokey)"
                   className={styles.shareButton}
@@ -145,12 +127,7 @@ export function FinishScreen(props: FinishScreenProps) {
                 <br />
                 NFTをゲット
               </Button>
-              <Text
-                variant="caption"
-                color="tertiary"
-                align="center"
-                className={styles.saveNote}
-              >
+              <Text variant="caption" color="tertiary" align="center" className={styles.saveNote}>
                 証明書と記念写真のNFTをゲットできます
               </Text>
             </section>
@@ -162,21 +139,15 @@ export function FinishScreen(props: FinishScreenProps) {
               <Text variant="caption" color="tertiary" align="center">
                 ブロックチェーン技術による永続的な記録
               </Text>
-              <Text
-                variant="caption"
-                color="brand"
-                align="center"
-                weight="medium"
-              >
+              <Text variant="caption" color="brand" align="center" weight="medium">
                 <span
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
                   }}
                 >
-                  <Bitcoin size={14} aria-hidden="true" /> Powered by Bitcoin
-                  Network
+                  <Bitcoin size={14} aria-hidden="true" /> Powered by Bitcoin Network
                 </span>
               </Text>
             </div>
@@ -184,5 +155,5 @@ export function FinishScreen(props: FinishScreenProps) {
         </Panel>
       </div>
     </div>
-  )
+  );
 }

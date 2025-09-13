@@ -1,45 +1,47 @@
-import React from 'react';
-import styles from './Avatar.module.css';
+import React from "react";
+import styles from "./Avatar.module.css";
 
 export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
-  size?: 'small' | 'medium' | 'large' | 'extraLarge' | 'huge';
-  variant?: 'default' | 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error';
+  size?: "small" | "medium" | "large" | "extraLarge" | "huge";
+  variant?: "default" | "primary" | "secondary" | "accent" | "success" | "warning" | "error";
   src?: string;
   alt?: string;
   name?: string;
   initials?: string;
-  status?: 'online' | 'busy' | 'offline' | 'away';
+  status?: "online" | "busy" | "offline" | "away";
   interactive?: boolean;
   className?: string;
   children?: React.ReactNode;
 }
 
 export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
-  ({ 
-    size = 'medium',
-    variant = 'default',
-    src,
-    alt,
-    name,
-    initials,
-    status,
-    interactive = false,
-    className = '', 
-    children,
-    onClick,
-    ...props 
-  }, ref) => {
-    
+  (
+    {
+      size = "medium",
+      variant = "default",
+      src,
+      alt,
+      name,
+      initials,
+      status,
+      interactive = false,
+      className = "",
+      children,
+      onClick,
+      ...props
+    },
+    ref,
+  ) => {
     // Generate initials from name if not provided
     const getInitials = (fullName?: string, providedInitials?: string): string => {
       if (providedInitials) return providedInitials;
-      if (!fullName) return '';
-      
+      if (!fullName) return "";
+
       return fullName
-        .split(' ')
+        .split(" ")
         .slice(0, 2) // Take first 2 words
-        .map(word => word.charAt(0))
-        .join('')
+        .map((word) => word.charAt(0))
+        .join("")
         .toUpperCase();
     };
 
@@ -50,13 +52,17 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
       styles[size],
       styles[variant],
       interactive && styles.interactive,
-      className
-    ].filter(Boolean).join(' ');
+      className,
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     const statusClasses = [
       styles.statusIndicator,
-      status && styles[`status${status.charAt(0).toUpperCase() + status.slice(1)}`]
-    ].filter(Boolean).join(' ');
+      status && styles[`status${status.charAt(0).toUpperCase() + status.slice(1)}`],
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
       if (interactive && onClick) {
@@ -68,13 +74,13 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
       // If image is provided, render img element
       if (src) {
         return (
-          <img 
-            src={src} 
-            alt={alt || name || 'Avatar'} 
+          <img
+            src={src}
+            alt={alt || name || "Avatar"}
             className={styles.image}
             onError={(e) => {
               // If image fails to load, hide it and show initials/children instead
-              e.currentTarget.style.display = 'none';
+              e.currentTarget.style.display = "none";
             }}
           />
         );
@@ -87,17 +93,11 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
 
       // Otherwise, render initials
       if (displayInitials) {
-        return (
-          <span className={styles.initials}>
-            {displayInitials}
-          </span>
-        );
+        return <span className={styles.initials}>{displayInitials}</span>;
       }
 
       // Fallback: render a default user icon
-      return (
-        <span style={{ fontSize: '60%' }}>👤</span>
-      );
+      return <span style={{ fontSize: "60%" }}>👤</span>;
     };
 
     return (
@@ -105,22 +105,17 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         ref={ref}
         className={avatarClasses}
         onClick={handleClick}
-        role={interactive ? 'button' : undefined}
+        role={interactive ? "button" : undefined}
         tabIndex={interactive ? 0 : undefined}
-        aria-label={alt || name || 'Avatar'}
+        aria-label={alt || name || "Avatar"}
         {...props}
       >
         {renderContent()}
-        
-        {status && (
-          <div 
-            className={statusClasses}
-            aria-label={`Status: ${status}`}
-          />
-        )}
+
+        {status && <div className={statusClasses} aria-label={`Status: ${status}`} />}
       </div>
     );
-  }
+  },
 );
 
-Avatar.displayName = 'Avatar';
+Avatar.displayName = "Avatar";
