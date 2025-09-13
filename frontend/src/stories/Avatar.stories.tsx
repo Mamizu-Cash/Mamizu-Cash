@@ -1,58 +1,50 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import React from 'react'
-import { Avatar } from '../components/ui/Avatar/Avatar'
+import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
+import { Avatar } from "../components/ui/Avatar/Avatar";
 
 // =================================================================
 // STORYBOOK META & STORIES - Avatar (Primitive Display Component)
 // =================================================================
 const meta: Meta<typeof Avatar> = {
-  title: 'Primitives/Avatar',
+  title: "Primitives/Avatar",
   component: Avatar,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     size: {
-      control: { type: 'select' },
-      options: ['small', 'medium', 'large', 'extraLarge', 'huge'],
+      control: { type: "select" },
+      options: ["small", "medium", "large", "extraLarge", "huge"],
     },
     variant: {
-      control: { type: 'select' },
-      options: [
-        'default',
-        'primary',
-        'secondary',
-        'accent',
-        'success',
-        'warning',
-        'error',
-      ],
+      control: { type: "select" },
+      options: ["default", "primary", "secondary", "accent", "success", "warning", "error"],
     },
     status: {
-      control: { type: 'select' },
-      options: ['online', 'busy', 'offline', 'away'],
+      control: { type: "select" },
+      options: ["online", "busy", "offline", "away"],
     },
     interactive: {
-      control: 'boolean',
+      control: "boolean",
     },
     name: {
-      control: 'text',
+      control: "text",
     },
     initials: {
-      control: 'text',
+      control: "text",
     },
     src: {
-      control: 'text',
+      control: "text",
     },
     alt: {
-      control: 'text',
+      control: "text",
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 // =================================================================
 // BASIC AVATAR STORIES
@@ -60,47 +52,47 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    name: 'John Doe',
-    size: 'medium',
-    variant: 'default',
+    name: "John Doe",
+    size: "medium",
+    variant: "default",
     interactive: false,
   },
-}
+};
 
 export const WithInitials: Story = {
   args: {
-    initials: 'JD',
-    size: 'medium',
-    variant: 'primary',
+    initials: "JD",
+    size: "medium",
+    variant: "primary",
   },
-}
+};
 
 export const WithImage: Story = {
   args: {
-    src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-    alt: 'Profile picture',
-    name: 'John Doe',
-    size: 'medium',
+    src: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+    alt: "Profile picture",
+    name: "John Doe",
+    size: "medium",
   },
-}
+};
 
 export const WithEmoji: Story = {
   args: {
-    children: '👰',
-    size: 'large',
-    variant: 'accent',
+    children: "👰",
+    size: "large",
+    variant: "accent",
   },
-}
+};
 
 export const Interactive: Story = {
   args: {
-    name: 'Jane Smith',
-    size: 'large',
-    variant: 'primary',
+    name: "Jane Smith",
+    size: "large",
+    variant: "primary",
     interactive: true,
-    onClick: () => alert('Avatar clicked!'),
+    onClick: () => alert("Avatar clicked!"),
   },
-}
+};
 
 // =================================================================
 // SIZE VARIANTS
@@ -108,7 +100,7 @@ export const Interactive: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+    <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
       <Avatar size="small" name="Small Avatar" variant="primary" />
       <Avatar size="medium" name="Medium Avatar" variant="primary" />
       <Avatar size="large" name="Large Avatar" variant="primary" />
@@ -116,8 +108,8 @@ export const Sizes: Story = {
       <Avatar size="huge" name="Huge Avatar" variant="primary" />
     </div>
   ),
-  name: 'Sizes',
-}
+  name: "Sizes",
+};
 
 // =================================================================
 // COLOR VARIANTS
@@ -127,10 +119,10 @@ export const Variants: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        gap: '1rem',
-        alignItems: 'center',
-        flexWrap: 'wrap',
+        display: "flex",
+        gap: "1rem",
+        alignItems: "center",
+        flexWrap: "wrap",
       }}
     >
       <Avatar variant="default" name="Default User" />
@@ -142,8 +134,8 @@ export const Variants: Story = {
       <Avatar variant="error" name="Error User" />
     </div>
   ),
-  name: 'Variants',
-}
+  name: "Variants",
+};
 
 // =================================================================
 // STATUS INDICATORS
@@ -153,63 +145,32 @@ export const StatusIndicators: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        gap: '2rem',
-        alignItems: 'center',
-        flexWrap: 'wrap',
+        display: "flex",
+        gap: "2rem",
+        alignItems: "center",
+        flexWrap: "wrap",
       }}
     >
-      <div style={{ textAlign: 'center' }}>
-        <Avatar
-          name="Online User"
-          variant="primary"
-          status="online"
-          size="large"
-        />
-        <div
-          style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#6b7280' }}
-        >
-          Online
-        </div>
+      <div style={{ textAlign: "center" }}>
+        <Avatar name="Online User" variant="primary" status="online" size="large" />
+        <div style={{ marginTop: "0.5rem", fontSize: "0.8rem", color: "#6b7280" }}>Online</div>
       </div>
-      <div style={{ textAlign: 'center' }}>
+      <div style={{ textAlign: "center" }}>
         <Avatar name="Busy User" variant="warning" status="busy" size="large" />
-        <div
-          style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#6b7280' }}
-        >
-          Busy
-        </div>
+        <div style={{ marginTop: "0.5rem", fontSize: "0.8rem", color: "#6b7280" }}>Busy</div>
       </div>
-      <div style={{ textAlign: 'center' }}>
-        <Avatar
-          name="Away User"
-          variant="secondary"
-          status="away"
-          size="large"
-        />
-        <div
-          style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#6b7280' }}
-        >
-          Away
-        </div>
+      <div style={{ textAlign: "center" }}>
+        <Avatar name="Away User" variant="secondary" status="away" size="large" />
+        <div style={{ marginTop: "0.5rem", fontSize: "0.8rem", color: "#6b7280" }}>Away</div>
       </div>
-      <div style={{ textAlign: 'center' }}>
-        <Avatar
-          name="Offline User"
-          variant="default"
-          status="offline"
-          size="large"
-        />
-        <div
-          style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#6b7280' }}
-        >
-          Offline
-        </div>
+      <div style={{ textAlign: "center" }}>
+        <Avatar name="Offline User" variant="default" status="offline" size="large" />
+        <div style={{ marginTop: "0.5rem", fontSize: "0.8rem", color: "#6b7280" }}>Offline</div>
       </div>
     </div>
   ),
-  name: 'Status Indicators',
-}
+  name: "Status Indicators",
+};
 
 // =================================================================
 // EMOJI AVATARS (from mockups)
@@ -217,33 +178,33 @@ export const StatusIndicators: Story = {
 
 export const EmojiAvatars: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-      <div style={{ textAlign: 'center' }}>
+    <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+      <div style={{ textAlign: "center" }}>
         <Avatar size="huge" variant="accent">
           👰
         </Avatar>
         <div
           style={{
-            marginTop: '0.5rem',
-            fontSize: '0.9rem',
-            color: 'var(--bride-primary)',
-            fontWeight: '500',
+            marginTop: "0.5rem",
+            fontSize: "0.9rem",
+            color: "var(--bride-primary)",
+            fontWeight: "500",
           }}
         >
           新婦
         </div>
       </div>
-      <div style={{ fontSize: '2rem', margin: '0 1rem' }}>💕</div>
-      <div style={{ textAlign: 'center' }}>
+      <div style={{ fontSize: "2rem", margin: "0 1rem" }}>💕</div>
+      <div style={{ textAlign: "center" }}>
         <Avatar size="huge" variant="primary">
           🤵
         </Avatar>
         <div
           style={{
-            marginTop: '0.5rem',
-            fontSize: '0.9rem',
-            color: 'var(--groom-primary)',
-            fontWeight: '500',
+            marginTop: "0.5rem",
+            fontSize: "0.9rem",
+            color: "var(--groom-primary)",
+            fontWeight: "500",
           }}
         >
           新郎
@@ -251,56 +212,48 @@ export const EmojiAvatars: Story = {
       </div>
     </div>
   ),
-  name: 'Emoji Avatars (from mockup)',
-}
+  name: "Emoji Avatars (from mockup)",
+};
 
 export const PersonStatusAvatars: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-      <div style={{ textAlign: 'center' }}>
+    <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+      <div style={{ textAlign: "center" }}>
         <Avatar size="extraLarge" variant="primary" status="online">
           🤵
         </Avatar>
         <div
           style={{
-            marginTop: '0.75rem',
-            fontSize: '1rem',
-            fontWeight: '500',
-            color: 'var(--groom-primary)',
+            marginTop: "0.75rem",
+            fontSize: "1rem",
+            fontWeight: "500",
+            color: "var(--groom-primary)",
           }}
         >
           新郎
         </div>
-        <div
-          style={{ fontSize: '0.9rem', color: '#10b981', fontWeight: '600' }}
-        >
-          署名済み
-        </div>
+        <div style={{ fontSize: "0.9rem", color: "#10b981", fontWeight: "600" }}>署名済み</div>
       </div>
-      <div style={{ textAlign: 'center' }}>
+      <div style={{ textAlign: "center" }}>
         <Avatar size="extraLarge" variant="accent" status="busy">
           👰
         </Avatar>
         <div
           style={{
-            marginTop: '0.75rem',
-            fontSize: '1rem',
-            fontWeight: '500',
-            color: 'var(--bride-primary)',
+            marginTop: "0.75rem",
+            fontSize: "1rem",
+            fontWeight: "500",
+            color: "var(--bride-primary)",
           }}
         >
           新婦
         </div>
-        <div
-          style={{ fontSize: '0.9rem', color: '#f59e0b', fontWeight: '600' }}
-        >
-          署名中
-        </div>
+        <div style={{ fontSize: "0.9rem", color: "#f59e0b", fontWeight: "600" }}>署名中</div>
       </div>
     </div>
   ),
-  name: 'Person Status (from mockup)',
-}
+  name: "Person Status (from mockup)",
+};
 
 // =================================================================
 // CONTENT VARIATIONS
@@ -308,12 +261,10 @@ export const PersonStatusAvatars: Story = {
 
 export const ContentTypes: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
       <div>
-        <h3 style={{ margin: '0 0 1rem 0', fontFamily: 'IBM Plex Sans JP' }}>
-          Initials
-        </h3>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <h3 style={{ margin: "0 0 1rem 0", fontFamily: "IBM Plex Sans JP" }}>Initials</h3>
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
           <Avatar name="田中 太郎" variant="primary" size="large" />
           <Avatar name="山田 花子" variant="accent" size="large" />
           <Avatar initials="BTC" variant="secondary" size="large" />
@@ -322,10 +273,8 @@ export const ContentTypes: Story = {
       </div>
 
       <div>
-        <h3 style={{ margin: '0 0 1rem 0', fontFamily: 'IBM Plex Sans JP' }}>
-          Emojis
-        </h3>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <h3 style={{ margin: "0 0 1rem 0", fontFamily: "IBM Plex Sans JP" }}>Emojis</h3>
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
           <Avatar variant="primary" size="large">
             👤
           </Avatar>
@@ -345,10 +294,10 @@ export const ContentTypes: Story = {
       </div>
 
       <div>
-        <h3 style={{ margin: '0 0 1rem 0', fontFamily: 'IBM Plex Sans JP' }}>
+        <h3 style={{ margin: "0 0 1rem 0", fontFamily: "IBM Plex Sans JP" }}>
           Images (with fallback)
         </h3>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
           <Avatar
             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
             name="John Doe"
@@ -371,8 +320,8 @@ export const ContentTypes: Story = {
       </div>
     </div>
   ),
-  name: 'Content Types',
-}
+  name: "Content Types",
+};
 
 // =================================================================
 // INTERACTIVE DEMOS
@@ -380,69 +329,60 @@ export const ContentTypes: Story = {
 
 export const InteractiveAvatars: Story = {
   render: () => {
-    const [selectedAvatar, setSelectedAvatar] = React.useState<string | null>(
-      null,
-    )
+    const [selectedAvatar, setSelectedAvatar] = React.useState<string | null>(null);
 
     const avatars = [
-      { id: 'bride', name: '新婦', emoji: '👰', variant: 'accent' as const },
-      { id: 'groom', name: '新郎', emoji: '🤵', variant: 'primary' as const },
+      { id: "bride", name: "新婦", emoji: "👰", variant: "accent" as const },
+      { id: "groom", name: "新郎", emoji: "🤵", variant: "primary" as const },
       {
-        id: 'witness1',
-        name: '証人1',
-        initials: 'W1',
-        variant: 'secondary' as const,
+        id: "witness1",
+        name: "証人1",
+        initials: "W1",
+        variant: "secondary" as const,
       },
       {
-        id: 'witness2',
-        name: '証人2',
-        initials: 'W2',
-        variant: 'success' as const,
+        id: "witness2",
+        name: "証人2",
+        initials: "W2",
+        variant: "success" as const,
       },
-    ]
+    ];
 
     return (
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '2rem',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          gap: "2rem",
+          alignItems: "center",
         }}
       >
-        <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+        <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
           Click on avatars to select them
         </p>
 
-        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+        <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
           {avatars.map((avatar) => (
-            <div key={avatar.id} style={{ textAlign: 'center' }}>
+            <div key={avatar.id} style={{ textAlign: "center" }}>
               <Avatar
                 size="large"
-                variant={
-                  selectedAvatar === avatar.id ? 'success' : avatar.variant
-                }
+                variant={selectedAvatar === avatar.id ? "success" : avatar.variant}
                 interactive
                 initials={avatar.initials}
-                onClick={() =>
-                  setSelectedAvatar(
-                    selectedAvatar === avatar.id ? null : avatar.id,
-                  )
-                }
+                onClick={() => setSelectedAvatar(selectedAvatar === avatar.id ? null : avatar.id)}
                 style={{
-                  transform:
-                    selectedAvatar === avatar.id ? 'scale(1.1)' : 'scale(1)',
-                  transition: 'transform 0.2s ease',
+                  transform: selectedAvatar === avatar.id ? "scale(1.1)" : "scale(1)",
+                  transition: "transform 0.2s ease",
                 }}
               >
                 {avatar.emoji}
               </Avatar>
               <div
                 style={{
-                  marginTop: '0.5rem',
-                  fontSize: '0.8rem',
-                  color: selectedAvatar === avatar.id ? '#10b981' : '#6b7280',
-                  fontWeight: selectedAvatar === avatar.id ? '500' : '400',
+                  marginTop: "0.5rem",
+                  fontSize: "0.8rem",
+                  color: selectedAvatar === avatar.id ? "#10b981" : "#6b7280",
+                  fontWeight: selectedAvatar === avatar.id ? "500" : "400",
                 }}
               >
                 {avatar.name}
@@ -454,36 +394,34 @@ export const InteractiveAvatars: Story = {
         {selectedAvatar && (
           <div
             style={{
-              padding: '1rem',
-              background: '#f0f9ff',
-              borderRadius: '8px',
-              fontSize: '0.9rem',
-              color: '#0369a1',
+              padding: "1rem",
+              background: "#f0f9ff",
+              borderRadius: "8px",
+              fontSize: "0.9rem",
+              color: "#0369a1",
             }}
           >
             Selected: {avatars.find((a) => a.id === selectedAvatar)?.name}
           </div>
         )}
       </div>
-    )
+    );
   },
-  name: 'Interactive Demo',
-}
+  name: "Interactive Demo",
+};
 
 export const AvatarGroup: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
       <div>
-        <h3 style={{ margin: '0 0 1rem 0', fontFamily: 'IBM Plex Sans JP' }}>
-          Witness List
-        </h3>
-        <div style={{ display: 'flex', gap: '-0.5rem' }}>
+        <h3 style={{ margin: "0 0 1rem 0", fontFamily: "IBM Plex Sans JP" }}>Witness List</h3>
+        <div style={{ display: "flex", gap: "-0.5rem" }}>
           {[
-            { name: 'Alice Johnson', variant: 'primary' as const },
-            { name: 'Bob Smith', variant: 'secondary' as const },
-            { name: 'Carol Davis', variant: 'accent' as const },
-            { name: 'David Wilson', variant: 'success' as const },
-            { name: 'Eve Brown', variant: 'warning' as const },
+            { name: "Alice Johnson", variant: "primary" as const },
+            { name: "Bob Smith", variant: "secondary" as const },
+            { name: "Carol Davis", variant: "accent" as const },
+            { name: "David Wilson", variant: "success" as const },
+            { name: "Eve Brown", variant: "warning" as const },
           ].map((person, index) => (
             <Avatar
               key={person.name}
@@ -491,20 +429,20 @@ export const AvatarGroup: Story = {
               variant={person.variant}
               size="medium"
               style={{
-                marginLeft: index > 0 ? '-0.5rem' : 0,
+                marginLeft: index > 0 ? "-0.5rem" : 0,
                 zIndex: 5 - index,
-                border: '2px solid white',
+                border: "2px solid white",
               }}
-              status={index < 3 ? 'online' : 'offline'}
+              status={index < 3 ? "online" : "offline"}
             />
           ))}
           <div
             style={{
-              marginLeft: '0.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              fontSize: '0.9rem',
-              color: '#6b7280',
+              marginLeft: "0.5rem",
+              display: "flex",
+              alignItems: "center",
+              fontSize: "0.9rem",
+              color: "#6b7280",
             }}
           >
             +15 more
@@ -513,46 +451,19 @@ export const AvatarGroup: Story = {
       </div>
 
       <div>
-        <h3 style={{ margin: '0 0 1rem 0', fontFamily: 'IBM Plex Sans JP' }}>
-          Team
-        </h3>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <Avatar
-            name="Admin User"
-            variant="error"
-            size="large"
-            status="online"
-          />
-          <Avatar
-            name="Moderator"
-            variant="warning"
-            size="medium"
-            status="busy"
-          />
-          <Avatar
-            name="Member 1"
-            variant="primary"
-            size="medium"
-            status="online"
-          />
-          <Avatar
-            name="Member 2"
-            variant="secondary"
-            size="medium"
-            status="away"
-          />
-          <Avatar
-            name="Guest"
-            variant="default"
-            size="small"
-            status="offline"
-          />
+        <h3 style={{ margin: "0 0 1rem 0", fontFamily: "IBM Plex Sans JP" }}>Team</h3>
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          <Avatar name="Admin User" variant="error" size="large" status="online" />
+          <Avatar name="Moderator" variant="warning" size="medium" status="busy" />
+          <Avatar name="Member 1" variant="primary" size="medium" status="online" />
+          <Avatar name="Member 2" variant="secondary" size="medium" status="away" />
+          <Avatar name="Guest" variant="default" size="small" status="offline" />
         </div>
       </div>
     </div>
   ),
-  name: 'Avatar Groups',
-}
+  name: "Avatar Groups",
+};
 
 // =================================================================
 // SHOWCASE STORY
@@ -562,23 +473,23 @@ export const AllAvatarsShowcase: Story = {
   render: () => (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '3rem',
-        minWidth: '600px',
+        display: "flex",
+        flexDirection: "column",
+        gap: "3rem",
+        minWidth: "600px",
       }}
     >
       <div>
         <h3
           style={{
-            fontFamily: 'IBM Plex Sans JP',
-            color: 'var(--text-primary)',
-            margin: '0 0 1rem 0',
+            fontFamily: "IBM Plex Sans JP",
+            color: "var(--text-primary)",
+            margin: "0 0 1rem 0",
           }}
         >
           Avatar Sizes
         </h3>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
           <Avatar size="small" name="Small" variant="primary" />
           <Avatar size="medium" name="Medium" variant="primary" />
           <Avatar size="large" name="Large" variant="primary" />
@@ -590,19 +501,19 @@ export const AllAvatarsShowcase: Story = {
       <div>
         <h3
           style={{
-            fontFamily: 'IBM Plex Sans JP',
-            color: 'var(--text-primary)',
-            margin: '0 0 1rem 0',
+            fontFamily: "IBM Plex Sans JP",
+            color: "var(--text-primary)",
+            margin: "0 0 1rem 0",
           }}
         >
           Avatar Variants
         </h3>
         <div
           style={{
-            display: 'flex',
-            gap: '1rem',
-            alignItems: 'center',
-            flexWrap: 'wrap',
+            display: "flex",
+            gap: "1rem",
+            alignItems: "center",
+            flexWrap: "wrap",
           }}
         >
           <Avatar variant="default" name="Default" size="large" />
@@ -618,14 +529,14 @@ export const AllAvatarsShowcase: Story = {
       <div>
         <h3
           style={{
-            fontFamily: 'IBM Plex Sans JP',
-            color: 'var(--text-primary)',
-            margin: '0 0 1rem 0',
+            fontFamily: "IBM Plex Sans JP",
+            color: "var(--text-primary)",
+            margin: "0 0 1rem 0",
           }}
         >
           Content Types
         </h3>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
           <Avatar name="田中 太郎" variant="primary" size="large" />
           <Avatar variant="accent" size="large">
             👰
@@ -643,93 +554,83 @@ export const AllAvatarsShowcase: Story = {
       <div>
         <h3
           style={{
-            fontFamily: 'IBM Plex Sans JP',
-            color: 'var(--text-primary)',
-            margin: '0 0 1rem 0',
+            fontFamily: "IBM Plex Sans JP",
+            color: "var(--text-primary)",
+            margin: "0 0 1rem 0",
           }}
         >
           Status Indicators
         </h3>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <Avatar
-            name="Online"
-            variant="success"
-            size="large"
-            status="online"
-          />
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          <Avatar name="Online" variant="success" size="large" status="online" />
           <Avatar name="Busy" variant="warning" size="large" status="busy" />
           <Avatar name="Away" variant="secondary" size="large" status="away" />
-          <Avatar
-            name="Offline"
-            variant="default"
-            size="large"
-            status="offline"
-          />
+          <Avatar name="Offline" variant="default" size="large" status="offline" />
         </div>
       </div>
 
       <div>
         <h3
           style={{
-            fontFamily: 'IBM Plex Sans JP',
-            color: 'var(--text-primary)',
-            margin: '0 0 1rem 0',
+            fontFamily: "IBM Plex Sans JP",
+            color: "var(--text-primary)",
+            margin: "0 0 1rem 0",
           }}
         >
           Ceremony Participants (from mockup)
         </h3>
         <div
           style={{
-            display: 'flex',
-            gap: '2rem',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            gap: "2rem",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: "center" }}>
             <Avatar size="huge" variant="primary" status="online">
               🤵
             </Avatar>
             <div
               style={{
-                marginTop: '0.75rem',
-                fontSize: '1rem',
-                fontWeight: '500',
-                color: 'var(--groom-primary)',
+                marginTop: "0.75rem",
+                fontSize: "1rem",
+                fontWeight: "500",
+                color: "var(--groom-primary)",
               }}
             >
               新郎
             </div>
             <div
               style={{
-                fontSize: '0.9rem',
-                color: '#10b981',
-                fontWeight: '600',
+                fontSize: "0.9rem",
+                color: "#10b981",
+                fontWeight: "600",
               }}
             >
               署名済み
             </div>
           </div>
-          <div style={{ fontSize: '2rem', margin: '0 1rem' }}>💕</div>
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: "2rem", margin: "0 1rem" }}>💕</div>
+          <div style={{ textAlign: "center" }}>
             <Avatar size="huge" variant="accent" status="busy">
               👰
             </Avatar>
             <div
               style={{
-                marginTop: '0.75rem',
-                fontSize: '1rem',
-                fontWeight: '500',
-                color: 'var(--bride-primary)',
+                marginTop: "0.75rem",
+                fontSize: "1rem",
+                fontWeight: "500",
+                color: "var(--bride-primary)",
               }}
             >
               新婦
             </div>
             <div
               style={{
-                fontSize: '0.9rem',
-                color: '#f59e0b',
-                fontWeight: '600',
+                fontSize: "0.9rem",
+                color: "#f59e0b",
+                fontWeight: "600",
               }}
             >
               署名中
@@ -739,5 +640,5 @@ export const AllAvatarsShowcase: Story = {
       </div>
     </div>
   ),
-  name: 'All Avatars (Showcase)',
-}
+  name: "All Avatars (Showcase)",
+};

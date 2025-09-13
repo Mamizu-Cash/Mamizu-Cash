@@ -1,119 +1,106 @@
-import { useState } from 'react'
-import { CONSTANTS } from '../../../constants'
-import styles from './TransactionBroadcast.module.css'
+import { useState } from "react";
+import { CONSTANTS } from "../../../constants";
+import styles from "./TransactionBroadcast.module.css";
 
 export type TransactionBroadcastProps = {
-  onTransactionSent?: (txid: string) => void
-}
+  onTransactionSent?: (txid: string) => void;
+};
 
 type BroadcastResponse = {
-  success: boolean
-  txid?: string
-  error?: string
-}
+  success: boolean;
+  txid?: string;
+  error?: string;
+};
 
-export function TransactionBroadcast({
-  onTransactionSent,
-}: TransactionBroadcastProps) {
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
-  const [broadcasting, setBroadcasting] = useState(false)
-  const [lastBroadcastResult, setLastBroadcastResult] =
-    useState<BroadcastResponse | null>(null)
+export function TransactionBroadcast({ onTransactionSent }: TransactionBroadcastProps) {
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [broadcasting, setBroadcasting] = useState(false);
+  const [lastBroadcastResult, setLastBroadcastResult] = useState<BroadcastResponse | null>(null);
 
   const copyToClipboard = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text)
-      alert('クリップボードにコピーしました')
+      await navigator.clipboard.writeText(text);
+      alert("クリップボードにコピーしました");
     } catch (err) {
-      console.error('Failed to copy to clipboard:', err)
-      alert('コピーに失敗しました')
+      console.error("Failed to copy to clipboard:", err);
+      alert("コピーに失敗しました");
     }
-  }
+  };
 
   const broadcastTransaction = async (): Promise<BroadcastResponse> => {
     try {
       // First try Blockstream API
-      const blockstreamResponse = await fetch(
-        'https://blockstream.info/api/tx',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain',
-          },
-          body: CONSTANTS.precomputedTransactionDataHex,
+      const blockstreamResponse = await fetch("https://blockstream.info/api/tx", {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain",
         },
-      )
+        body: CONSTANTS.precomputedTransactionDataHex,
+      });
 
       if (blockstreamResponse.ok) {
-        const txid = await blockstreamResponse.text()
-        return { success: true, txid: txid.trim() }
+        const txid = await blockstreamResponse.text();
+        return { success: true, txid: txid.trim() };
       }
 
       // If Blockstream fails, try BlockCypher API
-      const blockcypherResponse = await fetch(
-        'https://api.blockcypher.com/v1/btc/main/txs/push',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            tx: CONSTANTS.precomputedTransactionDataHex,
-          }),
+      const blockcypherResponse = await fetch("https://api.blockcypher.com/v1/btc/main/txs/push", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      )
+        body: JSON.stringify({
+          tx: CONSTANTS.precomputedTransactionDataHex,
+        }),
+      });
 
       if (blockcypherResponse.ok) {
-        const result = await blockcypherResponse.json()
-        return { success: true, txid: result.hash }
+        const result = await blockcypherResponse.json();
+        return { success: true, txid: result.hash };
       }
 
       // If both fail, try one more API - Mempool.space
-      const mempoolResponse = await fetch('https://mempool.space/api/tx', {
-        method: 'POST',
+      const mempoolResponse = await fetch("https://mempool.space/api/tx", {
+        method: "POST",
         headers: {
-          'Content-Type': 'text/plain',
+          "Content-Type": "text/plain",
         },
         body: CONSTANTS.precomputedTransactionDataHex,
-      })
+      });
 
       if (mempoolResponse.ok) {
-        const txid = await mempoolResponse.text()
-        return { success: true, txid: txid.trim() }
+        const txid = await mempoolResponse.text();
+        return { success: true, txid: txid.trim() };
       }
 
-      const errorText = await mempoolResponse.text()
-      return { success: false, error: `送信に失敗しました: ${errorText}` }
+      const errorText = await mempoolResponse.text();
+      return { success: false, error: `送信に失敗しました: ${errorText}` };
     } catch (error) {
-      console.error('Transaction broadcast failed:', error)
+      console.error("Transaction broadcast failed:", error);
       return {
         success: false,
-        error: `ネットワークエラー: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      }
+        error: `ネットワークエラー: ${error instanceof Error ? error.message : "Unknown error"}`,
+      };
     }
-  }
+  };
 
   const handleBroadcastConfirm = async () => {
-    setShowConfirmDialog(false)
-    setBroadcasting(true)
-    setLastBroadcastResult(null)
+    setShowConfirmDialog(false);
+    setBroadcasting(true);
+    setLastBroadcastResult(null);
 
-    const result = await broadcastTransaction()
-    setLastBroadcastResult(result)
-    setBroadcasting(false)
+    const result = await broadcastTransaction();
+    setLastBroadcastResult(result);
+    setBroadcasting(false);
 
     if (result.success && result.txid) {
-      onTransactionSent?.(result.txid)
+      onTransactionSent?.(result.txid);
     }
-  }
+  };
 
   const openExternalBroadcaster = () => {
-    window.open(
-      'https://mempool.space/tx/push',
-      '_blank',
-      'noopener,noreferrer',
-    )
-  }
+    window.open("https://mempool.space/tx/push", "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div className={styles.container}>
@@ -123,18 +110,12 @@ export function TransactionBroadcast({
         <h3 className={styles.sectionTitle}>事前計算済みトランザクション</h3>
         <div className={styles.infoGrid}>
           <div className={styles.infoItem}>
-            <label className={styles.infoLabel}>
-              トランザクションハッシュ:
-            </label>
+            <label className={styles.infoLabel}>トランザクションハッシュ:</label>
             <div className={styles.hashContainer}>
-              <code className={styles.hashText}>
-                {CONSTANTS.precomputedTransactionHash}
-              </code>
+              <code className={styles.hashText}>{CONSTANTS.precomputedTransactionHash}</code>
               <button
                 className={`${styles.button} ${styles.copyButton}`}
-                onClick={() =>
-                  copyToClipboard(CONSTANTS.precomputedTransactionHash)
-                }
+                onClick={() => copyToClipboard(CONSTANTS.precomputedTransactionHash)}
               >
                 コピー
               </button>
@@ -142,9 +123,7 @@ export function TransactionBroadcast({
           </div>
 
           <div className={styles.infoItem}>
-            <label className={styles.infoLabel}>
-              生トランザクションデータ:
-            </label>
+            <label className={styles.infoLabel}>生トランザクションデータ:</label>
             <div className={styles.rawTxContainer}>
               <textarea
                 className={styles.rawTxTextarea}
@@ -153,9 +132,7 @@ export function TransactionBroadcast({
               />
               <button
                 className={`${styles.button} ${styles.copyButton}`}
-                onClick={() =>
-                  copyToClipboard(CONSTANTS.precomputedTransactionDataHex)
-                }
+                onClick={() => copyToClipboard(CONSTANTS.precomputedTransactionDataHex)}
               >
                 生トランザクションをコピー
               </button>
@@ -186,7 +163,7 @@ export function TransactionBroadcast({
             onClick={() => setShowConfirmDialog(true)}
             disabled={broadcasting}
           >
-            {broadcasting ? '送信中...' : 'トランザクションを送信'}
+            {broadcasting ? "送信中..." : "トランザクションを送信"}
           </button>
 
           <button
@@ -230,9 +207,7 @@ export function TransactionBroadcast({
       {showConfirmDialog && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
-            <h3 className={styles.modalTitle}>
-              トランザクション送信の最終確認
-            </h3>
+            <h3 className={styles.modalTitle}>トランザクション送信の最終確認</h3>
             <div className={styles.modalContent}>
               <p>本当にトランザクションを送信しますか？</p>
               <p>
@@ -242,9 +217,7 @@ export function TransactionBroadcast({
                 <p>
                   <strong>送信するトランザクション:</strong>
                 </p>
-                <code className={styles.confirmHash}>
-                  {CONSTANTS.precomputedTransactionHash}
-                </code>
+                <code className={styles.confirmHash}>{CONSTANTS.precomputedTransactionHash}</code>
               </div>
             </div>
             <div className={styles.modalActions}>
@@ -265,5 +238,5 @@ export function TransactionBroadcast({
         </div>
       )}
     </div>
-  )
+  );
 }

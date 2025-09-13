@@ -1,17 +1,17 @@
-import { useState } from 'react'
-import styles from './ControlPanel.module.css'
+import { useState } from "react";
+import styles from "./ControlPanel.module.css";
 
-type CeremonyState = 'waiting' | 'signing' | 'completed'
+type CeremonyState = "waiting" | "signing" | "completed";
 
 export type ControlPanelProps = {
-  onStartCeremony: () => void
-  onForceState: (bride: CeremonyState, groom: CeremonyState) => void
-  onPublishTxid: () => void
-  onClearTxid: () => void
-  onSendReaction: (message: string) => void
-  loading?: boolean
-  wsReady?: boolean
-}
+  onStartCeremony: () => void;
+  onForceState: (bride: CeremonyState, groom: CeremonyState) => void;
+  onPublishTxid: () => void;
+  onClearTxid: () => void;
+  onSendReaction: (message: string) => void;
+  loading?: boolean;
+  wsReady?: boolean;
+};
 
 export function ControlPanel({
   onStartCeremony,
@@ -22,14 +22,15 @@ export function ControlPanel({
   onSendReaction,
   wsReady,
 }: ControlPanelProps) {
-  const [brideState, setBrideState] = useState<CeremonyState>('waiting')
-  const [groomState, setGroomState] = useState<CeremonyState>('waiting')
-  const [reactionMsg, setReactionMsg] = useState('')
+  const [brideState, setBrideState] = useState<CeremonyState>("waiting");
+  const [groomState, setGroomState] = useState<CeremonyState>("waiting");
+  const [reactionMsg, setReactionMsg] = useState("");
 
   return (
     <div className={styles.container}>
       <div className={styles.section}>
         <button
+          type="button"
           className={`${styles.button} ${styles.primary}`}
           onClick={onStartCeremony}
           disabled={loading}
@@ -68,6 +69,7 @@ export function ControlPanel({
             </select>
           </label>
           <button
+            type="button"
             className={`${styles.button} ${styles.primary}`}
             onClick={() => onForceState(brideState, groomState)}
             disabled={loading}
@@ -87,11 +89,7 @@ export function ControlPanel({
           >
             txidを公開
           </button>
-          <button
-            className={`${styles.button}`}
-            onClick={() => onClearTxid()}
-            disabled={loading}
-          >
+          <button className={`${styles.button}`} onClick={() => onClearTxid()} disabled={loading}>
             txidを空にする
           </button>
         </div>
@@ -111,18 +109,16 @@ export function ControlPanel({
           <button
             className={`${styles.button} ${styles.primary}`}
             onClick={() => {
-              onSendReaction(reactionMsg)
-              setReactionMsg('')
+              onSendReaction(reactionMsg);
+              setReactionMsg("");
             }}
             disabled={loading || !reactionMsg.trim() || !wsReady}
           >
             送信
           </button>
-          {!wsReady && (
-            <span className={styles.errorText}>WebSocket未接続</span>
-          )}
+          {!wsReady && <span className={styles.errorText}>WebSocket未接続</span>}
         </div>
       </div>
     </div>
-  )
+  );
 }

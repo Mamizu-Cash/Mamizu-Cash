@@ -1,7 +1,7 @@
-import React, { useState, useRef } from "react";
-import { Copy, Check } from "lucide-react";
-import { BaseButton } from "../BaseButton/BaseButton";
+import { Check, Copy } from "lucide-react";
+import React, { useRef, useState } from "react";
 import type { BaseButtonProps } from "../BaseButton/BaseButton";
+import { BaseButton } from "../BaseButton/BaseButton";
 import styles from "./CopyButton.module.css";
 
 export interface CopyButtonProps extends BaseButtonProps {
@@ -25,12 +25,10 @@ export const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(
       onClick,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [copied, setCopied] = useState(false);
-    const [ripples, setRipples] = useState<
-      Array<{ id: number; x: number; y: number }>
-    >([]);
+    const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([]);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
     const buttonClasses = [
@@ -53,9 +51,7 @@ export const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(
         setRipples((prev) => [...prev, newRipple]);
 
         setTimeout(() => {
-          setRipples((prev) =>
-            prev.filter((ripple) => ripple.id !== newRipple.id)
-          );
+          setRipples((prev) => prev.filter((ripple) => ripple.id !== newRipple.id));
         }, 400);
       }
 
@@ -125,7 +121,7 @@ export const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(
         ))}
       </BaseButton>
     );
-  }
+  },
 );
 
 CopyButton.displayName = "CopyButton";

@@ -1,39 +1,40 @@
-import React, { useEffect, useState } from 'react'
-import * as QRCode from 'qrcode'
+import * as QRCode from "qrcode";
+import type React from "react";
+import { useEffect, useState } from "react";
 
 // Use the correct options type for QRCode.toDataURL
-type QRCodeToDataURLOptions = Parameters<typeof QRCode.toDataURL>[1]
+type QRCodeToDataURLOptions = Parameters<typeof QRCode.toDataURL>[1];
 
 interface QRCodeImgProps {
-  text: string
-  options?: QRCodeToDataURLOptions
+  text: string;
+  options?: QRCodeToDataURLOptions;
 }
 
 const QrCode: React.FC<QRCodeImgProps> = ({ text, options }) => {
-  const [imgUrl, setImgUrl] = useState<string>('')
+  const [imgUrl, setImgUrl] = useState<string>("");
 
   useEffect(() => {
     if (text) {
       QRCode.toDataURL(text, options || {})
         .then((url) => setImgUrl(url))
         .catch((error) => {
-          console.error('QR Code generation error:', error)
-          setImgUrl('')
-        })
+          console.error("QR Code generation error:", error);
+          setImgUrl("");
+        });
     } else {
-      setImgUrl('')
+      setImgUrl("");
     }
-  }, [text, options])
+  }, [text, options]);
 
   return imgUrl ? (
     <img
       src={imgUrl}
       alt="QR Code"
       style={{
-        width: '100%',
+        width: "100%",
       }}
     />
-  ) : null
-}
+  ) : null;
+};
 
-export { QrCode }
+export { QrCode };

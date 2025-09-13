@@ -1,0 +1,105 @@
+[tools]
+node = "22"
+
+[tasks.install]
+description = "Install dependencies"
+alias = "i"
+run = "npm install"
+
+[tasks.dev]
+description = "Start development server"
+alias = "d"
+run = "npm run dev"
+
+[tasks.build]
+description = "Build the project"
+alias = "b"
+run = "npm run build"
+
+[tasks.test]
+description = "Run tests"
+alias = "t"
+run = "npm test"
+
+[tasks.test-watch]
+description = "Run tests in watch mode"
+alias = "tw"
+run = "npm run test -- --watch"
+
+[tasks.format]
+description = "Format code with biome"
+alias = "fmt"
+run = "npx biome format --write ."
+
+[tasks.typecheck]
+description = "Run TypeScript type check"
+alias = "tc"
+run = "npx tsc --noEmit"
+
+[tasks.check]
+description = "Run format, lint, and typecheck with biome"
+alias = "k"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "🔍 Running code checks with biome..."
+echo ""
+echo "Step 1: Formatting and linting with biome..."
+npx biome check --write .
+echo "✅ Biome check complete"
+echo ""
+echo "Step 2: Type checking..."
+npx tsc --noEmit
+echo "✅ Type checking complete"
+echo ""
+echo "🎉 All checks passed!"
+'''
+
+[tasks.check-unsafe]
+description = "Run format and lint with biome (unsafe mode)"
+alias = "ku"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "🔍 Running code checks with biome (unsafe mode)..."
+echo ""
+echo "Formatting and linting with biome (unsafe)..."
+npx biome check --write --unsafe .
+echo ""
+echo "🎉 All checks passed!"
+'''
+
+[tasks.lint]
+description = "Run linter"
+alias = "l"
+run = "npm run lint"
+
+[tasks.storybook]
+description = "Start Storybook development server"
+alias = "sb"
+run = "npm run storybook"
+
+[tasks.build-storybook]
+description = "Build Storybook for production"
+run = "npm run build-storybook"
+
+[tasks.serve]
+description = "Preview production build"
+alias = "p"
+run = "npm run serve"
+
+[tasks.up]
+description = "Update dependencies to latest versions"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "📦 Checking for outdated packages..."
+npx npm-check-updates
+echo ""
+echo "📦 Updating package.json to latest versions..."
+npx npm-check-updates -u
+echo ""
+echo "📦 Installing updated dependencies..."
+npm install
+echo "✅ Dependencies updated to latest versions!"
+'''

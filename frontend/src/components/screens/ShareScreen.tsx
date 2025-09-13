@@ -1,26 +1,19 @@
-import { Background, Button, Panel, Text } from '../ui/index'
-import styles from './ShareScreen.module.css'
-import commonStyles from './CommonScreenStyles.module.css'
-import logoWide from '../../assets/logo-wide.svg'
-import { CONSTANTS } from '../../constants'
+import logoWide from "../../assets/logo-wide.svg";
+import { CONSTANTS } from "../../constants";
+import { Background, Button, Panel, Text } from "../ui/index";
+import commonStyles from "./CommonScreenStyles.module.css";
+import styles from "./ShareScreen.module.css";
 
 export function ShareScreen() {
   return (
     <div className={`${commonStyles.container} ${styles.container}`}>
       <Background />
       <div className={`${commonStyles.mainContainer} ${styles.mainContainer}`}>
-        <Panel
-          size="medium"
-          className={`${commonStyles.panel} ${styles.panel}`}
-        >
+        <Panel size="medium" className={`${commonStyles.panel} ${styles.panel}`}>
           {/* Header Section */}
           <header className={`${commonStyles.header} ${styles.header}`}>
             <div className={styles.brandGroup}>
-              <img
-                src={logoWide}
-                alt="ビット婚姻"
-                className={styles.brandLogo}
-              />
+              <img src={logoWide} alt="ビット婚姻" className={styles.brandLogo} />
             </div>
             <div className={styles.titleSection}>
               <Text
@@ -120,7 +113,7 @@ export function ShareScreen() {
                 </a>
 
                 <a
-                  href={`${CONSTANTS.blockExplorer.tx.replace('xxx', CONSTANTS.precomputedTransactionHash)}`}
+                  href={`${CONSTANTS.blockExplorer.tx.replace("xxx", CONSTANTS.precomputedTransactionHash)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.buttonLink}
@@ -130,7 +123,12 @@ export function ShareScreen() {
                   </Button>
                 </a>
 
-                <a href="https://aoki.app/" target="_blank" className={styles.buttonLink}>
+                <a
+                  href="https://aoki.app/"
+                  target="_blank"
+                  className={styles.buttonLink}
+                  rel="noopener"
+                >
                   <Button variant="groom" size="large" className={styles.actionButton}>
                     ❓ AokiAppへ
                   </Button>
@@ -145,12 +143,7 @@ export function ShareScreen() {
               <Text variant="caption" color="tertiary" align="center">
                 ブロックチェーン技術による永続的な記録
               </Text>
-              <Text
-                variant="caption"
-                color="brand"
-                align="center"
-                weight="medium"
-              >
+              <Text variant="caption" color="brand" align="center" weight="medium">
                 Powered by AokiApp Inc.
               </Text>
             </div>
@@ -158,5 +151,5 @@ export function ShareScreen() {
         </Panel>
       </div>
     </div>
-  )
+  );
 }

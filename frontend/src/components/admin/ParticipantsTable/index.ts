@@ -1,2 +1,2 @@
-export { ParticipantsTable } from './ParticipantsTable'
-export type { ParticipantsTableProps } from './ParticipantsTable'
+export type { ParticipantsTableProps } from "./ParticipantsTable";
+export { ParticipantsTable } from "./ParticipantsTable";

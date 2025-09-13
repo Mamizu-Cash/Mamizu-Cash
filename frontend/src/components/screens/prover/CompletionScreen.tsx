@@ -1,78 +1,56 @@
-import {
-  Background,
-  Button,
-  Panel,
-  Text,
-  Avatar,
-  Badge,
-  CopyButton,
-} from '../../ui/index'
-import styles from './CompletionScreen.module.css'
-import commonStyles from '../CommonScreenStyles.module.css'
-import logoWide from '../../../assets/logo-wide.svg'
-import type { ProverRole } from './WelcomeScreen'
+import logoWide from "../../../assets/logo-wide.svg";
+import { Avatar, Background, Badge, Button, CopyButton, Panel, Text } from "../../ui/index";
+import commonStyles from "../CommonScreenStyles.module.css";
+import styles from "./CompletionScreen.module.css";
+import type { ProverRole } from "./WelcomeScreen";
 
 export type CompletionScreenProps = {
-  ceremonyId?: string
-  role?: ProverRole
-  txid?: string
-  blockHeight?: number
-  certificateUrl?: string
-  onShare: (platform: 'twitter' | 'facebook' | 'line') => void
-  onDownloadCertificate: () => void
-}
+  ceremonyId?: string;
+  role?: ProverRole;
+  txid?: string;
+  blockHeight?: number;
+  certificateUrl?: string;
+  onShare: (platform: "twitter" | "facebook" | "line") => void;
+  onDownloadCertificate: () => void;
+};
 
 export function CompletionScreen(props: CompletionScreenProps) {
-  const {
-    ceremonyId,
-    role,
-    txid,
-    blockHeight,
-    certificateUrl,
-    onShare,
-    onDownloadCertificate,
-  } = props
+  const { ceremonyId, role, txid, blockHeight, certificateUrl, onShare, onDownloadCertificate } =
+    props;
 
-  const currentTime = new Date().toLocaleString('ja-JP', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Asia/Tokyo',
-  })
+  const currentTime = new Date().toLocaleString("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Asia/Tokyo",
+  });
 
   const getRoleDisplayName = (role?: ProverRole) => {
-    if (!role) return ''
-    return role === 'BRIDE' ? '新婦' : '新郎'
-  }
+    if (!role) return "";
+    return role === "BRIDE" ? "新婦" : "新郎";
+  };
 
   const getRoleColor = (role?: ProverRole) => {
-    if (!role) return 'secondary'
-    return role === 'BRIDE' ? 'accent' : 'info'
-  }
+    if (!role) return "secondary";
+    return role === "BRIDE" ? "accent" : "info";
+  };
 
   const getPartnerRoleName = (role?: ProverRole) => {
-    if (!role) return 'パートナー'
-    return role === 'BRIDE' ? '新郎' : '新婦'
-  }
+    if (!role) return "パートナー";
+    return role === "BRIDE" ? "新郎" : "新婦";
+  };
 
   return (
     <div className={`${commonStyles.container} ${styles.container}`}>
       <Background />
       <div className={`${commonStyles.mainContainer} ${styles.mainContainer}`}>
-        <Panel
-          size="medium"
-          className={`${commonStyles.panel} ${styles.panel}`}
-        >
+        <Panel size="medium" className={`${commonStyles.panel} ${styles.panel}`}>
           {/* Header Section */}
           <header className={`${commonStyles.header} ${styles.header}`}>
             <div className={styles.brandGroup}>
-              <img
-                src={logoWide}
-                alt="ビット婚姻"
-                className={styles.brandLogo}
-              />
+              <img src={logoWide} alt="ビット婚姻" className={styles.brandLogo} />
             </div>
             <div className={styles.celebrationSection}>
               <div className={styles.celebrationIcons}>
@@ -125,12 +103,7 @@ export function CompletionScreen(props: CompletionScreenProps) {
                 <br />
                 世界で最も安全なブロックチェーンに記録されました
               </Text>
-              <Text
-                variant="body"
-                color="secondary"
-                align="center"
-                className={styles.summaryText}
-              >
+              <Text variant="body" color="secondary" align="center" className={styles.summaryText}>
                 この記録は改ざん不可能で、永続的に保存され、
                 <br />
                 世界中の誰でもその真正性を検証することができます。
@@ -164,18 +137,10 @@ export function CompletionScreen(props: CompletionScreenProps) {
                       トランザクションID
                     </Text>
                     <div className={styles.copyableItem}>
-                      <Text
-                        variant="monoSmall"
-                        color="brand"
-                        className={styles.txid}
-                        truncate
-                      >
+                      <Text variant="monoSmall" color="brand" className={styles.txid} truncate>
                         {txid}
                       </Text>
-                      <CopyButton
-                        textToCopy={txid}
-                        className={styles.copyButton}
-                      />
+                      <CopyButton textToCopy={txid} className={styles.copyButton} />
                     </div>
                   </div>
 
@@ -242,21 +207,21 @@ export function CompletionScreen(props: CompletionScreenProps) {
                   <div className={styles.shareButtonGroup}>
                     <Button
                       variant="secondary"
-                      onClick={() => onShare('twitter')}
+                      onClick={() => onShare("twitter")}
                       className={styles.shareButton}
                     >
                       Twitter
                     </Button>
                     <Button
                       variant="secondary"
-                      onClick={() => onShare('facebook')}
+                      onClick={() => onShare("facebook")}
                       className={styles.shareButton}
                     >
                       Facebook
                     </Button>
                     <Button
                       variant="secondary"
-                      onClick={() => onShare('line')}
+                      onClick={() => onShare("line")}
                       className={styles.shareButton}
                     >
                       LINE
@@ -312,20 +277,10 @@ export function CompletionScreen(props: CompletionScreenProps) {
               <Text variant="caption" color="tertiary" align="center">
                 この記録は Bitcoin ネットワークによって永続的に保護されています
               </Text>
-              <Text
-                variant="caption"
-                color="brand"
-                align="center"
-                weight="medium"
-              >
+              <Text variant="caption" color="brand" align="center" weight="medium">
                 Powered by AokiApp Inc.
               </Text>
-              <Text
-                variant="caption"
-                color="tertiary"
-                align="center"
-                className={styles.thankYou}
-              >
+              <Text variant="caption" color="tertiary" align="center" className={styles.thankYou}>
                 ビット婚姻をご利用いただき、ありがとうございました
               </Text>
             </div>
@@ -333,5 +288,5 @@ export function CompletionScreen(props: CompletionScreenProps) {
         </Panel>
       </div>
     </div>
-  )
+  );
 }

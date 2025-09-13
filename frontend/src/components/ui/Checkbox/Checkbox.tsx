@@ -1,36 +1,41 @@
-import React from 'react';
-import { Check } from 'lucide-react';
-import styles from './Checkbox.module.css';
+import { Check } from "lucide-react";
+import React from "react";
+import styles from "./Checkbox.module.css";
 
-export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
-  variant?: 'primary' | 'secondary' | 'accent';
-  size?: 'small' | 'medium' | 'large';
+export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+  variant?: "primary" | "secondary" | "accent";
+  size?: "small" | "medium" | "large";
   label?: React.ReactNode;
   required?: boolean;
   className?: string;
 }
 
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ 
-    variant = 'primary', 
-    size = 'medium', 
-    label,
-    required = false,
-    className = '', 
-    disabled = false,
-    checked = false,
-    onChange,
-    id,
-    ...props 
-  }, ref) => {
+  (
+    {
+      variant = "primary",
+      size = "medium",
+      label,
+      required = false,
+      className = "",
+      disabled = false,
+      checked = false,
+      onChange,
+      id,
+      ...props
+    },
+    ref,
+  ) => {
     const containerClasses = [
       styles.container,
       styles[variant],
       styles[size],
       checked && styles.checked,
       disabled && styles.disabled,
-      className
-    ].filter(Boolean).join(' ');
+      className,
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     // Generate unique ID if not provided
     const checkboxId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
@@ -48,7 +53,10 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           {...props}
         />
         <div className={styles.checkbox}>
-          <Check className={styles.checkmark} size={size === 'small' ? 10 : size === 'large' ? 14 : 12} />
+          <Check
+            className={styles.checkmark}
+            size={size === "small" ? 10 : size === "large" ? 14 : 12}
+          />
         </div>
         {label && (
           <span className={styles.label}>
@@ -58,7 +66,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         )}
       </label>
     );
-  }
+  },
 );
 
-Checkbox.displayName = 'Checkbox';
+Checkbox.displayName = "Checkbox";

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/fuyutarow/ETHTOKYO/Mamizu-Cash/**)",
+      "Bash(npm run build:*)",
+      "Bash(npm ls:*)",
+      "Bash(mise k:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
