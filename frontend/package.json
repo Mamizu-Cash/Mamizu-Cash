@@ -15,7 +15,6 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.13",
     "@tanstack/react-devtools": "^0.6.7",
     "@tanstack/react-router": "^1.131.41",
     "@tanstack/react-router-devtools": "^1.131.42",
@@ -26,8 +25,7 @@
     "qrcode": "^1.5.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-hot-toast": "^2.6.0",
-    "tailwindcss": "^4.1.13"
+    "react-hot-toast": "^2.6.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",

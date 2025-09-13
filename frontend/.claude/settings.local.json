@@ -4,7 +4,8 @@
       "Read(//home/fuyutarow/ETHTOKYO/Mamizu-Cash/**)",
       "Bash(npm run build:*)",
       "Bash(npm ls:*)",
-      "Bash(mise k:*)"
+      "Bash(mise k:*)",
+      "Read(//mnt/c/Users/fuyutarow/.vscode/extensions/**)"
     ],
     "deny": [],
     "ask": []

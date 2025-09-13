@@ -4,7 +4,8 @@
       "Bash(npm run build:*)",
       "Bash(mise ku:*)",
       "Bash(npx biome check:*)",
-      "Bash(mise k:*)"
+      "Bash(mise k:*)",
+      "Read(//home/fuyutarow/**)"
     ],
     "deny": [],
     "ask": []
