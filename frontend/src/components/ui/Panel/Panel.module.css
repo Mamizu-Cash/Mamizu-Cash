@@ -1,0 +1,174 @@
+/* =================================================================
+ * Panel Component - design-26-production-ready完全継承版
+ * 
+ * [概要]
+ * design-26-production-ready.htmlの変態的品質レベルを完全継承。
+ * 全Panel/Cardコンポーネントに統一されたパネル色・エフェクトを適用。
+ * TimeDisplayはパネルではなくボタンとして扱うため含まない。
+ * 
+ * [統一仕様]
+ * - 1バリアント・1サイズのみを提供
+ * - design-26のパネルの境界面スタイルに統一
+ * - 半透明背景効果とbackdrop-filterの組み合わせ
+ * - 複数レイヤーシャドウによる立体感
+ * ================================================================= */
+
+/* =================================================================
+ * CSS VARIABLES - design-26から完全コピペ（統一性確保）
+ * ================================================================= */
+.panel {
+  /* CSS変数をローカルで定義（グローバル変数との統一性確保） */
+  --premium-glass: rgba(255, 255, 255, 0.92); /* 半透明白 - メインコンテナ */
+  --premium-border: rgba(116, 192, 252, 0.25); /* 境界線色 - 控えめな区切り */
+  --premium-highlight: rgba(
+    255,
+    255,
+    255,
+    0.15
+  ); /* ハイライト色 - エンボス効果 */
+  --blur-strong: blur(20px); /* 強い背景ぼかし効果 */
+  --transition-smooth: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); /* スムーズトランジション */
+
+  /* =================================================================
+   * PRIMARY CONTAINER - design-26から完全コピペ
+   * ================================================================= */
+  /* 半透明背景：背景パターンの美しさを活かしつつ、コンテンツ領域を明確化 */
+  background: var(--premium-glass);
+  /* 背景ぼかし効果：奥行き感とプレミアム感を演出 */
+  backdrop-filter: var(--blur-strong);
+  -webkit-backdrop-filter: var(--blur-strong); /* Safari対応 */
+  border: 1px solid var(--premium-border);
+  border-radius: 32px; /* 角丸：親しみやすさと現代性を表現 */
+  padding: 2rem;
+
+  /* プレミアムUI品質のシャドウスタック - design-26から完全コピペ */
+  box-shadow: 
+    /* 内側ハイライト：上面の光沢感 */
+    inset 0 1px 1px var(--premium-highlight),
+    /* 内側シャドウ：下面の奥行き感 */ inset 0 -1px 1px rgba(0, 0, 0, 0.08),
+    /* 基本外側シャドウ：近距離の影 */ 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    /* 中距離シャドウ：立体感強化 */ 0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    /* 遠距離グロー：ブランドカラーでの存在感演出 */ 0 20px 40px
+      rgba(116, 192, 252, 0.08);
+
+  position: relative;
+  transition: var(--transition-smooth); /* ホバー等の状態変化対応 */
+}
+
+/* コンテナ上端ハイライトライン - design-26から完全コピペ */
+.highlight {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  /* グラデーションハイライト：中央が最も明るい効果 */
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--premium-highlight),
+    transparent
+  );
+  z-index: 1; /* コンテンツより前面に配置 */
+}
+
+/* =================================================================
+ * SIZE VARIANTS - サイズバリエーション（必要に応じて調整可能）
+ * ================================================================= */
+.small {
+  padding: 1rem;
+  border-radius: 20px;
+  max-width: 280px;
+}
+
+.medium {
+  padding: 2rem;
+  border-radius: 32px;
+  max-width: 420px;
+}
+
+.large {
+  padding: 3rem;
+  border-radius: 32px;
+  max-width: 950px;
+}
+
+.full {
+  width: 100%;
+  max-width: none !important;
+}
+
+/* =================================================================
+ * RESPONSIVE CONSIDERATIONS - レスポンシブ対応
+ * ================================================================= */
+@media (max-width: 480px) {
+  .panel {
+    padding: 1.5rem 1rem;
+    margin: 0 1rem;
+    border-radius: 24px;
+  }
+
+  .small {
+    padding: 0.8rem;
+    border-radius: 16px;
+  }
+
+  .large {
+    padding: 2rem 1.5rem;
+    border-radius: 24px;
+  }
+
+  .full {
+    width: 100%;
+    max-width: none !important;
+  }
+}
+
+@media (max-height: 700px) {
+  .panel {
+    padding: 1.5rem;
+  }
+
+  .large {
+    padding: 2rem;
+  }
+
+  .full {
+    width: 100%;
+    max-width: none !important;
+  }
+}
+
+/* =================================================================
+ * ACCESSIBILITY & PERFORMANCE - design-26から継承
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =================================================================
+ * BROWSER COMPATIBILITY - ブラウザ対応状況
+ * 
+ * [対応ブラウザ]
+ * - Chrome 80+: 完全対応
+ * - Firefox 75+: 完全対応
+ * - Safari 13+: -webkit-プレフィックス必要
+ * - Edge 80+: 完全対応
+ * 
+ * [フォールバック考慮]
+ * backdrop-filterの代替として、
+ * 通常のbackground-colorでのグレースフルデグラデーション
+ * ================================================================= */
+@supports not (backdrop-filter: blur(20px)) {
+  .panel {
+    background: rgba(
+      255,
+      255,
+      255,
+      0.95
+    ); /* backdrop-filter未対応時のフォールバック */
+  }
+}

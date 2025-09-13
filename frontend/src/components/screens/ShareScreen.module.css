@@ -1,0 +1,136 @@
+/* ShareScreen Component Styles */
+
+.container {
+  /* Inherits from CommonScreenStyles.container */
+}
+
+.mainContainer {
+  /* Inherits from CommonScreenStyles.mainContainer */
+}
+
+.panel {
+  /* Inherits from CommonScreenStyles.panel */
+}
+
+.header {
+  /* Inherits from CommonScreenStyles.header */
+}
+
+.brandGroup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brandLogo {
+  height: 4rem;
+  width: auto;
+  filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.8));
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mainTitle {
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.infoSection {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sectionTitle {
+  margin-bottom: 1rem;
+}
+
+.sectionLabel {
+  margin-bottom: 1rem;
+}
+
+.hashValue {
+  font-family: monospace;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem;
+  border-radius: 6px;
+  word-break: break-all;
+}
+
+.buttonSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.buttonLink {
+  text-decoration: none;
+}
+
+.actionButton {
+  width: 100%;
+}
+
+.footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .mainTitle {
+    font-size: 2rem;
+    letter-spacing: 1px;
+  }
+
+  .infoSection {
+    padding: 1rem;
+  }
+
+  .contentContainer {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainTitle {
+    font-size: 2.2rem;
+  }
+}

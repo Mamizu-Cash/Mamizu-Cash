@@ -1,0 +1,303 @@
+/* =================================================================
+ * Avatar Component - design-26-production-ready継承版
+ * 
+ * [概要]
+ * design-26-production-ready.htmlの変態的品質レベルを完全継承。
+ * PersonStatusアバターの高品質実装技術を汎用化。
+ * 汎用的で再利用可能なアバターコンポーネント。
+ * 
+ * [統一仕様]
+ * - design-26のPersonStatusアバター品質シャドウ技術を適用
+ * - プレミアムガラスモーフィズム効果
+ * - 6層シャドウアーキテクチャによる立体感
+ * - ブランドカラーグロー効果
+ * ================================================================= */
+
+/* =================================================================
+ * CSS VARIABLES - design-26から完全継承（統一性確保）
+ * ================================================================= */
+.avatar {
+  /* CSS変数をローカルで定義（グローバル変数との統一性確保） */
+  --premium-white: #ffffff;  /* 純白 - アバター背景 */
+  --premium-glass: rgba(255, 255, 255, 0.92);  /* 半透明白 - メインコンテナ */
+  --premium-border: rgba(116, 192, 252, 0.25);  /* 境界線色 - 控えめな区切り */
+  --premium-highlight: rgba(255, 255, 255, 0.15); /* ハイライト色 - エンボス効果 */
+  --groom-primary: #74c0fc;    /* 新郎メインカラー - ブルー系 */
+  --groom-secondary: #4dabf7;  /* 新郎セカンダリ - 明るいブルー */
+  --bitcoin-primary: #f7931a;  /* ビットコインメイン - オレンジ */
+  --bitcoin-secondary: #ff9500; /* ビットコインセカンダリ - 明るいオレンジ */
+  --bride-primary: #e64980;    /* 新婦メインカラー - ピンク系 */
+  --bride-secondary: #ff6b9d;  /* 新婦セカンダリ - 明るいピンク */
+  --text-primary: #374151;     /* 主要テキスト - 高コントラスト */
+  --transition-smooth: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); /* スムーズトランジション */
+
+  /* =================================================================
+   * BASE AVATAR STYLES - design-26のPersonStatusアバター品質を適用
+   * ================================================================= */
+  border-radius: 50%; /* 完全円形 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: visible;
+  font-weight: 600;
+  transition: var(--transition-smooth);
+  
+  /* プレミアムアバター基本シャドウスタック - design-26から完全継承 */
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(0, 0, 0, 0.12),
+    0 4px 8px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* 光沢オーバーレイ：物理的反射効果の模倣 - design-26から完全継承 */
+.avatar::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  height: 45%; /* 上部45%領域をカバー */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+  border-radius: 50%; /* アバターの円形に追従 */
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* =================================================================
+ * SIZE VARIANTS - サイズバリエーション
+ * ================================================================= */
+.small {
+  width: 32px;
+  height: 32px;
+  font-size: 0.875rem;
+}
+
+.medium {
+  width: 48px;
+  height: 48px;
+  font-size: 1.125rem;
+}
+
+.large {
+  width: 64px;
+  height: 64px;
+  font-size: 1.5rem;
+}
+
+.extraLarge {
+  width: 80px;
+  height: 80px;
+  font-size: 2rem;
+}
+
+.huge {
+  width: 120px;
+  height: 120px;
+  font-size: 3rem;
+}
+
+/* =================================================================
+ * COLOR/VARIANT STYLES - design-26から完全継承
+ * ================================================================= */
+.default {
+  background: var(--premium-glass);
+  color: var(--text-primary);
+}
+
+.primary {
+  background: linear-gradient(135deg, var(--groom-primary), var(--groom-secondary));
+  color: white;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(116, 192, 252, 0.25), /* ブランドカラーグロー */
+    0 4px 8px rgba(116, 192, 252, 0.15),   /* ブランドカラー中間影 */
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.secondary {
+  background: linear-gradient(135deg, var(--bitcoin-primary), var(--bitcoin-secondary));
+  color: white;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(247, 147, 26, 0.25), /* ビットコインカラーグロー */
+    0 4px 8px rgba(247, 147, 26, 0.15),   /* ビットコイン中間影 */
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.accent {
+  background: linear-gradient(135deg, var(--bride-primary), var(--bride-secondary));
+  color: white;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(230, 73, 128, 0.25), /* ブランドカラーグロー */
+    0 4px 8px rgba(230, 73, 128, 0.15),   /* ブランドカラー中間影 */
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(16, 185, 129, 0.25),
+    0 4px 8px rgba(16, 185, 129, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(245, 158, 11, 0.25),
+    0 4px 8px rgba(245, 158, 11, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.error {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: white;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(220, 38, 38, 0.25),
+    0 4px 8px rgba(220, 38, 38, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* =================================================================
+ * HOVER STATE - インタラクティブ表現（design-26から継承）
+ * ================================================================= */
+.interactive {
+  cursor: pointer;
+}
+
+.interactive:hover {
+  transform: translateY(-2px); /* 微細な浮き上がり効果 */
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+    0 12px 24px rgba(0, 0, 0, 0.15), /* 影の拡大 */
+    0 6px 12px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.primary.interactive:hover {
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+    0 12px 24px rgba(116, 192, 252, 0.3),
+    0 6px 12px rgba(116, 192, 252, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.secondary.interactive:hover {
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+    0 12px 24px rgba(247, 147, 26, 0.3),
+    0 6px 12px rgba(247, 147, 26, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.accent.interactive:hover {
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+    0 12px 24px rgba(230, 73, 128, 0.3),
+    0 6px 12px rgba(230, 73, 128, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* =================================================================
+ * STATUS INDICATORS - ステータス表示要素
+ * ================================================================= */
+.statusIndicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 25%;
+  height: 25%;
+  min-width: 12px;
+  min-height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  z-index: 2;
+}
+
+.statusOnline {
+  background: #10b981;
+}
+
+.statusBusy {
+  background: #f59e0b;
+}
+
+.statusOffline {
+  background: #6b7280;
+}
+
+.statusAway {
+  background: #f59e0b;
+}
+
+/* =================================================================
+ * IMAGE AVATAR STYLES
+ * ================================================================= */
+.image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+/* =================================================================
+ * INITIALS PROCESSING - イニシャル表示の最適化
+ * ================================================================= */
+.initials {
+  text-transform: uppercase;
+  user-select: none;
+  font-family: 'IBM Plex Sans JP', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+/* =================================================================
+ * RESPONSIVE OPTIMIZATIONS - モバイル最適化
+ * ================================================================= */
+@media (max-width: 480px) {
+  .huge {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+  }
+  
+  .extraLarge {
+    width: 72px;
+    height: 72px;
+    font-size: 1.75rem;
+  }
+}
+
+/* =================================================================
+ * ACCESSIBILITY & PERFORMANCE - design-26から継承
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .avatar {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .avatar {
+    border: 2px solid;
+  }
+}

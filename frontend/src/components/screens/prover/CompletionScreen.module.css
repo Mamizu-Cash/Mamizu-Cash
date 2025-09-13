@@ -1,0 +1,502 @@
+/* CompletionScreen specific styles */
+
+.container {
+  /* Inherits from CommonScreenStyles */
+}
+
+.mainContainer {
+  /* Inherits from CommonScreenStyles */
+}
+
+/* CompletionScreen specific styles - コンテンツ固有スタイル */
+/* .panel設定はCommonScreenStylesから継承 - 個別設定不要 */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.brandGroup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brandLogo {
+  height: 4rem;
+  width: auto;
+  filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.8));
+}
+
+.celebrationSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.celebrationIcons {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.celebrationIcon {
+  font-size: 3rem;
+  animation: bounce 2s infinite;
+  animation-delay: calc(var(--i, 0) * 0.2s);
+}
+
+.celebrationIcon:nth-child(1) {
+  --i: 0;
+}
+
+.celebrationIcon:nth-child(2) {
+  --i: 1;
+}
+
+.celebrationIcon:nth-child(3) {
+  --i: 2;
+}
+
+.congratsTitle {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-shadow: 0 3px 6px rgba(255, 255, 255, 0.8);
+  background: linear-gradient(
+    135deg,
+    var(--bride-primary),
+    var(--groom-primary)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.congratsSubtitle {
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.6);
+  max-width: 600px;
+  line-height: 1.4;
+}
+
+.roleBadge {
+  font-size: 1rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Summary Section */
+.summarySection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.summaryTitle {
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  max-width: 500px;
+}
+
+.summaryText {
+  line-height: 1.7;
+  max-width: 450px;
+}
+
+/* Details Section */
+.detailsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  text-align: center;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: var(--transition-smooth);
+}
+
+.detailItem:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.copyableItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.txid {
+  flex: 1;
+  word-break: break-all;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  font-family: monospace;
+}
+
+.copyButton {
+  flex-shrink: 0;
+}
+
+/* Actions Section */
+.actionsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  width: 100%;
+}
+
+.certificateButton {
+  min-width: 350px;
+  height: 65px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 22px;
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transition: var(--transition-smooth);
+}
+
+.certificateButton:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+.shareButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.shareLabel {
+  font-size: 0.9rem;
+}
+
+.shareButtonGroup {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.shareButton {
+  min-width: 100px;
+  height: 45px;
+  font-size: 0.9rem;
+  border-radius: 14px;
+  transition: var(--transition-smooth);
+}
+
+.shareButton:hover {
+  transform: translateY(-2px);
+}
+
+/* Features Section */
+.featuresSection {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.features {
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  min-width: 120px;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: var(--transition-smooth);
+}
+
+.feature:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.thankYou {
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+/* Animations */
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-15px);
+  }
+  60% {
+    transform: translateY(-7px);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .panel {
+    padding: 2rem;
+    border-radius: 24px;
+  }
+
+  .header {
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .brandLogo {
+    height: 3.5rem;
+  }
+
+  .congratsTitle {
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+  }
+
+  .congratsSubtitle {
+    font-size: 1.2rem;
+  }
+
+  .celebrationIcons {
+    gap: 1.5rem;
+  }
+
+  .celebrationIcon {
+    font-size: 2.5rem;
+  }
+
+  .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .features {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .feature {
+    min-width: 200px;
+  }
+
+  .certificateButton {
+    min-width: 300px;
+    height: 60px;
+    font-size: 1.1rem;
+  }
+
+  .shareButtonGroup {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .shareButton {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 1.5rem;
+    border-radius: 20px;
+  }
+
+  .congratsTitle {
+    font-size: 1.8rem;
+  }
+
+  .congratsSubtitle {
+    font-size: 1rem;
+  }
+
+  .celebrationIcon {
+    font-size: 2rem;
+  }
+
+  .copyableItem {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+
+  .txid {
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  .certificateButton {
+    min-width: 280px;
+    height: 55px;
+    font-size: 1rem;
+  }
+
+  .feature {
+    min-width: 160px;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .celebrationIcons {
+    gap: 1rem;
+  }
+
+  .features {
+    gap: 1.5rem;
+  }
+
+  .certificateButton {
+    min-width: 250px;
+  }
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .panel {
+    background: rgba(255, 255, 255, 0.98);
+    border: 2px solid var(--text-primary);
+  }
+
+  .summarySection,
+  .featuresSection {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid var(--text-secondary);
+  }
+
+  .detailItem,
+  .feature {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid var(--text-secondary);
+  }
+
+  .copyableItem {
+    background: rgba(240, 240, 240, 1);
+    border: 1px solid var(--text-secondary);
+  }
+
+  .congratsTitle {
+    background: none;
+    -webkit-text-fill-color: var(--text-primary);
+    color: var(--text-primary);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .detailItem,
+  .feature,
+  .certificateButton,
+  .shareButton {
+    transition-duration: 0.01ms !important;
+  }
+
+  .celebrationIcon {
+    animation: none !important;
+  }
+}

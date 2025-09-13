@@ -1,0 +1,389 @@
+/* =================================================================
+ * Text Component - design-26-production-ready継承版
+ * 
+ * [概要]
+ * design-26-production-ready.htmlの変態的品質レベルを完全継承。
+ * タイポグラフィシステムのベースコンポーネント。
+ * 汎用的で再利用可能なテキストコンポーネント。
+ * 
+ * [統一仕様]
+ * - design-26のテキストエンボス効果を適用
+ * - 日本語最適化フォント設定
+ * - セマンティックカラーシステム
+ * - レスポンシブタイポグラフィ
+ * ================================================================= */
+
+/* =================================================================
+ * CSS VARIABLES - design-26から完全継承（統一性確保）
+ * ================================================================= */
+.text {
+  /* CSS変数をローカルで定義（グローバル変数との統一性確保） */
+  --text-primary: #374151;     /* 主要テキスト - 高コントラスト */
+  --text-secondary: #6b7280;   /* 補助テキスト - 中コントラスト */
+  --text-tertiary: #9ca3af;    /* 三次テキスト - 低コントラスト */
+  --groom-primary: #74c0fc;    /* 新郎メインカラー - ブルー系 */
+  --bitcoin-primary: #f7931a;  /* ビットコインメイン - オレンジ */
+  --bride-primary: #e64980;    /* 新婦メインカラー - ピンク系 */
+  --transition-smooth: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); /* スムーズトランジション */
+
+  /* =================================================================
+   * BASE TEXT STYLES
+   * ================================================================= */
+  margin: 0;
+  padding: 0;
+  font-family: 'IBM Plex Sans JP', sans-serif; /* 日本語最適化フォント - design-26より */
+  color: var(--text-primary);
+  transition: var(--transition-smooth);
+}
+
+/* =================================================================
+ * SEMANTIC VARIANTS - セマンティックな用途別スタイル
+ * ================================================================= */
+
+/* Headings */
+.h1 {
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 2px; /* 日本語文字間隔の美的調整 - design-26より */
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8); /* エンボス効果 - design-26より */
+}
+
+.h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.h3 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.h4 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.25px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.h5 {
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.h6 {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Body text variants */
+.body {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.bodyLarge {
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+.bodySmall {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Label text */
+.label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6); /* design-26より */
+}
+
+.labelSmall {
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Caption text */
+.caption {
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Monospace for technical content */
+.mono {
+  font-family: 'IBM Plex Mono', monospace; /* 等幅フォント - design-26より */
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.5px; /* 技術的な可読性向上 - design-26より */
+}
+
+.monoLarge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 1px;
+}
+
+.monoSmall {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.25px;
+}
+
+/* =================================================================
+ * COLOR VARIANTS - 色彩バリエーション
+ * ================================================================= */
+.primary {
+  color: var(--text-primary);
+}
+
+.secondary {
+  color: var(--text-secondary);
+}
+
+.tertiary {
+  color: var(--text-tertiary);
+}
+
+.accent {
+  color: var(--bride-primary);
+}
+
+.brand {
+  color: var(--bitcoin-primary);
+}
+
+.info {
+  color: var(--groom-primary);
+}
+
+.success {
+  color: #10b981;
+}
+
+.warning {
+  color: #f59e0b;
+}
+
+.error {
+  color: #dc2626;
+}
+
+.white {
+  color: #ffffff;
+}
+
+/* =================================================================
+ * WEIGHT VARIANTS - フォントウェイト
+ * ================================================================= */
+.light {
+  font-weight: 300;
+}
+
+.normal {
+  font-weight: 400;
+}
+
+.medium {
+  font-weight: 500;
+}
+
+.semibold {
+  font-weight: 600;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+/* =================================================================
+ * ALIGNMENT VARIANTS
+ * ================================================================= */
+.left {
+  text-align: left;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.justify {
+  text-align: justify;
+}
+
+/* =================================================================
+ * DECORATION VARIANTS
+ * ================================================================= */
+.underline {
+  text-decoration: underline;
+}
+
+.lineThrough {
+  text-decoration: line-through;
+}
+
+.noDecoration {
+  text-decoration: none;
+}
+
+/* =================================================================
+ * TRANSFORM VARIANTS
+ * ================================================================= */
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: 1px; /* 大文字時の可読性向上 */
+}
+
+.lowercase {
+  text-transform: lowercase;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+/* =================================================================
+ * SPECIAL EFFECTS - design-26から継承
+ * ================================================================= */
+.embossed {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.embossedStrong {
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.glowing {
+  text-shadow: 0 0 8px currentColor;
+}
+
+/* ブランドカラー専用グロー効果 */
+.brand.glowing {
+  text-shadow: 0 0 8px rgba(247, 147, 26, 0.3);
+}
+
+.accent.glowing {
+  text-shadow: 0 0 8px rgba(230, 73, 128, 0.3);
+}
+
+.info.glowing {
+  text-shadow: 0 0 8px rgba(116, 192, 252, 0.3);
+}
+
+/* =================================================================
+ * TRUNCATION UTILITIES
+ * ================================================================= */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lineClamp2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lineClamp3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =================================================================
+ * RESPONSIVE OPTIMIZATIONS - モバイル最適化
+ * ================================================================= */
+@media (max-width: 480px) {
+  .h1 {
+    font-size: 1.875rem;
+    letter-spacing: 1px;
+  }
+  
+  .h2 {
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+  }
+  
+  .h3 {
+    font-size: 1.25rem;
+  }
+  
+  .bodyLarge {
+    font-size: 1rem;
+  }
+  
+  .mono {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .h1 {
+    font-size: 1.75rem;
+  }
+  
+  .h2 {
+    font-size: 1.375rem;
+  }
+}
+
+/* =================================================================
+ * ACCESSIBILITY & PERFORMANCE - design-26から継承
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .text {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .secondary {
+    color: var(--text-primary);
+  }
+  
+  .tertiary {
+    color: var(--text-secondary);
+  }
+  
+  .embossed,
+  .embossedStrong {
+    text-shadow: none;
+  }
+}
+
+/* Reduced transparency for better readability */
+@media (prefers-reduced-transparency: reduce) {
+  .embossed,
+  .embossedStrong,
+  .glowing {
+    text-shadow: none;
+  }
+}

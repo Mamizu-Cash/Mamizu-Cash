@@ -1,0 +1,72 @@
+.iconButton {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: 1px solid var(--premium-border);
+  background: var(--premium-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  font-size: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.iconButton:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.iconButton:focus {
+  outline: 2px solid var(--bride-primary);
+  outline-offset: 2px;
+}
+
+/* Sent/Active state */
+.sent {
+  background: linear-gradient(
+    135deg,
+    var(--bitcoin-primary),
+    var(--bitcoin-secondary)
+  );
+  color: white;
+}
+
+/* Content wrapper for click effect */
+.content {
+  display: inline-block;
+  transition: all 0.15s ease-out;
+  position: relative;
+}
+
+/* Click effect - scale and fade */
+.iconButton:active .content,
+.iconButton:focus .content {
+  animation: click-effect 0.2s ease-out;
+  animation-fill-mode: forwards;
+}
+
+@keyframes click-effect {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Alternative hover effect for better UX */
+.iconButton:hover .content {
+  transform: scale(1.1);
+}

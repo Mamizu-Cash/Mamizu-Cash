@@ -1,0 +1,337 @@
+/* =================================================================
+ * Spinner Component - design-26-production-ready継承版
+ * 
+ * [概要]
+ * design-26-production-ready.htmlの変態的品質レベルを完全継承。
+ * ローディング状態の視覚表現を統一するコンポーネント。
+ * Button等の既存実装で使用されているスピナーを汎用化。
+ * 
+ * [統一仕様]
+ * - design-26のプレミアム品質エフェクト技術を適用
+ * - 複数の回転アニメーションパターン
+ * - ブランドカラーシステム対応
+ * - セマンティックカラーによる状態表現
+ * ================================================================= */
+
+/* =================================================================
+ * CSS VARIABLES - design-26から完全継承（統一性確保）
+ * ================================================================= */
+.spinner {
+  /* CSS変数をローカルで定義（グローバル変数との統一性確保） */
+  --bitcoin-primary: #f7931a;  /* ビットコインメイン - オレンジ */
+  --bitcoin-secondary: #ff9500; /* ビットコインセカンダリ - 明るいオレンジ */
+  --groom-primary: #74c0fc;    /* 新郎メインカラー - ブルー系 */
+  --bride-primary: #e64980;    /* 新婦メインカラー - ピンク系 */
+  --text-primary: #374151;     /* 主要テキスト - 高コントラスト */
+  --text-secondary: #6b7280;   /* 補助テキスト - 中コントラスト */
+
+  /* =================================================================
+   * BASE SPINNER STYLES
+   * ================================================================= */
+  display: inline-block;
+  border-radius: 50%;
+  position: relative;
+}
+
+/* =================================================================
+ * SIZE VARIANTS
+ * ================================================================= */
+.small {
+  width: 16px;
+  height: 16px;
+}
+
+.medium {
+  width: 20px;
+  height: 20px;
+}
+
+.large {
+  width: 24px;
+  height: 24px;
+}
+
+.extraLarge {
+  width: 32px;
+  height: 32px;
+}
+
+.huge {
+  width: 40px;
+  height: 40px;
+}
+
+/* =================================================================
+ * SPINNER VARIANTS - 異なる回転スタイル
+ * ================================================================= */
+
+/* Default: 単色ボーダー回転 - 既存Button実装から継承 */
+.default {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  animation: spin 1s linear infinite;
+}
+
+/* Ring: リング状スピナー */
+.ring {
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top: 2px solid currentColor;
+  animation: spin 1s linear infinite;
+}
+
+/* Dots: 回転ドット */
+.dots::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  animation: spin 1s linear infinite;
+}
+
+/* Pulse: パルス効果 */
+.pulse {
+  background: currentColor;
+  animation: pulse-scale 1.5s ease-in-out infinite;
+}
+
+/* Gradient: グラデーション回転 */
+.gradient {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    currentColor 90deg,
+    transparent 180deg,
+    currentColor 270deg,
+    transparent 360deg
+  );
+  animation: spin 1.2s linear infinite;
+}
+
+.gradient::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: white;
+}
+
+/* Bitcoin style: ビットコインカラーグラデーション */
+.bitcoin {
+  background: conic-gradient(
+    from 0deg,
+    var(--bitcoin-primary) 0deg,
+    var(--bitcoin-secondary) 90deg,
+    transparent 180deg,
+    var(--bitcoin-primary) 270deg,
+    transparent 360deg
+  );
+  animation: spin 1s linear infinite;
+}
+
+.bitcoin::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: white;
+}
+
+/* =================================================================
+ * ANIMATIONS - design-26品質の回転アニメーション
+ * ================================================================= */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse-scale {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
+}
+
+@keyframes wobble {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-5deg) scale(1.05);
+  }
+  75% {
+    transform: rotate(5deg) scale(1.05);
+  }
+}
+
+/* =================================================================
+ * COLOR VARIANTS - セマンティックカラーシステム
+ * ================================================================= */
+.primary {
+  color: var(--groom-primary);
+}
+
+.secondary {
+  color: var(--bitcoin-primary);
+}
+
+.accent {
+  color: var(--bride-primary);
+}
+
+.success {
+  color: #10b981;
+}
+
+.warning {
+  color: #f59e0b;
+}
+
+.error {
+  color: #dc2626;
+}
+
+.neutral {
+  color: var(--text-secondary);
+}
+
+.white {
+  color: white;
+}
+
+/* Specific color overrides for ring spinner */
+.ring.primary {
+  border-color: rgba(116, 192, 252, 0.2);
+  border-top-color: var(--groom-primary);
+}
+
+.ring.secondary {
+  border-color: rgba(247, 147, 26, 0.2);
+  border-top-color: var(--bitcoin-primary);
+}
+
+.ring.accent {
+  border-color: rgba(230, 73, 128, 0.2);
+  border-top-color: var(--bride-primary);
+}
+
+.ring.success {
+  border-color: rgba(16, 185, 129, 0.2);
+  border-top-color: #10b981;
+}
+
+.ring.warning {
+  border-color: rgba(245, 158, 11, 0.2);
+  border-top-color: #f59e0b;
+}
+
+.ring.error {
+  border-color: rgba(220, 38, 38, 0.2);
+  border-top-color: #dc2626;
+}
+
+.ring.neutral {
+  border-color: rgba(107, 114, 128, 0.2);
+  border-top-color: var(--text-secondary);
+}
+
+.ring.white {
+  border-color: rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+}
+
+/* =================================================================
+ * SPECIAL EFFECTS
+ * ================================================================= */
+.slow {
+  animation-duration: 2s;
+}
+
+.fast {
+  animation-duration: 0.5s;
+}
+
+.wobble {
+  animation: wobble 2s ease-in-out infinite;
+}
+
+/* Glow effect for premium look */
+.glowing {
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+/* =================================================================
+ * INTERACTIVE STATES
+ * ================================================================= */
+.interactive {
+  cursor: pointer;
+}
+
+.interactive:hover {
+  animation-duration: 0.3s;
+  filter: brightness(1.1);
+}
+
+/* =================================================================
+ * RESPONSIVE OPTIMIZATIONS - モバイル最適化
+ * ================================================================= */
+@media (max-width: 480px) {
+  .huge {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .extraLarge {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .large {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* =================================================================
+ * ACCESSIBILITY & PERFORMANCE - design-26から継承
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none !important;
+  }
+  
+  .spinner::before,
+  .spinner::after {
+    animation: none !important;
+  }
+  
+  /* Reduced motion fallback: simple opacity pulse */
+  .spinner {
+    animation: opacity-pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes opacity-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .spinner {
+    border-width: 3px;
+  }
+  
+  .gradient::before,
+  .bitcoin::before {
+    inset: 4px;
+  }
+}
