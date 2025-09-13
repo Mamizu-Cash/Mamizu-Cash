@@ -56,15 +56,16 @@ contract BusinessVerifier is Ownable, ReentrancyGuard {
     // Constructor
     // -------------------------------------------------------------------------
 
-    /// @param baseURI ERC1155 metadata base URI for the KnownCompanyUnti collection.
     /// @param _verifier Address of the external eligibility verifier contract.
     /// @param _initialOwner Owner/admin for this stamper; manages no verification state.
     /// @dev This constructor DEPLOYS the tightly-coupled KnownCompanyUnti instance and sets
-    ///      this stamper as its owner, guaranteeing mint privilege for stamping.
-    constructor(string memory baseURI, address _verifier, address _initialOwner) Ownable(_initialOwner) {
+    ///      this stamper as its owner (via msg.sender in the token's constructor), guaranteeing mint privilege.
+    ///      The token base URI is hardcoded inside KnownCompanyUnti.
+    constructor(address _verifier, address _initialOwner) Ownable(_initialOwner) {
         if (_verifier == address(0)) revert ZeroAddress();
         verifier = IEligibilityVerifier(_verifier);
-        token = new KnownCompanyUnti(baseURI, address(this));
+        // Deploy token; msg.sender inside KnownCompanyUnti is this contract, so it becomes the owner automatically.
+        token = new KnownCompanyUnti();
         emit TokenSet(address(token));
     }
 
@@ -75,7 +76,7 @@ contract BusinessVerifier is Ownable, ReentrancyGuard {
     /// @notice Returns whether an account is eligible to stamp per the external verifier.
     /// @dev Convenience helper that passes empty bytes to the verifier for criteria that need no payload.
     function isEligible(address account) public view returns (bool) {
-        return verifier.isEligible(account, "");
+        return verifier.isEligible(account, bytes(""));
     }
 
     /// @notice Returns whether an account is eligible with an arbitrary verification payload.
@@ -109,7 +110,7 @@ contract BusinessVerifier is Ownable, ReentrancyGuard {
     ///      - Caller already holds their unique UNTI token (no double minting).
     /// @custom:compat Retains zero-arg entrypoint for existing frontends; forwards with empty payload.
     function stamp() external nonReentrant {
-        _stamp(msg.sender, "");
+        _stamp(msg.sender, bytes(""));
     }
 
     /// @notice Stamping entrypoint with an arbitrary verification payload.
@@ -119,7 +120,7 @@ contract BusinessVerifier is Ownable, ReentrancyGuard {
     }
 
     /// @dev Internal stamping routine shared by both entrypoints.
-    function _stamp(address caller, bytes calldata data) internal {
+    function _stamp(address caller, bytes memory data) internal {
         // 1) Verification gate
         if (!verifier.isEligible(caller, data)) revert NotEligible(caller);
 

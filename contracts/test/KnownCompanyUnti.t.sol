@@ -14,18 +14,18 @@ contract KnownCompanyUntiTest is Test {
     address internal alice = address(0xA11CE);
     address internal bob   = address(0xB0B);
 
-    string internal BASE_URI = "ipfs://example/{id}.json";
+    string internal BASE_URI = "https://assets.aoki.app/meta.json";
 
     function setUp() public {
-        token = new KnownCompanyUnti(BASE_URI, owner);
+        token = new KnownCompanyUnti();
     }
 
     // --- ERC-1155 responsibilities ---
 
-    function test_URI_PatternContainsIdPlaceholder() public {
-        // OZ ERC1155 returns the base URI; clients replace {id} offchain.
+    function test_URI_ReturnsFixedBase() public {
+        // OZ ERC1155 returns the base URI; this project uses a fixed metadata endpoint.
         string memory uri0 = token.uri(0);
-        assertEq(uri0, BASE_URI, "uri should match base");
+        assertEq(uri0, BASE_URI, "uri should match fixed base");
     }
 
     function test_BalanceAfterMint() public {

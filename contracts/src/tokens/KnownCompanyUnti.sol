@@ -9,11 +9,11 @@ import {ERC6268Lockable} from "../extensions/ERC6268Lockable.sol";
 /// @notice Owner can mint-and-lock an id to a recipient once. Locked ids are forever non-transferable.
 /// @dev Uses OpenZeppelin ERC1155 and Ownable. Enforces lock via ERC1155 v5 hook _update.
 contract KnownCompanyUnti is ERC1155, Ownable, ERC6268Lockable {
-    /// @param baseURI ERC1155 metadata base URI, supports {id} substitution
-    /// @param initialOwner Contract owner with mint permission
-    constructor(string memory baseURI, address initialOwner)
-        ERC1155(baseURI)
-        Ownable(initialOwner)
+    /// @notice Deploy with fixed base URI and set initial owner to msg.sender.
+    /// @dev Base URI is fixed to "https://assets.aoki.app/meta.json".
+    constructor()
+        ERC1155("https://assets.aoki.app/meta.json")
+        Ownable(msg.sender)
     {}
 
     /// @notice Mint `amount` of `id` to `to` and lock the id forever (non-transferable)
