@@ -5,7 +5,7 @@
       "Bash(mise ku:*)",
       "Bash(npx biome check:*)",
       "Bash(mise k:*)",
-      "Read(//home/fuyutarow/**)"
+      "Bash(lsb_release:*)"
     ],
     "deny": [],
     "ask": []
