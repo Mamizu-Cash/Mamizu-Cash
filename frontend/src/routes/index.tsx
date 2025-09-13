@@ -38,8 +38,8 @@ function App() {
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
-          onMouseOver={(e) => e.target.style.textDecoration = 'underline'}
-          onMouseOut={(e) => e.target.style.textDecoration = 'none'}
+          onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+          onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
         >
           Learn React
         </a>
@@ -52,8 +52,8 @@ function App() {
           href="https://tanstack.com"
           target="_blank"
           rel="noopener noreferrer"
-          onMouseOver={(e) => e.target.style.textDecoration = 'underline'}
-          onMouseOut={(e) => e.target.style.textDecoration = 'none'}
+          onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+          onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
         >
           Learn TanStack
         </a>
