@@ -2,13 +2,20 @@ import { Link } from "@tanstack/react-router";
 
 export default function Header() {
   return (
-    <header className="flex justify-between gap-2 bg-white p-2 text-black">
-      <nav className="flex flex-row">
-        <div className="px-2 font-bold">
+    <header style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      gap: '8px',
+      backgroundColor: 'white',
+      padding: '8px',
+      color: 'black'
+    }}>
+      <nav style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ padding: '0 8px', fontWeight: 'bold' }}>
           <Link to="/">Home</Link>
         </div>
 
-        <div className="px-2 font-bold">
+        <div style={{ padding: '0 8px', fontWeight: 'bold' }}>
           <Link to="/demo/store">Store</Link>
         </div>
       </nav>
