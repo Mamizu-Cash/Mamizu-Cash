@@ -22,14 +22,6 @@ function CounterPage() {
     isDecrementPending,
     isSetCountPending,
     isResetPending,
-    incrementTxHash,
-    decrementTxHash,
-    setCountTxHash,
-    resetTxHash,
-    incrementError,
-    decrementError,
-    setCountError,
-    resetError,
     refetchCount,
   } = useCounter();
 
@@ -109,66 +101,6 @@ function CounterPage() {
                 <div className={`${styles.status} ${styles.loading}`}>
                   <span>⏳</span>
                   <span>Reset transaction pending...</span>
-                </div>
-              )}
-
-              {incrementTxHash && !isIncrementPending && (
-                <div className={`${styles.status} ${styles.success}`}>
-                  <span>✅</span>
-                  <span>Increment successful!</span>
-                  <div className={styles.txHash}>Tx: {incrementTxHash}</div>
-                </div>
-              )}
-
-              {decrementTxHash && !isDecrementPending && (
-                <div className={`${styles.status} ${styles.success}`}>
-                  <span>✅</span>
-                  <span>Decrement successful!</span>
-                  <div className={styles.txHash}>Tx: {decrementTxHash}</div>
-                </div>
-              )}
-
-              {setCountTxHash && !isSetCountPending && (
-                <div className={`${styles.status} ${styles.success}`}>
-                  <span>✅</span>
-                  <span>Set count successful!</span>
-                  <div className={styles.txHash}>Tx: {setCountTxHash}</div>
-                </div>
-              )}
-
-              {resetTxHash && !isResetPending && (
-                <div className={`${styles.status} ${styles.success}`}>
-                  <span>✅</span>
-                  <span>Reset successful!</span>
-                  <div className={styles.txHash}>Tx: {resetTxHash}</div>
-                </div>
-              )}
-
-              {incrementError && (
-                <div className={`${styles.status} ${styles.error}`}>
-                  <span>❌</span>
-                  <span>Increment failed: {incrementError.message}</span>
-                </div>
-              )}
-
-              {decrementError && (
-                <div className={`${styles.status} ${styles.error}`}>
-                  <span>❌</span>
-                  <span>Decrement failed: {decrementError.message}</span>
-                </div>
-              )}
-
-              {setCountError && (
-                <div className={`${styles.status} ${styles.error}`}>
-                  <span>❌</span>
-                  <span>Set count failed: {setCountError.message}</span>
-                </div>
-              )}
-
-              {resetError && (
-                <div className={`${styles.status} ${styles.error}`}>
-                  <span>❌</span>
-                  <span>Reset failed: {resetError.message}</span>
                 </div>
               )}
             </div>

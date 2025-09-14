@@ -4,6 +4,7 @@ import { createAppKit } from "@reown/appkit";
 import type { AppKitNetwork } from "@reown/appkit/networks";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { QueryClient } from "@tanstack/react-query";
+// @ts-expect-error - viem types issue
 import { defineChain } from "viem";
 
 // JSC Kaigan Testnet configuration

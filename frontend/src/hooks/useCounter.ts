@@ -1,8 +1,12 @@
+import { useEffect } from "react";
 import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import CounterAbi from "../abi/Counter.abi.json";
+import { useToastHelpers } from "../components/ui/Toast";
 import { CONTRACT_ADDRESSES } from "../lib/web3/contracts";
 
 export function useCounter() {
+  const { showSuccess, showError } = useToastHelpers();
+
   // Read functions
   const {
     data: count,
@@ -55,19 +59,22 @@ export function useCounter() {
   } = useWriteContract();
 
   // Transaction receipts
-  const { isLoading: isIncrementConfirming } = useWaitForTransactionReceipt({
-    hash: incrementTxHash,
-  });
+  const { isLoading: isIncrementConfirming, isSuccess: isIncrementSuccess } =
+    useWaitForTransactionReceipt({
+      hash: incrementTxHash,
+    });
 
-  const { isLoading: isDecrementConfirming } = useWaitForTransactionReceipt({
-    hash: decrementTxHash,
-  });
+  const { isLoading: isDecrementConfirming, isSuccess: isDecrementSuccess } =
+    useWaitForTransactionReceipt({
+      hash: decrementTxHash,
+    });
 
-  const { isLoading: isSetCountConfirming } = useWaitForTransactionReceipt({
-    hash: setCountTxHash,
-  });
+  const { isLoading: isSetCountConfirming, isSuccess: isSetCountSuccess } =
+    useWaitForTransactionReceipt({
+      hash: setCountTxHash,
+    });
 
-  const { isLoading: isResetConfirming } = useWaitForTransactionReceipt({
+  const { isLoading: isResetConfirming, isSuccess: isResetSuccess } = useWaitForTransactionReceipt({
     hash: resetTxHash,
   });
 
@@ -105,6 +112,60 @@ export function useCounter() {
     });
   };
 
+  // Effect for handling transaction success
+  useEffect(() => {
+    if (isIncrementSuccess) {
+      refetchCount();
+      showSuccess("Success!", "Counter incremented successfully");
+    }
+  }, [isIncrementSuccess, refetchCount, showSuccess]);
+
+  useEffect(() => {
+    if (isDecrementSuccess) {
+      refetchCount();
+      showSuccess("Success!", "Counter decremented successfully");
+    }
+  }, [isDecrementSuccess, refetchCount, showSuccess]);
+
+  useEffect(() => {
+    if (isSetCountSuccess) {
+      refetchCount();
+      showSuccess("Success!", "Counter value set successfully");
+    }
+  }, [isSetCountSuccess, refetchCount, showSuccess]);
+
+  useEffect(() => {
+    if (isResetSuccess) {
+      refetchCount();
+      showSuccess("Success!", "Counter reset successfully");
+    }
+  }, [isResetSuccess, refetchCount, showSuccess]);
+
+  // Effect for handling transaction errors
+  useEffect(() => {
+    if (incrementError) {
+      showError("Transaction Failed", incrementError.message);
+    }
+  }, [incrementError, showError]);
+
+  useEffect(() => {
+    if (decrementError) {
+      showError("Transaction Failed", decrementError.message);
+    }
+  }, [decrementError, showError]);
+
+  useEffect(() => {
+    if (setCountError) {
+      showError("Transaction Failed", setCountError.message);
+    }
+  }, [setCountError, showError]);
+
+  useEffect(() => {
+    if (resetError) {
+      showError("Transaction Failed", resetError.message);
+    }
+  }, [resetError, showError]);
+
   return {
     // Read data
     count: count ?? 0n,
@@ -128,15 +189,5 @@ export function useCounter() {
     // Errors
     countError,
     getCountError,
-    incrementError,
-    decrementError,
-    setCountError,
-    resetError,
-
-    // Transaction hashes
-    incrementTxHash,
-    decrementTxHash,
-    setCountTxHash,
-    resetTxHash,
   };
 }
