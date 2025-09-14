@@ -1,7 +1,0 @@
-node_modules/
-
-*.r1cs
-*.sym
-
-*_js
-*_cpp
