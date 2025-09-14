@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { defineChain } from "viem";
-import { createConfig, http } from "wagmi";
+import { createConfig, http, injected } from "wagmi";
 
 // JSC Kaigan Testnet configuration
 export const kaigan = defineChain({
@@ -29,8 +29,12 @@ export const kaigan = defineChain({
 
 export const wagmiConfig = createConfig({
   chains: [kaigan],
+  connectors: [injected({ target: "metaMask" }), injected({ target: "injected" })],
   transports: {
-    [kaigan.id]: http(),
+    [kaigan.id]: http(
+      import.meta.env.VITE_RPC_URL ||
+        "https://rpc.kaigan.jsc.dev/rpc?token=QjxBt0CfU0eNzOHSJEvZA1FIzEK8hd2sJsosgP7TU0Q",
+    ),
   },
 });
 
