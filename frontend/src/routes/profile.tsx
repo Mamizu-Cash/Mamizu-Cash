@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Copy, ExternalLink, Shield, User } from "lucide-react";
+import { Building, CheckCircle, Copy, ExternalLink, Shield, User, XCircle } from "lucide-react";
 import { useAccount } from "wagmi";
 import { SBTStatus } from "../components/SBTStatus";
+import { useBusinessVerifier } from "../hooks/useBusinessVerifier";
 import { useMizuhikiSBT } from "../hooks/useMizuhikiSBT";
 import { CONTRACT_ADDRESSES, KAIGAN_EXPLORER_URL } from "../lib/web3/contracts";
 
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/profile")({
 function ProfileScreen() {
   const { address: userAddress, isConnected } = useAccount();
   const { hasSBT, sbtBalance, isLoading } = useMizuhikiSBT();
+  const { isEligible: hasUNTI } = useBusinessVerifier();
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -21,6 +23,10 @@ function ProfileScreen() {
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
+
+  // Determine verification status
+  const isFullyVerified = hasSBT && hasUNTI;
+  const hasAnyVerification = hasSBT || hasUNTI;
 
   if (!isConnected) {
     return (
@@ -187,7 +193,7 @@ function ProfileScreen() {
           </div>
         </div>
 
-        {/* SBT Status */}
+        {/* Verification Status Overview */}
         <div
           style={{
             backgroundColor: "white",
@@ -209,7 +215,224 @@ function ProfileScreen() {
             }}
           >
             <Shield size={20} />
-            Mizuhiki Verified SBT
+            認証状態
+          </h2>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+            {/* Mizuhiki SBT Badge */}
+            <div
+              style={{
+                padding: "1.5rem",
+                backgroundColor: hasSBT ? "#f0fdf4" : "#f8fafc",
+                border: `2px solid ${hasSBT ? "#10b981" : "#e2e8f0"}`,
+                borderRadius: "12px",
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "48px",
+                  height: "48px",
+                  backgroundColor: hasSBT ? "#10b981" : "#94a3b8",
+                  borderRadius: "50%",
+                  marginBottom: "1rem",
+                }}
+              >
+                {hasSBT ? (
+                  <CheckCircle size={24} color="white" />
+                ) : (
+                  <User size={24} color="white" />
+                )}
+              </div>
+              <h3
+                style={{
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  color: hasSBT ? "#065f46" : "#64748b",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                個人認証 (SBT)
+              </h3>
+              <p
+                style={{
+                  fontSize: "0.875rem",
+                  color: hasSBT ? "#047857" : "#64748b",
+                  margin: "0 0 1rem 0",
+                }}
+              >
+                {hasSBT ? "認証済み" : "未認証"}
+              </p>
+              {!hasSBT && (
+                <a
+                  href="/get-mizuhiki"
+                  style={{
+                    padding: "0.5rem 1rem",
+                    backgroundColor: "#3b82f6",
+                    color: "white",
+                    textDecoration: "none",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    display: "inline-block",
+                  }}
+                >
+                  取得する
+                </a>
+              )}
+            </div>
+
+            {/* UNTI Badge */}
+            <div
+              style={{
+                padding: "1.5rem",
+                backgroundColor: hasUNTI ? "#f0fdf4" : "#f8fafc",
+                border: `2px solid ${hasUNTI ? "#10b981" : "#e2e8f0"}`,
+                borderRadius: "12px",
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "48px",
+                  height: "48px",
+                  backgroundColor: hasUNTI ? "#10b981" : "#94a3b8",
+                  borderRadius: "50%",
+                  marginBottom: "1rem",
+                }}
+              >
+                {hasUNTI ? (
+                  <CheckCircle size={24} color="white" />
+                ) : (
+                  <Building size={24} color="white" />
+                )}
+              </div>
+              <h3
+                style={{
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  color: hasUNTI ? "#065f46" : "#64748b",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                企業認証 (UNTI)
+              </h3>
+              <p
+                style={{
+                  fontSize: "0.875rem",
+                  color: hasUNTI ? "#047857" : "#64748b",
+                  margin: "0 0 1rem 0",
+                }}
+              >
+                {hasUNTI ? "認証済み" : "未認証"}
+              </p>
+              {!hasUNTI && (
+                <a
+                  href="/get-unti"
+                  style={{
+                    padding: "0.5rem 1rem",
+                    backgroundColor: "#8b5cf6",
+                    color: "white",
+                    textDecoration: "none",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    display: "inline-block",
+                  }}
+                >
+                  取得する
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* Overall Status Message */}
+          <div
+            style={{
+              marginTop: "1.5rem",
+              padding: "1rem",
+              backgroundColor: isFullyVerified
+                ? "#f0fdf4"
+                : hasAnyVerification
+                  ? "#fef3c7"
+                  : "#fef2f2",
+              border: `1px solid ${isFullyVerified ? "#10b981" : hasAnyVerification ? "#f59e0b" : "#ef4444"}`,
+              borderRadius: "8px",
+              textAlign: "center",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem",
+                marginBottom: "0.5rem",
+              }}
+            >
+              {isFullyVerified ? (
+                <CheckCircle size={18} color="#10b981" />
+              ) : hasAnyVerification ? (
+                <Shield size={18} color="#f59e0b" />
+              ) : (
+                <XCircle size={18} color="#ef4444" />
+              )}
+              <span
+                style={{
+                  fontSize: "0.875rem",
+                  fontWeight: "600",
+                  color: isFullyVerified ? "#065f46" : hasAnyVerification ? "#92400e" : "#dc2626",
+                }}
+              >
+                {isFullyVerified ? "完全認証済み" : hasAnyVerification ? "部分認証済み" : "未認証"}
+              </span>
+            </div>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.8rem",
+                color: isFullyVerified ? "#047857" : hasAnyVerification ? "#a16207" : "#dc2626",
+                lineHeight: "1.4",
+              }}
+            >
+              {isFullyVerified
+                ? "すべての認証が完了しています。すべての機能をご利用いただけます。"
+                : hasAnyVerification
+                  ? "一部の認証が完了しています。すべての機能を利用するには両方の認証が必要です。"
+                  : "プライベート送金機能を利用するには認証が必要です。"}
+            </p>
+          </div>
+        </div>
+
+        {/* Detailed SBT Information */}
+        <div
+          style={{
+            backgroundColor: "white",
+            borderRadius: "16px",
+            padding: "2rem",
+            marginBottom: "2rem",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: "1.25rem",
+              fontWeight: "bold",
+              color: "#1e293b",
+              marginBottom: "1.5rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+            }}
+          >
+            <User size={20} />
+            Mizuhiki SBT 詳細
           </h2>
 
           <div style={{ marginBottom: "1.5rem" }}>
@@ -302,83 +525,6 @@ function ProfileScreen() {
               </div>
             </div>
           )}
-
-          {!hasSBT && (
-            <div
-              style={{
-                marginTop: "1.5rem",
-                padding: "1rem",
-                backgroundColor: "#fef3c7",
-                border: "1px solid #f59e0b",
-                borderRadius: "8px",
-              }}
-            >
-              <p
-                style={{
-                  margin: "0 0 0.5rem 0",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#92400e",
-                }}
-              >
-                SBTを保有していません
-              </p>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: "0.8rem",
-                  color: "#a16207",
-                  lineHeight: "1.4",
-                }}
-              >
-                Mamizu Cashのプライベート送金機能を利用するにはMizuhiki Verified SBTが必要です。
-                <br />
-                <a
-                  href="/get-mizuhiki"
-                  style={{
-                    color: "#a16207",
-                    textDecoration: "underline",
-                    fontWeight: "500",
-                  }}
-                >
-                  こちらからSBTを取得してください
-                </a>
-              </p>
-            </div>
-          )}
-
-          {hasSBT && (
-            <div
-              style={{
-                marginTop: "1.5rem",
-                padding: "1rem",
-                backgroundColor: "#d1fae5",
-                border: "1px solid #10b981",
-                borderRadius: "8px",
-              }}
-            >
-              <p
-                style={{
-                  margin: "0 0 0.5rem 0",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#065f46",
-                }}
-              >
-                認証済みユーザー
-              </p>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: "0.8rem",
-                  color: "#047857",
-                  lineHeight: "1.4",
-                }}
-              >
-                Mizuhiki Verified SBTを保有しています。プライベート送金機能をご利用いただけます。
-              </p>
-            </div>
-          )}
         </div>
 
         {/* Actions */}
@@ -420,12 +566,13 @@ function ProfileScreen() {
               ホームに戻る
             </a>
 
+            {/* Authentication Actions */}
             {!hasSBT && (
               <a
                 href="/get-mizuhiki"
                 style={{
                   padding: "0.75rem 1.5rem",
-                  backgroundColor: "#10b981",
+                  backgroundColor: "#3b82f6",
                   color: "white",
                   textDecoration: "none",
                   borderRadius: "8px",
@@ -436,11 +583,34 @@ function ProfileScreen() {
                   gap: "0.5rem",
                 }}
               >
-                SBTを取得する
+                <User size={16} />
+                個人認証を取得
               </a>
             )}
 
-            {hasSBT && (
+            {!hasUNTI && (
+              <a
+                href="/get-unti"
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor: "#8b5cf6",
+                  color: "white",
+                  textDecoration: "none",
+                  borderRadius: "8px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                <Building size={16} />
+                企業認証を取得
+              </a>
+            )}
+
+            {/* Service Actions - Only available with verification */}
+            {hasAnyVerification && (
               <>
                 <a
                   href="/deposit"
@@ -478,6 +648,23 @@ function ProfileScreen() {
                   資金引き出し
                 </a>
               </>
+            )}
+
+            {/* Message when no verification */}
+            {!hasAnyVerification && (
+              <div
+                style={{
+                  padding: "0.75rem 1rem",
+                  backgroundColor: "#fef2f2",
+                  border: "1px solid #fecaca",
+                  borderRadius: "8px",
+                  fontSize: "0.875rem",
+                  color: "#dc2626",
+                  fontStyle: "italic",
+                }}
+              >
+                認証後に送金機能が利用可能になります
+              </div>
             )}
           </div>
         </div>

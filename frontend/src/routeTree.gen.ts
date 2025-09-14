@@ -15,6 +15,7 @@ import { Route as GetUntiRouteImport } from './routes/get-unti'
 import { Route as GetMizuhikiRouteImport } from './routes/get-mizuhiki'
 import { Route as DepositRouteImport } from './routes/deposit'
 import { Route as CounterRouteImport } from './routes/counter'
+import { Route as AttestorRouteImport } from './routes/attestor'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoStoreRouteImport } from './routes/demo.store'
 
@@ -48,6 +49,11 @@ const CounterRoute = CounterRouteImport.update({
   path: '/counter',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AttestorRoute = AttestorRouteImport.update({
+  id: '/attestor',
+  path: '/attestor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -61,6 +67,7 @@ const DemoStoreRoute = DemoStoreRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/attestor': typeof AttestorRoute
   '/counter': typeof CounterRoute
   '/deposit': typeof DepositRoute
   '/get-mizuhiki': typeof GetMizuhikiRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/attestor': typeof AttestorRoute
   '/counter': typeof CounterRoute
   '/deposit': typeof DepositRoute
   '/get-mizuhiki': typeof GetMizuhikiRoute
@@ -82,6 +90,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/attestor': typeof AttestorRoute
   '/counter': typeof CounterRoute
   '/deposit': typeof DepositRoute
   '/get-mizuhiki': typeof GetMizuhikiRoute
@@ -94,6 +103,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/attestor'
     | '/counter'
     | '/deposit'
     | '/get-mizuhiki'
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/attestor'
     | '/counter'
     | '/deposit'
     | '/get-mizuhiki'
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/attestor'
     | '/counter'
     | '/deposit'
     | '/get-mizuhiki'
@@ -125,6 +137,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AttestorRoute: typeof AttestorRoute
   CounterRoute: typeof CounterRoute
   DepositRoute: typeof DepositRoute
   GetMizuhikiRoute: typeof GetMizuhikiRoute
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CounterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/attestor': {
+      id: '/attestor'
+      path: '/attestor'
+      fullPath: '/attestor'
+      preLoaderRoute: typeof AttestorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -197,6 +217,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AttestorRoute: AttestorRoute,
   CounterRoute: CounterRoute,
   DepositRoute: DepositRoute,
   GetMizuhikiRoute: GetMizuhikiRoute,

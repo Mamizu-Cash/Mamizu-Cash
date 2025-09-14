@@ -27,6 +27,9 @@ export default function Header() {
         <div style={{ padding: "0 8px", fontWeight: "bold" }}>
           <Link to="/profile">Profile</Link>
         </div>
+        <div style={{ padding: "0 8px", fontWeight: "bold" }}>
+          <Link to="/attestor">Attestor</Link>
+        </div>
       </nav>
 
       <div style={{ display: "flex", alignItems: "center" }}>

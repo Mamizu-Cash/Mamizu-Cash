@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import logo from "../logo.svg";
+import logo from "../logo.png";
 import styles from "./index.module.css";
 
 export const Route = createFileRoute("/")({
