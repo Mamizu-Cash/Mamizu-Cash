@@ -1,6 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Building, CheckCircle, Copy, ExternalLink, Shield, User, XCircle } from "lucide-react";
+import { toast } from "sonner";
 import { useAccount } from "wagmi";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SBTStatus } from "../components/SBTStatus";
 import { useBusinessVerifier } from "../hooks/useBusinessVerifier";
 import { useMizuhikiSBT } from "../hooks/useMizuhikiSBT";
@@ -17,7 +22,7 @@ function ProfileScreen() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    // TODO: Add toast notification
+    toast.success("Copied to clipboard!");
   };
 
   const formatAddress = (address: string) => {
@@ -30,644 +35,338 @@ function ProfileScreen() {
 
   if (!isConnected) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          backgroundColor: "#f8fafc",
-          padding: "2rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: "white",
-            borderRadius: "16px",
-            padding: "3rem",
-            textAlign: "center",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <h1 style={{ fontSize: "1.5rem", color: "#1e293b", marginBottom: "1rem" }}>
-            ウォレット未接続
-          </h1>
-          <p style={{ color: "#64748b" }}>プロフィールを表示するにはウォレットを接続してください</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-muted/30 py-8">
+        <Card className="w-full max-w-md border-0 bg-background/95 shadow-xl backdrop-blur">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">ウォレット未接続</CardTitle>
+            <CardDescription>
+              プロフィールを表示するにはウォレットを接続してください
+            </CardDescription>
+          </CardHeader>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-        padding: "2rem",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "800px",
-          margin: "0 auto",
-        }}
-      >
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 py-8">
+      <div className="container mx-auto max-w-4xl space-y-8 px-4">
         {/* Header */}
-        <div
-          style={{
-            backgroundColor: "white",
-            borderRadius: "16px",
-            padding: "2rem",
-            marginBottom: "2rem",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <div
-            style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "60px",
-                height: "60px",
-                backgroundColor: "#3b82f6",
-                borderRadius: "50%",
-              }}
-            >
-              <User size={30} color="white" />
+        <Card className="border-0 bg-background/95 shadow-xl backdrop-blur">
+          <CardHeader>
+            <div className="flex items-center gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary">
+                <User size={30} className="text-white" />
+              </div>
+              <div className="space-y-2">
+                <CardTitle className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-2xl text-transparent">
+                  プロフィール
+                </CardTitle>
+                <CardDescription className="text-base">
+                  アカウント情報とMizuhiki SBT状態
+                </CardDescription>
+              </div>
             </div>
-            <div>
-              <h1
-                style={{
-                  fontSize: "1.75rem",
-                  fontWeight: "bold",
-                  color: "#1e293b",
-                  margin: "0 0 0.5rem 0",
-                }}
-              >
-                プロフィール
-              </h1>
-              <p style={{ color: "#64748b", margin: 0 }}>アカウント情報とMizuhiki SBT状態</p>
-            </div>
-          </div>
-        </div>
+          </CardHeader>
+        </Card>
 
         {/* Wallet Info */}
-        <div
-          style={{
-            backgroundColor: "white",
-            borderRadius: "16px",
-            padding: "2rem",
-            marginBottom: "2rem",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: "bold",
-              color: "#1e293b",
-              marginBottom: "1.5rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-            }}
-          >
-            <User size={20} />
-            ウォレット情報
-          </h2>
-
-          <div style={{ marginBottom: "1rem" }}>
-            <label
-              style={{
-                display: "block",
-                fontSize: "0.875rem",
-                fontWeight: "600",
-                color: "#374151",
-                marginBottom: "0.5rem",
-              }}
-            >
-              ウォレットアドレス
-            </label>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                padding: "0.75rem 1rem",
-                backgroundColor: "#f9fafb",
-                border: "1px solid #e5e7eb",
-                borderRadius: "8px",
-              }}
-            >
-              <span style={{ fontFamily: "monospace", fontSize: "0.875rem" }}>{userAddress}</span>
-              <button
-                onClick={() => userAddress && copyToClipboard(userAddress)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "#6b7280",
-                  padding: "0.25rem",
-                }}
-                title="コピー"
-              >
-                <Copy size={16} />
-              </button>
-              <a
-                href={`${KAIGAN_EXPLORER_URL}/address/${userAddress}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: "#6b7280",
-                  padding: "0.25rem",
-                  textDecoration: "none",
-                }}
-                title="エクスプローラーで見る"
-              >
-                <ExternalLink size={16} />
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Verification Status Overview */}
-        <div
-          style={{
-            backgroundColor: "white",
-            borderRadius: "16px",
-            padding: "2rem",
-            marginBottom: "2rem",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: "bold",
-              color: "#1e293b",
-              marginBottom: "1.5rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-            }}
-          >
-            <Shield size={20} />
-            認証状態
-          </h2>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-            {/* Mizuhiki SBT Badge */}
-            <div
-              style={{
-                padding: "1.5rem",
-                backgroundColor: hasSBT ? "#f0fdf4" : "#f8fafc",
-                border: `2px solid ${hasSBT ? "#10b981" : "#e2e8f0"}`,
-                borderRadius: "12px",
-                textAlign: "center",
-              }}
-            >
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "48px",
-                  height: "48px",
-                  backgroundColor: hasSBT ? "#10b981" : "#94a3b8",
-                  borderRadius: "50%",
-                  marginBottom: "1rem",
-                }}
-              >
-                {hasSBT ? (
-                  <CheckCircle size={24} color="white" />
-                ) : (
-                  <User size={24} color="white" />
-                )}
-              </div>
-              <h3
-                style={{
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  color: hasSBT ? "#065f46" : "#64748b",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                個人認証 (SBT)
-              </h3>
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: hasSBT ? "#047857" : "#64748b",
-                  margin: "0 0 1rem 0",
-                }}
-              >
-                {hasSBT ? "認証済み" : "未認証"}
-              </p>
-              {!hasSBT && (
-                <a
-                  href="/get-mizuhiki"
-                  style={{
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "#3b82f6",
-                    color: "white",
-                    textDecoration: "none",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    display: "inline-block",
-                  }}
+        <Card className="border-0 bg-background/95 shadow-xl backdrop-blur">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User size={20} />
+              ウォレット情報
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <label className="font-semibold text-muted-foreground text-sm">
+                ウォレットアドレス
+              </label>
+              <div className="flex items-center gap-2 rounded-lg border bg-muted/50 p-3">
+                <span className="flex-1 break-all font-mono text-sm">{userAddress}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => userAddress && copyToClipboard(userAddress)}
+                  className="h-8 w-8 shrink-0 hover:bg-muted"
+                  title="コピー"
                 >
-                  取得する
-                </a>
-              )}
-            </div>
-
-            {/* UNTI Badge */}
-            <div
-              style={{
-                padding: "1.5rem",
-                backgroundColor: hasUNTI ? "#f0fdf4" : "#f8fafc",
-                border: `2px solid ${hasUNTI ? "#10b981" : "#e2e8f0"}`,
-                borderRadius: "12px",
-                textAlign: "center",
-              }}
-            >
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "48px",
-                  height: "48px",
-                  backgroundColor: hasUNTI ? "#10b981" : "#94a3b8",
-                  borderRadius: "50%",
-                  marginBottom: "1rem",
-                }}
-              >
-                {hasUNTI ? (
-                  <CheckCircle size={24} color="white" />
-                ) : (
-                  <Building size={24} color="white" />
-                )}
-              </div>
-              <h3
-                style={{
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  color: hasUNTI ? "#065f46" : "#64748b",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                企業認証 (UNTI)
-              </h3>
-              <p
-                style={{
-                  fontSize: "0.875rem",
-                  color: hasUNTI ? "#047857" : "#64748b",
-                  margin: "0 0 1rem 0",
-                }}
-              >
-                {hasUNTI ? "認証済み" : "未認証"}
-              </p>
-              {!hasUNTI && (
-                <a
-                  href="/get-unti"
-                  style={{
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "#8b5cf6",
-                    color: "white",
-                    textDecoration: "none",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    display: "inline-block",
-                  }}
+                  <Copy size={16} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  asChild
+                  className="h-8 w-8 shrink-0 hover:bg-muted"
+                  title="エクスプローラーで見る"
                 >
-                  取得する
-                </a>
-              )}
-            </div>
-          </div>
-
-          {/* Overall Status Message */}
-          <div
-            style={{
-              marginTop: "1.5rem",
-              padding: "1rem",
-              backgroundColor: isFullyVerified
-                ? "#f0fdf4"
-                : hasAnyVerification
-                  ? "#fef3c7"
-                  : "#fef2f2",
-              border: `1px solid ${isFullyVerified ? "#10b981" : hasAnyVerification ? "#f59e0b" : "#ef4444"}`,
-              borderRadius: "8px",
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                marginBottom: "0.5rem",
-              }}
-            >
-              {isFullyVerified ? (
-                <CheckCircle size={18} color="#10b981" />
-              ) : hasAnyVerification ? (
-                <Shield size={18} color="#f59e0b" />
-              ) : (
-                <XCircle size={18} color="#ef4444" />
-              )}
-              <span
-                style={{
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: isFullyVerified ? "#065f46" : hasAnyVerification ? "#92400e" : "#dc2626",
-                }}
-              >
-                {isFullyVerified ? "完全認証済み" : hasAnyVerification ? "部分認証済み" : "未認証"}
-              </span>
-            </div>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.8rem",
-                color: isFullyVerified ? "#047857" : hasAnyVerification ? "#a16207" : "#dc2626",
-                lineHeight: "1.4",
-              }}
-            >
-              {isFullyVerified
-                ? "すべての認証が完了しています。すべての機能をご利用いただけます。"
-                : hasAnyVerification
-                  ? "一部の認証が完了しています。すべての機能を利用するには両方の認証が必要です。"
-                  : "プライベート送金機能を利用するには認証が必要です。"}
-            </p>
-          </div>
-        </div>
-
-        {/* Detailed SBT Information */}
-        <div
-          style={{
-            backgroundColor: "white",
-            borderRadius: "16px",
-            padding: "2rem",
-            marginBottom: "2rem",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: "bold",
-              color: "#1e293b",
-              marginBottom: "1.5rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-            }}
-          >
-            <User size={20} />
-            Mizuhiki SBT 詳細
-          </h2>
-
-          <div style={{ marginBottom: "1.5rem" }}>
-            <SBTStatus />
-          </div>
-
-          {isLoading ? (
-            <div style={{ color: "#64748b", fontSize: "0.875rem" }}>SBT情報を読み込み中...</div>
-          ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    color: "#374151",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  SBT保有数
-                </label>
-                <div
-                  style={{
-                    padding: "0.75rem 1rem",
-                    backgroundColor: "#f9fafb",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                    fontFamily: "monospace",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  {sbtBalance?.toString() ?? "0"}
-                </div>
-              </div>
-
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    color: "#374151",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  SBTコントラクト
-                </label>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    padding: "0.75rem 1rem",
-                    backgroundColor: "#f9fafb",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <span style={{ fontFamily: "monospace", fontSize: "0.875rem" }}>
-                    {formatAddress(CONTRACT_ADDRESSES.MIZUHIKI_SBT)}
-                  </span>
-                  <button
-                    onClick={() => copyToClipboard(CONTRACT_ADDRESSES.MIZUHIKI_SBT)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "#6b7280",
-                      padding: "0.25rem",
-                    }}
-                    title="コピー"
-                  >
-                    <Copy size={14} />
-                  </button>
                   <a
-                    href={`${KAIGAN_EXPLORER_URL}/address/${CONTRACT_ADDRESSES.MIZUHIKI_SBT}`}
+                    href={`${KAIGAN_EXPLORER_URL}/address/${userAddress}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{
-                      color: "#6b7280",
-                      padding: "0.25rem",
-                      textDecoration: "none",
-                    }}
-                    title="エクスプローラーで見る"
                   >
-                    <ExternalLink size={14} />
+                    <ExternalLink size={16} />
                   </a>
-                </div>
+                </Button>
               </div>
             </div>
-          )}
-        </div>
+          </CardContent>
+        </Card>
+
+        {/* Verification Status Overview */}
+        <Card className="border-0 bg-background/95 shadow-xl backdrop-blur">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield size={20} />
+              認証状態
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {/* Mizuhiki SBT Badge */}
+              <Card
+                className={`text-center transition-all hover:shadow-lg ${hasSBT ? "border-success bg-success/5" : "border-muted hover:border-muted-foreground/30"}`}
+              >
+                <CardContent className="space-y-4 pt-6">
+                  <div
+                    className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full ${hasSBT ? "bg-success" : "bg-muted-foreground"}`}
+                  >
+                    {hasSBT ? (
+                      <CheckCircle size={24} className="text-white" />
+                    ) : (
+                      <User size={24} className="text-white" />
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <h3
+                      className={`font-semibold ${hasSBT ? "text-success" : "text-muted-foreground"}`}
+                    >
+                      個人認証 (SBT)
+                    </h3>
+                    <Badge
+                      variant={hasSBT ? "default" : "secondary"}
+                      className={hasSBT ? "bg-success hover:bg-success/90" : ""}
+                    >
+                      {hasSBT ? "認証済み" : "未認証"}
+                    </Badge>
+                  </div>
+                  {!hasSBT && (
+                    <Button asChild size="sm" className="bg-primary hover:bg-primary/90">
+                      <a href="/get-mizuhiki">取得する</a>
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* UNTI Badge */}
+              <Card
+                className={`text-center transition-all hover:shadow-lg ${hasUNTI ? "border-success bg-success/5" : "border-muted hover:border-muted-foreground/30"}`}
+              >
+                <CardContent className="space-y-4 pt-6">
+                  <div
+                    className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full ${hasUNTI ? "bg-success" : "bg-muted-foreground"}`}
+                  >
+                    {hasUNTI ? (
+                      <CheckCircle size={24} className="text-white" />
+                    ) : (
+                      <Building size={24} className="text-white" />
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <h3
+                      className={`font-semibold ${hasUNTI ? "text-success" : "text-muted-foreground"}`}
+                    >
+                      企業認証 (UNTI)
+                    </h3>
+                    <Badge
+                      variant={hasUNTI ? "default" : "secondary"}
+                      className={hasUNTI ? "bg-success hover:bg-success/90" : ""}
+                    >
+                      {hasUNTI ? "認証済み" : "未認証"}
+                    </Badge>
+                  </div>
+                  {!hasUNTI && (
+                    <Button asChild size="sm" variant="secondary">
+                      <a href="/get-unti">取得する</a>
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Overall Status Message */}
+            <Alert
+              className={
+                isFullyVerified
+                  ? "border-success bg-success/5"
+                  : hasAnyVerification
+                    ? "border-warning bg-warning/5"
+                    : "border-destructive bg-destructive/5"
+              }
+            >
+              <div className="flex items-center gap-2">
+                {isFullyVerified ? (
+                  <CheckCircle size={18} className="text-success" />
+                ) : hasAnyVerification ? (
+                  <Shield size={18} className="text-warning" />
+                ) : (
+                  <XCircle size={18} className="text-destructive" />
+                )}
+                <AlertTitle
+                  className={
+                    isFullyVerified
+                      ? "text-success"
+                      : hasAnyVerification
+                        ? "text-warning-foreground"
+                        : "text-destructive"
+                  }
+                >
+                  {isFullyVerified
+                    ? "完全認証済み"
+                    : hasAnyVerification
+                      ? "部分認証済み"
+                      : "未認証"}
+                </AlertTitle>
+              </div>
+              <AlertDescription
+                className={
+                  isFullyVerified
+                    ? "text-success"
+                    : hasAnyVerification
+                      ? "text-warning-foreground"
+                      : "text-destructive"
+                }
+              >
+                {isFullyVerified
+                  ? "すべての認証が完了しています。すべての機能をご利用いただけます。"
+                  : hasAnyVerification
+                    ? "一部の認証が完了しています。すべての機能を利用するには両方の認証が必要です。"
+                    : "プライベート送金機能を利用するには認証が必要です。"}
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
+
+        {/* Detailed SBT Information */}
+        <Card className="border-0 bg-background/95 shadow-xl backdrop-blur">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User size={20} />
+              Mizuhiki SBT 詳細
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <SBTStatus />
+
+            {isLoading ? (
+              <div className="text-muted-foreground text-sm">SBT情報を読み込み中...</div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="font-semibold text-muted-foreground text-sm">SBT保有数</label>
+                  <div className="rounded-lg border bg-muted/50 p-3 font-mono text-sm">
+                    {sbtBalance?.toString() ?? "0"}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="font-semibold text-muted-foreground text-sm">
+                    SBTコントラクト
+                  </label>
+                  <div className="flex items-center gap-2 rounded-lg border bg-muted/50 p-3">
+                    <span className="flex-1 font-mono text-sm">
+                      {formatAddress(CONTRACT_ADDRESSES.MIZUHIKI_SBT)}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => copyToClipboard(CONTRACT_ADDRESSES.MIZUHIKI_SBT)}
+                      className="h-6 w-6 shrink-0 hover:bg-muted"
+                      title="コピー"
+                    >
+                      <Copy size={14} />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      asChild
+                      className="h-6 w-6 shrink-0 hover:bg-muted"
+                      title="エクスプローラーで見る"
+                    >
+                      <a
+                        href={`${KAIGAN_EXPLORER_URL}/address/${CONTRACT_ADDRESSES.MIZUHIKI_SBT}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <ExternalLink size={14} />
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Actions */}
-        <div
-          style={{
-            backgroundColor: "white",
-            borderRadius: "16px",
-            padding: "2rem",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: "bold",
-              color: "#1e293b",
-              marginBottom: "1.5rem",
-            }}
-          >
-            アクション
-          </h2>
+        <Card className="border-0 bg-background/95 shadow-xl backdrop-blur">
+          <CardHeader>
+            <CardTitle>アクション</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild className="bg-primary hover:bg-primary/90">
+                <a href="/">ホームに戻る</a>
+              </Button>
 
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-            <a
-              href="/"
-              style={{
-                padding: "0.75rem 1.5rem",
-                backgroundColor: "#3b82f6",
-                color: "white",
-                textDecoration: "none",
-                borderRadius: "8px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
-            >
-              ホームに戻る
-            </a>
+              {/* Authentication Actions */}
+              {!hasSBT && (
+                <Button asChild className="bg-primary hover:bg-primary/90">
+                  <a href="/get-mizuhiki" className="flex items-center gap-2">
+                    <User size={16} />
+                    個人認証を取得
+                  </a>
+                </Button>
+              )}
 
-            {/* Authentication Actions */}
-            {!hasSBT && (
-              <a
-                href="/get-mizuhiki"
-                style={{
-                  padding: "0.75rem 1.5rem",
-                  backgroundColor: "#3b82f6",
-                  color: "white",
-                  textDecoration: "none",
-                  borderRadius: "8px",
-                  fontSize: "0.875rem",
-                  fontWeight: "500",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                <User size={16} />
-                個人認証を取得
-              </a>
-            )}
+              {!hasUNTI && (
+                <Button asChild variant="secondary">
+                  <a href="/get-unti" className="flex items-center gap-2">
+                    <Building size={16} />
+                    企業認証を取得
+                  </a>
+                </Button>
+              )}
 
-            {!hasUNTI && (
-              <a
-                href="/get-unti"
-                style={{
-                  padding: "0.75rem 1.5rem",
-                  backgroundColor: "#8b5cf6",
-                  color: "white",
-                  textDecoration: "none",
-                  borderRadius: "8px",
-                  fontSize: "0.875rem",
-                  fontWeight: "500",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                <Building size={16} />
-                企業認証を取得
-              </a>
-            )}
+              {/* Service Actions - Only available with verification */}
+              {hasAnyVerification && (
+                <>
+                  <Button asChild className="bg-primary hover:bg-primary/90">
+                    <a href="/deposit">プライベート送金</a>
+                  </Button>
 
-            {/* Service Actions - Only available with verification */}
-            {hasAnyVerification && (
-              <>
-                <a
-                  href="/deposit"
-                  style={{
-                    padding: "0.75rem 1.5rem",
-                    backgroundColor: "#059669",
-                    color: "white",
-                    textDecoration: "none",
-                    borderRadius: "8px",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  プライベート送金
-                </a>
-
-                <a
-                  href="/withdraw"
-                  style={{
-                    padding: "0.75rem 1.5rem",
-                    backgroundColor: "#dc2626",
-                    color: "white",
-                    textDecoration: "none",
-                    borderRadius: "8px",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  資金引き出し
-                </a>
-              </>
-            )}
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="border-primary text-primary hover:bg-primary/10"
+                  >
+                    <a href="/withdraw">支払いを受け取る</a>
+                  </Button>
+                </>
+              )}
+            </div>
 
             {/* Message when no verification */}
             {!hasAnyVerification && (
-              <div
-                style={{
-                  padding: "0.75rem 1rem",
-                  backgroundColor: "#fef2f2",
-                  border: "1px solid #fecaca",
-                  borderRadius: "8px",
-                  fontSize: "0.875rem",
-                  color: "#dc2626",
-                  fontStyle: "italic",
-                }}
-              >
-                認証後に送金機能が利用可能になります
-              </div>
+              <Alert className="mt-4 border-destructive/30 bg-destructive/5">
+                <AlertDescription className="text-destructive italic">
+                  認証後に送金機能が利用可能になります
+                </AlertDescription>
+              </Alert>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

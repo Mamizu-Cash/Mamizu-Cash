@@ -14,7 +14,17 @@
       "Bash(bun add:*)",
       "Bash(mise abigen-counter:*)",
       "Bash(mise abigen-business-verifier:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npm install:*)",
+      "Bash(forge build:*)",
+      "Bash(forge install:*)",
+      "Bash(forge test:*)",
+      "Bash(m)",
+      "Bash(mise tasks:*)",
+      "Read(//home/fuyutarow/.foundry/keystores/**)",
+      "Bash(mise deploy-counter:*)",
+      "Bash(forge create:*)"
     ],
     "deny": [],
     "ask": []

@@ -6,6 +6,19 @@
   },
   {
     "type": "function",
+    "name": "MIZUHIKI_SBT",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "count",
     "inputs": [],
     "outputs": [
@@ -40,6 +53,13 @@
   {
     "type": "function",
     "name": "increment",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "mizuhikiIncrement",
     "inputs": [],
     "outputs": [],
     "stateMutability": "nonpayable"

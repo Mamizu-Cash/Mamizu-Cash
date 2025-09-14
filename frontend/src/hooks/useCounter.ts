@@ -59,6 +59,13 @@ export function useCounter() {
     error: resetError,
   } = useWriteContract();
 
+  const {
+    writeContract: mizuhikiIncrement,
+    isPending: isMizuhikiIncrementPending,
+    data: mizuhikiIncrementTxHash,
+    error: mizuhikiIncrementError,
+  } = useWriteContract();
+
   // Transaction receipts
   const { isLoading: isIncrementConfirming, isSuccess: isIncrementSuccess } =
     useWaitForTransactionReceipt({
@@ -78,6 +85,11 @@ export function useCounter() {
   const { isLoading: isResetConfirming, isSuccess: isResetSuccess } = useWaitForTransactionReceipt({
     hash: resetTxHash,
   });
+
+  const { isLoading: isMizuhikiIncrementConfirming, isSuccess: isMizuhikiIncrementSuccess } =
+    useWaitForTransactionReceipt({
+      hash: mizuhikiIncrementTxHash,
+    });
 
   // Helper functions
   const handleIncrement = () => {
@@ -110,6 +122,14 @@ export function useCounter() {
       address: CONTRACT_ADDRESSES.COUNTER,
       abi: CounterAbi,
       functionName: "reset",
+    });
+  };
+
+  const handleMizuhikiIncrement = () => {
+    mizuhikiIncrement({
+      address: CONTRACT_ADDRESSES.COUNTER,
+      abi: CounterAbi,
+      functionName: "mizuhikiIncrement",
     });
   };
 
@@ -154,6 +174,16 @@ export function useCounter() {
     }
   }, [isResetSuccess, refetchCount, showSuccess]);
 
+  useEffect(() => {
+    if (isMizuhikiIncrementSuccess) {
+      setIsRefreshing(true);
+      refetchCount().finally(() => {
+        setIsRefreshing(false);
+        showSuccess("Success!", "Mizuhiki increment completed successfully");
+      });
+    }
+  }, [isMizuhikiIncrementSuccess, refetchCount, showSuccess]);
+
   // Effect for handling transaction errors
   useEffect(() => {
     if (incrementError) {
@@ -179,6 +209,12 @@ export function useCounter() {
     }
   }, [resetError, showError]);
 
+  useEffect(() => {
+    if (mizuhikiIncrementError) {
+      showError("Mizuhiki Increment Failed", mizuhikiIncrementError.message);
+    }
+  }, [mizuhikiIncrementError, showError]);
+
   return {
     // Read data
     count,
@@ -191,12 +227,14 @@ export function useCounter() {
     isDecrementPending: isDecrementPending || isDecrementConfirming,
     isSetCountPending: isSetCountPending || isSetCountConfirming,
     isResetPending: isResetPending || isResetConfirming,
+    isMizuhikiIncrementPending: isMizuhikiIncrementPending || isMizuhikiIncrementConfirming,
 
     // Actions
     increment: handleIncrement,
     decrement: handleDecrement,
     setCount: handleSetCount,
     reset: handleReset,
+    mizuhikiIncrement: handleMizuhikiIncrement,
     refetchCount,
 
     // Errors

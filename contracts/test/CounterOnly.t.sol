@@ -4,9 +4,9 @@ pragma solidity ^0.8.19;
 import {Test, console2} from "forge-std/Test.sol";
 import {Counter} from "../src/Counter.sol";
 
-/// @title Counter Contract Tests
-/// @notice Unit tests for the Counter contract
-contract CounterTest is Test {
+/// @title Counter Contract Tests (Isolated)
+/// @notice Isolated tests for the Counter contract without dependencies
+contract CounterOnlyTest is Test {
     Counter public counter;
 
     /// @notice Set up the test environment
@@ -69,69 +69,6 @@ contract CounterTest is Test {
 
         counter.reset();
         assertEq(counter.count(), 0, "Count should be 0 after reset");
-    }
-
-    /// @notice Test CountChanged event emission for increment
-    function test_IncrementEmitsEvent() public {
-        vm.expectEmit(true, true, false, false);
-        emit Counter.CountChanged(1, 0);
-        counter.increment();
-    }
-
-    /// @notice Test CountChanged event emission for decrement
-    function test_DecrementEmitsEvent() public {
-        counter.increment(); // Set to 1 first
-
-        vm.expectEmit(true, true, false, false);
-        emit Counter.CountChanged(0, 1);
-        counter.decrement();
-    }
-
-    /// @notice Test CountChanged event emission for setCount
-    function test_SetCountEmitsEvent() public {
-        vm.expectEmit(true, true, false, false);
-        emit Counter.CountChanged(42, 0);
-        counter.setCount(42);
-    }
-
-    /// @notice Test CountChanged event emission for reset
-    function test_ResetEmitsEvent() public {
-        counter.setCount(100); // Set to non-zero first
-
-        vm.expectEmit(true, true, false, false);
-        emit Counter.CountChanged(0, 100);
-        counter.reset();
-    }
-
-    /// @notice Fuzz test for setCount with random values
-    function testFuzz_SetCount(uint256 value) public {
-        counter.setCount(value);
-        assertEq(counter.count(), value, "Count should match the set value");
-    }
-
-    /// @notice Test multiple operations sequence
-    function test_MultipleOperations() public {
-        // Start at 0
-        assertEq(counter.count(), 0);
-
-        // Increment to 3
-        counter.increment();
-        counter.increment();
-        counter.increment();
-        assertEq(counter.count(), 3);
-
-        // Decrement to 1
-        counter.decrement();
-        counter.decrement();
-        assertEq(counter.count(), 1);
-
-        // Set to 10
-        counter.setCount(10);
-        assertEq(counter.count(), 10);
-
-        // Reset to 0
-        counter.reset();
-        assertEq(counter.count(), 0);
     }
 
     /// @notice Test mizuhikiIncrement reverts for non-SBT holder

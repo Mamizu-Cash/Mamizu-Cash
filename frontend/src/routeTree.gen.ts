@@ -17,7 +17,6 @@ import { Route as DepositRouteImport } from './routes/deposit'
 import { Route as CounterRouteImport } from './routes/counter'
 import { Route as AttestorRouteImport } from './routes/attestor'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DemoStoreRouteImport } from './routes/demo.store'
 
 const WithdrawRoute = WithdrawRouteImport.update({
   id: '/withdraw',
@@ -59,11 +58,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStoreRoute = DemoStoreRouteImport.update({
-  id: '/demo/store',
-  path: '/demo/store',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -74,7 +68,6 @@ export interface FileRoutesByFullPath {
   '/get-unti': typeof GetUntiRoute
   '/profile': typeof ProfileRoute
   '/withdraw': typeof WithdrawRoute
-  '/demo/store': typeof DemoStoreRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -85,7 +78,6 @@ export interface FileRoutesByTo {
   '/get-unti': typeof GetUntiRoute
   '/profile': typeof ProfileRoute
   '/withdraw': typeof WithdrawRoute
-  '/demo/store': typeof DemoStoreRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -97,7 +89,6 @@ export interface FileRoutesById {
   '/get-unti': typeof GetUntiRoute
   '/profile': typeof ProfileRoute
   '/withdraw': typeof WithdrawRoute
-  '/demo/store': typeof DemoStoreRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,7 +101,6 @@ export interface FileRouteTypes {
     | '/get-unti'
     | '/profile'
     | '/withdraw'
-    | '/demo/store'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -121,7 +111,6 @@ export interface FileRouteTypes {
     | '/get-unti'
     | '/profile'
     | '/withdraw'
-    | '/demo/store'
   id:
     | '__root__'
     | '/'
@@ -132,7 +121,6 @@ export interface FileRouteTypes {
     | '/get-unti'
     | '/profile'
     | '/withdraw'
-    | '/demo/store'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -144,7 +132,6 @@ export interface RootRouteChildren {
   GetUntiRoute: typeof GetUntiRoute
   ProfileRoute: typeof ProfileRoute
   WithdrawRoute: typeof WithdrawRoute
-  DemoStoreRoute: typeof DemoStoreRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -205,13 +192,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/store': {
-      id: '/demo/store'
-      path: '/demo/store'
-      fullPath: '/demo/store'
-      preLoaderRoute: typeof DemoStoreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -224,7 +204,6 @@ const rootRouteChildren: RootRouteChildren = {
   GetUntiRoute: GetUntiRoute,
   ProfileRoute: ProfileRoute,
   WithdrawRoute: WithdrawRoute,
-  DemoStoreRoute: DemoStoreRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

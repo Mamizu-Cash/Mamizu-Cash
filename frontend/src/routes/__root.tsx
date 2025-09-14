@@ -2,6 +2,7 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import Header from "../components/Header";
+import { Toaster } from "../components/ui/sonner";
 import { ToastContainer, ToastProvider } from "../components/ui/Toast";
 import { Web3Providers } from "../lib/web3/providers";
 
@@ -22,6 +23,7 @@ export const Route = createRootRoute({
         <Header />
         <Outlet />
         <ToastContainer />
+        <Toaster />
         <DevtoolsComponent />
       </ToastProvider>
     </Web3Providers>

@@ -9,6 +9,10 @@ import {
   XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type CredentialInfo, getCredential } from "../lib/mockCredentials";
 
 export const Route = createFileRoute("/withdraw")({
@@ -66,615 +70,340 @@ function WithdrawScreen() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-        padding: "2rem",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "600px",
-          margin: "0 auto",
-          backgroundColor: "white",
-          borderRadius: "16px",
-          padding: "3rem",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "80px",
-              height: "80px",
-              backgroundColor: "#8b5cf6",
-              borderRadius: "50%",
-              marginBottom: "1rem",
-            }}
-          >
-            <Download size={40} color="white" />
-          </div>
-          <h1
-            style={{
-              fontSize: "2rem",
-              fontWeight: "bold",
-              color: "#1e293b",
-              marginBottom: "0.5rem",
-            }}
-          >
-            Secure Withdrawal
-          </h1>
-          <p
-            style={{
-              color: "#64748b",
-              fontSize: "1.1rem",
-              lineHeight: "1.6",
-            }}
-          >
-            Verify your credentials and withdraw funds privately
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-8">
+      <div className="container mx-auto max-w-4xl px-4">
+        <Card className="w-full border-0 bg-background/95 shadow-xl backdrop-blur">
+          <CardHeader className="space-y-4 pb-8 text-center">
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary">
+              <Download size={40} className="text-white" />
+            </div>
+            <div className="space-y-2">
+              <CardTitle className="bg-gradient-to-r from-primary to-secondary bg-clip-text font-bold text-3xl text-transparent">
+                安全な支払い受取
+              </CardTitle>
+              <CardDescription className="text-lg">
+                資格確認後、完全プライベートで資金受取
+              </CardDescription>
+            </div>
+          </CardHeader>
 
-        {/* Withdrawal Information */}
-        <div
-          style={{
-            backgroundColor: "#f8fafc",
-            padding: "1.5rem",
-            borderRadius: "12px",
-            marginBottom: "2rem",
-            border: "1px solid #e2e8f0",
-          }}
-        >
-          <h3
-            style={{
-              margin: "0 0 1rem 0",
-              color: "#1e293b",
-              fontSize: "1.1rem",
-              fontWeight: "600",
-            }}
-          >
-            Withdrawal Details
-          </h3>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "0.5rem",
-            }}
-          >
-            <span style={{ color: "#64748b" }}>Amount:</span>
-            <span style={{ fontWeight: "bold", color: "#1e293b" }}>{withdrawalInfo.amount}</span>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "0.5rem",
-            }}
-          >
-            <span style={{ color: "#64748b" }}>Pool:</span>
-            <span
-              style={{
-                fontFamily: "monospace",
-                fontSize: "0.875rem",
-                color: "#6b7280",
-              }}
+          <CardContent className="space-y-8">
+            {/* URL Safety Explanation */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <Shield size={20} className="text-primary" />
+                <h2 className="font-semibold text-xl">URL安全性の仕組み</h2>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <Card className="border-primary/20 bg-primary/5">
+                  <CardContent className="space-y-3 pt-4">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={16} className="text-primary" />
+                      <h3 className="font-semibold text-primary text-sm">クライアントサイド処理</h3>
+                    </div>
+                    <p className="text-primary text-xs">
+                      URLのnoteやプール情報はフラグメント（#以下）に埋め込まれ、
+                      ブラウザ内でのみ解釈されます。サーバーには送信されないため、
+                      ログに残ることがありません。
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-secondary/20 bg-secondary/5">
+                  <CardContent className="space-y-3 pt-4">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={16} className="text-secondary" />
+                      <h3 className="font-semibold text-secondary text-sm">資格による二重保護</h3>
+                    </div>
+                    <p className="text-secondary text-xs">
+                      万一URLが漏洩しても、受取人がMizuhiki SBTまたはUNTIを
+                      保有していなければ引き出しは不可能です。
+                      noteの知識と資格の両方が必要な設計です。
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Alert className="border-success/30 bg-success/5">
+                <Shield size={16} className="text-success" />
+                <AlertTitle className="text-success">実務で安心な設計</AlertTitle>
+                <AlertDescription className="text-success">
+                  <div className="mt-2 space-y-1 text-sm">
+                    <div>
+                      • <strong>ワンタイム表示：</strong> 一度開封後は再表示不可能
+                    </div>
+                    <div>
+                      • <strong>宛先バインド：</strong> 特定の受取人にのみ紐付け可能
+                    </div>
+                    <div>
+                      • <strong>QRコード対応：</strong> モバイルでの安全な共有
+                    </div>
+                    <div>
+                      • <strong>時限設定：</strong> 指定期間後の自動無効化（将来実装）
+                    </div>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            </div>
+
+            {/* Withdrawal Information */}
+            <Card className="border-muted">
+              <CardHeader>
+                <CardTitle className="text-xl">受取詳細</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">受取金額:</span>
+                  <span className="font-bold text-xl">{withdrawalInfo.amount}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">プール:</span>
+                  <span className="font-mono text-muted-foreground text-sm">
+                    {withdrawalInfo.pool}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">プライバシー状態:</span>
+                  <Badge
+                    variant="secondary"
+                    className="border-success/30 bg-success/20 text-success"
+                  >
+                    完全匿名
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">送金者情報:</span>
+                  <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
+                    観測不可能
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Credential Verification */}
+            <Alert
+              className={`${
+                credentialStatus === "valid"
+                  ? "border-success bg-success/5"
+                  : credentialStatus === "invalid"
+                    ? "border-destructive bg-destructive/5"
+                    : "border-warning bg-warning/5"
+              }`}
             >
-              {withdrawalInfo.pool}
-            </span>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span style={{ color: "#64748b" }}>Privacy:</span>
-            <span
-              style={{
-                color: "#059669",
-                backgroundColor: "#d1fae5",
-                padding: "0.25rem 0.75rem",
-                borderRadius: "9999px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-              }}
-            >
-              Fully Anonymous
-            </span>
-          </div>
-        </div>
-
-        {/* Credential Verification */}
-        <div
-          style={{
-            backgroundColor:
-              credentialStatus === "valid"
-                ? "#f0fdf4"
-                : credentialStatus === "invalid"
-                  ? "#fef2f2"
-                  : "#fffbeb",
-            padding: "1.5rem",
-            borderRadius: "12px",
-            marginBottom: "2rem",
-            border: `1px solid ${
-              credentialStatus === "valid"
-                ? "#bbf7d0"
-                : credentialStatus === "invalid"
-                  ? "#fecaca"
-                  : "#fed7aa"
-            }`,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              marginBottom: "1rem",
-            }}
-          >
-            {credentialStatus === "checking" && (
-              <>
-                <div
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    border: "2px solid #f59e0b",
-                    borderTop: "2px solid transparent",
-                    borderRadius: "50%",
-                    animation: "spin 1s linear infinite",
-                  }}
-                />
-                <span style={{ fontWeight: "600", color: "#92400e" }}>
-                  Verifying Credentials...
-                </span>
-              </>
-            )}
-            {credentialStatus === "valid" && (
-              <>
-                <CheckCircle size={20} color="#059669" />
-                <span style={{ fontWeight: "600", color: "#14532d" }}>Credentials Verified</span>
-              </>
-            )}
-            {credentialStatus === "invalid" && (
-              <>
-                <XCircle size={20} color="#dc2626" />
-                <span style={{ fontWeight: "600", color: "#991b1b" }}>Invalid Credentials</span>
-              </>
-            )}
-          </div>
-
-          {credentialStatus === "checking" && (
-            <p
-              style={{
-                margin: 0,
-                color: "#a16207",
-                fontSize: "0.9rem",
-              }}
-            >
-              Checking for Mizuhiki SBT or UNTI credentials...
-            </p>
-          )}
-
-          {credentialStatus === "valid" && credential && (
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                {credential.type === "mizuhiki" ? (
-                  <User size={16} color="#059669" />
-                ) : (
-                  <Building size={16} color="#059669" />
+              <div className="mb-4 flex items-center gap-3">
+                {credentialStatus === "checking" && (
+                  <>
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-warning border-t-transparent" />
+                    <AlertTitle className="text-warning-foreground">
+                      Verifying Credentials...
+                    </AlertTitle>
+                  </>
                 )}
-                <span style={{ color: "#166534", fontWeight: "500" }}>
-                  {credential.type === "mizuhiki"
-                    ? "Mizuhiki Verified SBT"
-                    : "UNTI (Corporate KYB)"}
-                </span>
+                {credentialStatus === "valid" && (
+                  <>
+                    <CheckCircle size={20} className="text-success" />
+                    <AlertTitle className="text-success">Credentials Verified</AlertTitle>
+                  </>
+                )}
+                {credentialStatus === "invalid" && (
+                  <>
+                    <XCircle size={20} className="text-destructive" />
+                    <AlertTitle className="text-destructive">Invalid Credentials</AlertTitle>
+                  </>
+                )}
               </div>
-              <p
-                style={{
-                  margin: 0,
-                  color: "#166534",
-                  fontSize: "0.9rem",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                You are authorized to receive this private transfer
-              </p>
-              <div
-                style={{
-                  backgroundColor: "white",
-                  padding: "0.75rem",
-                  borderRadius: "6px",
-                  border: "1px solid #bbf7d0",
-                  fontSize: "0.8rem",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: "0.25rem",
-                  }}
-                >
-                  <span style={{ color: "#059669" }}>Token ID:</span>
-                  <span style={{ fontFamily: "monospace", color: "#14532d" }}>
-                    {credential.tokenId}
-                  </span>
+
+              {credentialStatus === "checking" && (
+                <AlertDescription>Mizuhiki SBTまたはUNTI資格を確認中...</AlertDescription>
+              )}
+
+              {credentialStatus === "valid" && credential && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    {credential.type === "mizuhiki" ? (
+                      <User size={16} className="text-success" />
+                    ) : (
+                      <Building size={16} className="text-success" />
+                    )}
+                    <Badge
+                      variant="secondary"
+                      className="border-success/30 bg-success/20 text-success"
+                    >
+                      {credential.type === "mizuhiki"
+                        ? "Mizuhiki Verified SBT"
+                        : "UNTI (Corporate KYB)"}
+                    </Badge>
+                  </div>
+                  <AlertDescription className="text-success">
+                    プライベート受取の資格が確認されました
+                  </AlertDescription>
+                  <Card className="border-success/30 bg-success/10">
+                    <CardContent className="space-y-2 pt-4 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-success">Token ID:</span>
+                        <span className="font-mono text-success-foreground">
+                          {credential.tokenId}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-success">
+                          {credential.type === "mizuhiki" ? "Name:" : "Company:"}
+                        </span>
+                        <span className="text-success-foreground">
+                          {credential.type === "mizuhiki"
+                            ? credential.userInfo?.name
+                            : credential.userInfo?.companyName}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-success">Issued:</span>
+                        <span className="text-success-foreground">
+                          {new Date(credential.issuedAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: "0.25rem",
-                  }}
-                >
-                  <span style={{ color: "#059669" }}>
-                    {credential.type === "mizuhiki" ? "Name:" : "Company:"}
-                  </span>
-                  <span style={{ color: "#14532d" }}>
-                    {credential.type === "mizuhiki"
-                      ? credential.userInfo?.name
-                      : credential.userInfo?.companyName}
-                  </span>
+              )}
+
+              {credentialStatus === "invalid" && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle size={16} className="text-destructive" />
+                    <span className="font-medium text-destructive">No Valid Credentials Found</span>
+                  </div>
+                  <AlertDescription className="text-destructive">
+                    この資金を受け取るには、Mizuhiki SBTまたはUNTI資格が必要です。
+                  </AlertDescription>
+                  <div className="flex flex-wrap gap-3">
+                    <Button asChild size="sm">
+                      <a href="/get-mizuhiki" className="flex items-center gap-2">
+                        <User size={14} />
+                        Get Mizuhiki SBT
+                      </a>
+                    </Button>
+                    <Button asChild size="sm" variant="secondary">
+                      <a href="/get-unti" className="flex items-center gap-2">
+                        <Building size={14} />
+                        Get UNTI
+                      </a>
+                    </Button>
+                  </div>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#059669" }}>Issued:</span>
-                  <span style={{ color: "#14532d" }}>
-                    {new Date(credential.issuedAt).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
+              )}
+            </Alert>
 
-          {credentialStatus === "invalid" && (
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                <AlertTriangle size={16} color="#dc2626" />
-                <span style={{ color: "#991b1b", fontWeight: "500" }}>
-                  No Valid Credentials Found
-                </span>
-              </div>
-              <p
-                style={{
-                  margin: 0,
-                  color: "#991b1b",
-                  fontSize: "0.9rem",
-                  marginBottom: "1rem",
-                }}
-              >
-                You need either a Mizuhiki Verified SBT or UNTI credential to withdraw these funds.
-              </p>
-              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                <a
-                  href="/get-mizuhiki"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "#3b82f6",
-                    color: "white",
-                    textDecoration: "none",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                  }}
-                >
-                  <User size={14} />
-                  Get Mizuhiki SBT
-                </a>
-                <a
-                  href="/get-unti"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "#8b5cf6",
-                    color: "white",
-                    textDecoration: "none",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                  }}
-                >
-                  <Building size={14} />
-                  Get UNTI
-                </a>
-              </div>
-            </div>
-          )}
-        </div>
+            {/* Privacy Notice */}
+            <Alert className="border-primary/30 bg-primary/5">
+              <Shield size={16} className="text-primary" />
+              <AlertTitle className="text-primary">Complete Privacy Guaranteed</AlertTitle>
+              <AlertDescription className="text-primary">
+                This withdrawal uses zero-knowledge proofs. The sender's identity and transaction
+                history remain completely private and unlinkable.
+              </AlertDescription>
+            </Alert>
 
-        {/* Privacy Notice */}
-        <div
-          style={{
-            backgroundColor: "#eff6ff",
-            padding: "1rem",
-            borderRadius: "8px",
-            marginBottom: "2rem",
-            border: "1px solid #dbeafe",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              marginBottom: "0.5rem",
-            }}
-          >
-            <Shield size={16} color="#3b82f6" />
-            <span style={{ color: "#1e40af", fontWeight: "500" }}>Complete Privacy Guaranteed</span>
-          </div>
-          <p
-            style={{
-              margin: 0,
-              fontSize: "0.9rem",
-              color: "#1e40af",
-              lineHeight: "1.4",
-            }}
-          >
-            This withdrawal uses zero-knowledge proofs. The sender's identity and transaction
-            history remain completely private and unlinkable.
-          </p>
-        </div>
-
-        {/* Withdraw Button */}
-        <button
-          onClick={handleWithdraw}
-          disabled={credentialStatus !== "valid" || isWithdrawing}
-          style={{
-            width: "100%",
-            padding: "1rem 2rem",
-            backgroundColor: credentialStatus !== "valid" || isWithdrawing ? "#94a3b8" : "#8b5cf6",
-            color: "white",
-            border: "none",
-            borderRadius: "12px",
-            fontSize: "1.1rem",
-            fontWeight: "600",
-            cursor: credentialStatus !== "valid" || isWithdrawing ? "not-allowed" : "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-            transition: "background-color 0.2s",
-          }}
-        >
-          {isWithdrawing ? (
-            <>
-              <div
-                style={{
-                  width: "16px",
-                  height: "16px",
-                  border: "2px solid white",
-                  borderTop: "2px solid transparent",
-                  borderRadius: "50%",
-                  animation: "spin 1s linear infinite",
-                }}
-              />
-              Generating ZK Proof...
-            </>
-          ) : credentialStatus === "valid" ? (
-            <>
-              <Download size={20} />
-              Withdraw {withdrawalInfo.amount}
-            </>
-          ) : (
-            "Credential Verification Required"
-          )}
-        </button>
-
-        {/* Processing Status */}
-        {isWithdrawing && (
-          <div
-            style={{
-              marginTop: "1.5rem",
-              padding: "1rem",
-              backgroundColor: "#fffbeb",
-              borderRadius: "8px",
-              border: "1px solid #fed7aa",
-            }}
-          >
-            <p
-              style={{
-                margin: "0 0 0.5rem 0",
-                fontSize: "0.9rem",
-                color: "#92400e",
-                fontWeight: "500",
-              }}
+            {/* Withdraw Button */}
+            <Button
+              onClick={handleWithdraw}
+              disabled={credentialStatus !== "valid" || isWithdrawing}
+              size="lg"
+              className={`w-full py-6 font-semibold text-lg transition-all ${
+                credentialStatus !== "valid" || isWithdrawing
+                  ? "cursor-not-allowed"
+                  : "bg-primary hover:bg-primary/90"
+              }`}
             >
-              Processing secure withdrawal...
-            </p>
-            <div
-              style={{
-                fontSize: "0.8rem",
-                color: "#a16207",
-                lineHeight: "1.4",
-              }}
-            >
-              • Generating zero-knowledge proof
-              <br />• Verifying nullifier uniqueness
-              <br />• Submitting anonymous transaction
-            </div>
-          </div>
-        )}
+              {isWithdrawing ? (
+                <>
+                  <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Generating ZK Proof...
+                </>
+              ) : credentialStatus === "valid" ? (
+                <>
+                  <Download size={20} className="mr-2" />
+                  Withdraw {withdrawalInfo.amount}
+                </>
+              ) : (
+                "Credential Verification Required"
+              )}
+            </Button>
+
+            {/* Processing Status */}
+            {isWithdrawing && (
+              <Alert className="border-warning/30 bg-warning/5">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-warning border-t-transparent" />
+                <AlertTitle className="text-warning-foreground">
+                  Processing secure withdrawal...
+                </AlertTitle>
+                <AlertDescription className="space-y-1 text-warning-foreground">
+                  <div>• Generating zero-knowledge proof</div>
+                  <div>• Verifying nullifier uniqueness</div>
+                  <div>• Submitting anonymous transaction</div>
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
       </div>
-
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }
 
 function WithdrawSuccessScreen() {
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-        padding: "2rem",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "500px",
-          backgroundColor: "white",
-          borderRadius: "16px",
-          padding: "3rem",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100px",
-            height: "100px",
-            backgroundColor: "#10b981",
-            borderRadius: "50%",
-            marginBottom: "2rem",
-          }}
-        >
-          <CheckCircle size={60} color="white" />
-        </div>
-
-        <h1
-          style={{
-            fontSize: "2.5rem",
-            fontWeight: "bold",
-            color: "#1e293b",
-            marginBottom: "1rem",
-          }}
-        >
-          Withdrawal Complete
-        </h1>
-
-        <p
-          style={{
-            color: "#64748b",
-            fontSize: "1.2rem",
-            lineHeight: "1.6",
-            marginBottom: "2rem",
-          }}
-        >
-          Your funds have been successfully withdrawn with complete privacy
-        </p>
-
-        <div
-          style={{
-            backgroundColor: "#f0fdf4",
-            padding: "1.5rem",
-            borderRadius: "12px",
-            marginBottom: "2rem",
-            border: "1px solid #bbf7d0",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "0.5rem",
-            }}
-          >
-            <span style={{ color: "#166534" }}>Amount Received:</span>
-            <span style={{ fontWeight: "bold", color: "#14532d" }}>1 ETH</span>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-success/5 py-8">
+      <Card className="w-full max-w-lg border-0 bg-background/95 shadow-xl backdrop-blur">
+        <CardHeader className="space-y-6 text-center">
+          <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-r from-success to-emerald-600">
+            <CheckCircle size={60} className="text-white" />
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span style={{ color: "#166534" }}>Transaction Hash:</span>
-            <span
-              style={{
-                fontFamily: "monospace",
-                fontSize: "0.875rem",
-                color: "#059669",
-              }}
-            >
-              0x742d3...a8f1c
-            </span>
+          <div className="space-y-2">
+            <CardTitle className="font-bold text-4xl text-success">Withdrawal Complete</CardTitle>
+            <CardDescription className="text-lg">
+              Your funds have been successfully withdrawn with complete privacy
+            </CardDescription>
           </div>
-        </div>
+        </CardHeader>
 
-        <div
-          style={{
-            backgroundColor: "#eff6ff",
-            padding: "1rem",
-            borderRadius: "8px",
-            marginBottom: "2rem",
-            border: "1px solid #dbeafe",
-          }}
-        >
-          <p
-            style={{
-              margin: 0,
-              fontSize: "0.9rem",
-              color: "#1e40af",
-              lineHeight: "1.5",
+        <CardContent className="space-y-6">
+          {/* Transaction Details */}
+          <Card className="border-success/30 bg-success/10">
+            <CardContent className="space-y-4 pt-6">
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-success">Amount Received:</span>
+                <span className="font-bold text-success-foreground text-xl">1 ETH</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-success">Transaction Hash:</span>
+                <span className="font-mono text-sm text-success">0x742d3...a8f1c</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Privacy Notice */}
+          <Alert className="border-primary/30 bg-primary/5">
+            <Shield className="h-4 w-4 text-primary" />
+            <AlertTitle className="text-primary">Privacy Protected</AlertTitle>
+            <AlertDescription className="text-primary">
+              The source of these funds is completely anonymous and unlinkable on the blockchain.
+              Your transaction maintains full privacy compliance.
+            </AlertDescription>
+          </Alert>
+
+          {/* Action Button */}
+          <Button
+            onClick={() => {
+              window.location.href = "/";
             }}
+            size="lg"
+            className="w-full bg-gradient-to-r from-primary to-secondary py-6 font-semibold text-lg transition-all hover:scale-102 hover:from-primary/90 hover:to-secondary/90 hover:shadow-lg"
           >
-            <strong>Privacy Protected:</strong> The source of these funds is completely anonymous
-            and unlinkable on the blockchain. Your transaction maintains full privacy compliance.
-          </p>
-        </div>
-
-        <button
-          onClick={() => {
-            window.location.href = "/";
-          }}
-          style={{
-            width: "100%",
-            padding: "1rem 2rem",
-            backgroundColor: "#3b82f6",
-            color: "white",
-            border: "none",
-            borderRadius: "12px",
-            fontSize: "1.1rem",
-            fontWeight: "600",
-            cursor: "pointer",
-          }}
-        >
-          Start New Transaction
-        </button>
-      </div>
+            Start New Transaction
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
