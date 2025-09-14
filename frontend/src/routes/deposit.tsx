@@ -39,6 +39,7 @@ function DepositScreen() {
   // Generate unique IDs for accessibility
   const privacyFeaturesId = useId();
   const amountSelectionId = useId();
+  const linkGenerationSectionId = useId();
 
   // Link generation states
   const [generatedUrl, setGeneratedUrl] = useState("");
@@ -121,15 +122,18 @@ function DepositScreen() {
         {
           duration: 5000,
           action: {
-            label: "Generate Link",
+            label: "View Link",
             onClick: () => {
-              generateUrl();
+              // Scroll to link generation section
+              document.getElementById(linkGenerationSectionId)?.scrollIntoView({
+                behavior: "smooth",
+              });
             },
           },
         },
       );
 
-      // Auto-generate link after deposit
+      // Auto-generate link after deposit success
       setTimeout(() => {
         generateUrl();
       }, 1000);
@@ -380,47 +384,17 @@ function DepositScreen() {
         {/* Link Generation Section - Show after successful deposit */}
         {processingState === "complete" && (
           <section
-            style={{
-              marginTop: "2rem",
-              backgroundColor: "#f0fdf4",
-              padding: "2rem",
-              borderRadius: "12px",
-              border: "1px solid #bbf7d0",
-            }}
+            id={linkGenerationSectionId}
+            className={styles.linkGenerationSection}
+            aria-label="Withdrawal link generation"
           >
             {/* Link Generation Header */}
-            <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "60px",
-                  height: "60px",
-                  backgroundColor: "#10b981",
-                  borderRadius: "50%",
-                  marginBottom: "1rem",
-                }}
-              >
-                <Link2 size={30} color="white" />
+            <div className={styles.linkHeader}>
+              <div className={styles.linkIconContainer}>
+                <Link2 size={30} color="white" aria-hidden="true" />
               </div>
-              <h2
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "bold",
-                  color: "#14532d",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Share Withdrawal Link
-              </h2>
-              <p
-                style={{
-                  color: "#166534",
-                  fontSize: "1rem",
-                  lineHeight: "1.6",
-                }}
-              >
+              <h2 className={styles.linkTitle}>Share Withdrawal Link</h2>
+              <p className={styles.linkSubtitle}>
                 Generate a secure link for the recipient to withdraw funds privately
               </p>
             </div>
@@ -430,35 +404,11 @@ function DepositScreen() {
               <button
                 onClick={generateUrl}
                 disabled={isGeneratingLink}
-                style={{
-                  width: "100%",
-                  padding: "1rem 2rem",
-                  backgroundColor: isGeneratingLink ? "#94a3b8" : "#10b981",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "12px",
-                  fontSize: "1.1rem",
-                  fontWeight: "600",
-                  cursor: isGeneratingLink ? "not-allowed" : "pointer",
-                  marginBottom: "2rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.5rem",
-                }}
+                className={`${styles.generateButton} ${isGeneratingLink ? styles.generating : ""}`}
               >
                 {isGeneratingLink ? (
                   <>
-                    <div
-                      style={{
-                        width: "16px",
-                        height: "16px",
-                        border: "2px solid white",
-                        borderTop: "2px solid transparent",
-                        borderRadius: "50%",
-                        animation: "spin 1s linear infinite",
-                      }}
-                    />
+                    <div className={styles.spinner} />
                     Generating Secure Link...
                   </>
                 ) : (
@@ -471,62 +421,15 @@ function DepositScreen() {
             ) : (
               <>
                 {/* Generated URL */}
-                <div
-                  style={{
-                    backgroundColor: "white",
-                    border: "2px solid #bbf7d0",
-                    borderRadius: "12px",
-                    padding: "1rem",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "0.9rem",
-                      color: "#166534",
-                      marginBottom: "0.5rem",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Withdrawal URL
-                  </label>
-                  <div
-                    style={{
-                      backgroundColor: "#f8fafc",
-                      padding: "0.75rem",
-                      borderRadius: "8px",
-                      fontFamily: "monospace",
-                      fontSize: "0.875rem",
-                      wordBreak: "break-all",
-                      color: "#374151",
-                      border: "1px solid #d1d5db",
-                    }}
-                  >
-                    {generatedUrl}
-                  </div>
+                <div className={styles.urlContainer}>
+                  <label className={styles.urlLabel}>Withdrawal URL</label>
+                  <div className={styles.urlDisplay}>{generatedUrl}</div>
                 </div>
 
                 {/* Copy Button */}
                 <button
                   onClick={copyToClipboard}
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem 1rem",
-                    backgroundColor: copied ? "#10b981" : "#3b82f6",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    fontSize: "1rem",
-                    fontWeight: "500",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "0.5rem",
-                    marginBottom: "1.5rem",
-                    transition: "background-color 0.2s",
-                  }}
+                  className={`${styles.copyButton} ${copied ? styles.copied : ""}`}
                 >
                   {copied ? (
                     <>
@@ -544,23 +447,7 @@ function DepositScreen() {
                 {/* QR Code Toggle */}
                 <button
                   onClick={() => setShowQR(!showQR)}
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem 1rem",
-                    backgroundColor: showQR ? "#6366f1" : "white",
-                    color: showQR ? "white" : "#374151",
-                    border: "2px solid #6366f1",
-                    borderRadius: "8px",
-                    fontSize: "1rem",
-                    fontWeight: "500",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "0.5rem",
-                    marginBottom: "1.5rem",
-                    transition: "all 0.2s",
-                  }}
+                  className={`${styles.qrToggleButton} ${showQR ? styles.active : ""}`}
                 >
                   <QrCode size={18} />
                   {showQR ? "Hide QR Code" : "Show QR Code"}
@@ -568,108 +455,28 @@ function DepositScreen() {
 
                 {/* QR Code Display */}
                 {showQR && (
-                  <div
-                    style={{
-                      backgroundColor: "white",
-                      padding: "2rem",
-                      borderRadius: "12px",
-                      border: "2px solid #bbf7d0",
-                      textAlign: "center",
-                      marginBottom: "1.5rem",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "200px",
-                        height: "200px",
-                        backgroundColor: "#f3f4f6",
-                        border: "1px solid #d1d5db",
-                        borderRadius: "8px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        margin: "0 auto",
-                        color: "#6b7280",
-                      }}
-                    >
+                  <div className={styles.qrCodeContainer}>
+                    <div className={styles.qrCodePlaceholder}>
                       QR Code
                       <br />
                       (Mock)
                     </div>
-                    <p
-                      style={{
-                        marginTop: "1rem",
-                        fontSize: "0.9rem",
-                        color: "#166534",
-                      }}
-                    >
-                      Scan to open withdrawal link
-                    </p>
+                    <p className={styles.qrDescription}>Scan to open withdrawal link</p>
                   </div>
                 )}
 
                 {/* Share Options */}
-                <div style={{ marginBottom: "1rem" }}>
-                  <h3
-                    style={{
-                      margin: "0 0 1rem 0",
-                      fontSize: "1.1rem",
-                      fontWeight: "600",
-                      color: "#14532d",
-                    }}
-                  >
-                    Quick Share
-                  </h3>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(3, 1fr)",
-                      gap: "0.75rem",
-                    }}
-                  >
+                <div className={styles.shareSection}>
+                  <h3 className={styles.shareTitle}>Quick Share</h3>
+                  <div className={styles.shareGrid}>
                     {shareOptions.map((option) => (
                       <button
                         key={option.label}
                         onClick={option.action}
-                        style={{
-                          padding: "1rem",
-                          backgroundColor: "white",
-                          border: "2px solid #bbf7d0",
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          gap: "0.5rem",
-                          transition: "all 0.2s",
-                        }}
-                        onMouseOver={(e) => {
-                          e.currentTarget.style.borderColor = "#10b981";
-                          e.currentTarget.style.backgroundColor = "#f0fdf4";
-                        }}
-                        onMouseOut={(e) => {
-                          e.currentTarget.style.borderColor = "#bbf7d0";
-                          e.currentTarget.style.backgroundColor = "white";
-                        }}
-                        onFocus={(e) => {
-                          e.currentTarget.style.borderColor = "#10b981";
-                          e.currentTarget.style.backgroundColor = "#f0fdf4";
-                        }}
-                        onBlur={(e) => {
-                          e.currentTarget.style.borderColor = "#bbf7d0";
-                          e.currentTarget.style.backgroundColor = "white";
-                        }}
+                        className={styles.shareButton}
                       >
                         <option.icon size={24} color="#166534" />
-                        <span
-                          style={{
-                            fontSize: "0.875rem",
-                            color: "#14532d",
-                            fontWeight: "500",
-                          }}
-                        >
-                          {option.label}
-                        </span>
+                        <span className={styles.shareLabel}>{option.label}</span>
                       </button>
                     ))}
                   </div>
@@ -678,22 +485,8 @@ function DepositScreen() {
             )}
 
             {/* Security Notice */}
-            <div
-              style={{
-                backgroundColor: "#fef3c7",
-                padding: "1rem",
-                borderRadius: "8px",
-                border: "1px solid #fcd34d",
-              }}
-            >
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: "0.9rem",
-                  color: "#92400e",
-                  lineHeight: "1.5",
-                }}
-              >
+            <div className={styles.securityNotice}>
+              <p className={styles.securityText}>
                 <strong>Security:</strong> Only users with valid KYC/KYB credentials (Mizuhiki SBT
                 or UNTI) can withdraw using this link. The link contains encrypted withdrawal
                 information that's processed locally.

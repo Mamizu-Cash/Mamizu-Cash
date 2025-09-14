@@ -283,7 +283,7 @@
   margin-bottom: var(--spacing-2);
 }
 
-.spinner {
+.loadingIndicator .spinner {
   width: 16px;
   height: 16px;
   border: 2px solid var(--color-warning-600);
@@ -349,6 +349,444 @@
   background: linear-gradient(135deg, var(--color-error-50) 0%, var(--color-error-100) 100%);
   border: 1px solid var(--color-error-300);
   color: var(--color-error-800);
+}
+
+/* Link Generation Section */
+.linkGenerationSection {
+  margin-top: var(--spacing-8);
+  background: linear-gradient(135deg, var(--color-success-50) 0%, var(--color-success-100) 100%);
+  padding: var(--spacing-8);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-success-200);
+  animation: slideUp var(--transition-slow) ease-out;
+}
+
+.linkHeader {
+  text-align: center;
+  margin-bottom: var(--spacing-8);
+}
+
+.linkIconContainer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--color-success-600) 0%, var(--color-success-700) 100%);
+  border-radius: 50%;
+  margin-bottom: var(--spacing-4);
+  box-shadow: var(--shadow-lg);
+}
+
+.linkTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-success-800);
+  margin-bottom: var(--spacing-2);
+}
+
+.linkSubtitle {
+  color: var(--color-success-700);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+}
+
+/* URL Display */
+.urlDisplay {
+  background-color: var(--bg-tertiary);
+  border: 2px solid var(--color-success-200);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+}
+
+.urlLabel {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-success-700);
+  margin-bottom: var(--spacing-2);
+  font-weight: var(--font-weight-medium);
+}
+
+.urlText {
+  background-color: var(--bg-secondary);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  word-break: break-all;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+/* Action Buttons */
+.linkActions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
+}
+
+.linkButton {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.linkButton:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.copyButton {
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-700) 100%);
+  color: white;
+}
+
+.copyButton.copied {
+  background: linear-gradient(135deg, var(--color-success-600) 0%, var(--color-success-700) 100%);
+}
+
+.qrButton {
+  background-color: var(--bg-tertiary);
+  color: var(--color-secondary-600);
+  border: 2px solid var(--color-secondary-600);
+}
+
+.qrButton:hover {
+  background-color: var(--color-secondary-600);
+  color: white;
+}
+
+.qrButton.active {
+  background-color: var(--color-secondary-600);
+  color: white;
+}
+
+/* QR Code Display */
+.qrDisplay {
+  background-color: var(--bg-tertiary);
+  padding: var(--spacing-8);
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--color-success-200);
+  text-align: center;
+  margin-bottom: var(--spacing-6);
+  animation: slideDown var(--transition-base) ease-out;
+}
+
+.qrCodePlaceholder {
+  width: 200px;
+  height: 200px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.qrDescription {
+  margin-top: var(--spacing-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-success-700);
+}
+
+/* Share Options */
+.shareSection {
+  margin-bottom: var(--spacing-4);
+}
+
+.shareTitle {
+  margin: 0 0 var(--spacing-4) 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-success-800);
+}
+
+.shareGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-3);
+}
+
+.shareOption {
+  padding: var(--spacing-4);
+  background-color: var(--bg-tertiary);
+  border: 2px solid var(--color-success-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  color: var(--color-success-800);
+}
+
+.shareOption:hover {
+  border-color: var(--color-success-400);
+  background-color: var(--color-success-50);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+  color: var(--color-success-800);
+}
+
+.shareOptionLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Security Notice */
+.securityNotice {
+  background-color: var(--color-warning-100);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-warning-300);
+}
+
+.securityNoticeText {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-warning-800);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Generate Button */
+.generateButton {
+  width: 100%;
+  padding: var(--spacing-4) var(--spacing-8);
+  background: linear-gradient(135deg, var(--color-success-600) 0%, var(--color-success-700) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  margin-bottom: var(--spacing-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-md);
+}
+
+.generateButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-success-700) 0%, var(--color-success-800) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.generateButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.generateButton.generating {
+  background: linear-gradient(135deg, var(--color-neutral-400) 0%, var(--color-neutral-500) 100%);
+  cursor: not-allowed;
+}
+
+.generateButton .spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* URL Container and Display */
+.urlContainer {
+  background-color: var(--bg-tertiary);
+  border: 2px solid var(--color-success-300);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+}
+
+.urlLabel {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-success-800);
+  margin-bottom: var(--spacing-2);
+  font-weight: var(--font-weight-medium);
+}
+
+.urlDisplay {
+  background-color: var(--bg-primary);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  word-break: break-all;
+  color: var(--text-secondary);
+  border: 1px solid var(--color-gray-300);
+}
+
+/* Copy Button */
+.copyButton {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--color-primary-600);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-6);
+  transition: var(--transition-base);
+}
+
+.copyButton:hover {
+  background-color: var(--color-primary-700);
+}
+
+.copyButton.copied {
+  background-color: var(--color-success-600);
+}
+
+/* QR Toggle Button */
+.qrToggleButton {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 2px solid var(--color-indigo-600);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-6);
+  transition: var(--transition-base);
+}
+
+.qrToggleButton:hover {
+  border-color: var(--color-indigo-700);
+  background-color: var(--color-indigo-50);
+}
+
+.qrToggleButton.active {
+  background-color: var(--color-indigo-600);
+  color: white;
+}
+
+/* QR Code Display */
+.qrCodeContainer {
+  background-color: var(--bg-tertiary);
+  padding: var(--spacing-8);
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--color-success-300);
+  text-align: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.qrCodePlaceholder {
+  width: 200px;
+  height: 200px;
+  background-color: var(--color-gray-100);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  color: var(--color-gray-500);
+}
+
+.qrDescription {
+  margin-top: var(--spacing-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-success-800);
+}
+
+/* Share Section */
+.shareSection {
+  margin-bottom: var(--spacing-4);
+}
+
+.shareTitle {
+  margin: 0 0 var(--spacing-4) 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-success-900);
+}
+
+.shareGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-3);
+}
+
+.shareButton {
+  padding: var(--spacing-4);
+  background-color: var(--bg-tertiary);
+  border: 2px solid var(--color-success-300);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  transition: var(--transition-base);
+}
+
+.shareButton:hover {
+  border-color: var(--color-success-600);
+  background-color: var(--color-success-50);
+}
+
+.shareButton:focus {
+  border-color: var(--color-success-600);
+  background-color: var(--color-success-50);
+  outline: none;
+}
+
+.shareLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-success-900);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Security Notice */
+.securityNotice {
+  background-color: var(--color-warning-100);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-warning-400);
+}
+
+.securityText {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-warning-800);
+  line-height: var(--line-height-relaxed);
 }
 
 /* Responsive Design */
