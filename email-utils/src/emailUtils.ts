@@ -1,4 +1,4 @@
-import { initZkEmailSdk } from '@zk-email/sdk';
+import { initZkEmailSdk, Proof } from '@zk-email/sdk';
 import fs from 'fs/promises';
 
 /**
@@ -26,10 +26,6 @@ export async function generateProofFromBlueprintAndEml(
 
   const proof = await prover.generateProof(eml);
 
-  const verif = await proof.verify();
-  console.log(`[prove4d] Off-chain verification result: ${verif}`);
-
-  debugger;
   const verifOnChain = await blueprint.verifyProofOnChain(proof);
   console.log(`[prove4d] On-chain verification result: ${verifOnChain}`);
 
