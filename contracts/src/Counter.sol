@@ -1,12 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+
 /// @title Simple Counter Contract
 /// @notice A basic counter that can be incremented and decremented
 /// @dev This is a simple example contract for demonstration purposes
 contract Counter {
     /// @notice The current count value
     uint256 public count;
+
+    /// @notice Mizuhiki SBT contract address on Kaigan testnet
+    address public constant MIZUHIKI_SBT = 0x606F72657e72cd1218444C69eF9D366c62C54978;
 
     /// @notice Emitted when the counter value changes
     /// @param newValue The new counter value
@@ -52,6 +57,19 @@ contract Counter {
     function reset() public {
         uint256 oldValue = count;
         count = 0;
+        emit CountChanged(count, oldValue);
+    }
+
+    /// @notice Increment the counter by 1 (Mizuhiki SBT holders only)
+    /// @dev Only accounts holding at least one Mizuhiki SBT can call this function
+    function mizuhikiIncrement() public {
+        require(
+            IERC721(MIZUHIKI_SBT).balanceOf(msg.sender) > 0,
+            "Counter: caller must hold Mizuhiki SBT"
+        );
+
+        uint256 oldValue = count;
+        count += 1;
         emit CountChanged(count, oldValue);
     }
 }

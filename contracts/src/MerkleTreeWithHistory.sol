@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // from https://github.com/tornadocash/tornado-core/blob/master/contracts/MerkleTreeWithHistory.sol
-pragma solidity 0.8.17;
+pragma solidity ^0.8.19;
 
 interface IHasher {
     function MiMCSponge(
