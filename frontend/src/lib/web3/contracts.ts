@@ -5,6 +5,7 @@ export const CONTRACT_ADDRESSES = {
   BUSINESS_VERIFIER: "0xb44aba22cfc4b58b2cdf9be059d3ba94cd051638" as `0x${string}`,
   KNOWN_COMPANY_UNTI: "0x74a1924549587b7d19398771c6c5ea3b7ae3c32a" as `0x${string}`,
   MIZUHIKI_SBT: "0x606F72657e72cd1218444C69eF9D366c62C54978" as `0x${string}`,
+  ZK_EMAIL_VERIFIER: "0xYourZkEmailVerifierAddressHere" as `0x${string}`,
 } as const;
 
 // Kaigan chain configuration

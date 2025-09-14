@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
-import {AlwaysAllow} from "../src/verification/AlwaysAllow.sol";
+import {ZkEmailVerifier} from "../src/verification/ZkEmailVerifier.sol";
 import {BusinessVerifier} from "../src/BusinessVerifier.sol";
 
 /// @title Deploy BusinessVerifier Contract Script
@@ -18,7 +18,7 @@ contract DeployBusinessVerifier is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         // 1. Deploy AlwaysAllow verifier contract
-        AlwaysAllow alwaysAllow = new AlwaysAllow();
+        ZkEmailVerifier alwaysAllow = new ZkEmailVerifier(0x1ff35617D792A88f396008b1e109585020571D49);
 
         // 2. Deploy BusinessVerifier with AlwaysAllow as the verifier
         BusinessVerifier businessVerifier = new BusinessVerifier(
@@ -39,10 +39,5 @@ contract DeployBusinessVerifier is Script {
         console.log("Owner address:", owner);
         console.log("Deployer address:", owner);
         console.log("Chain ID:", block.chainid);
-
-        // Log verification
-        console.log("\n=== Verification ===");
-        console.log("AlwaysAllow.isEligible(owner):", alwaysAllow.isEligible(owner, ""));
-        console.log("BusinessVerifier.isEligible(owner):", businessVerifier.isEligible(owner));
     }
 }

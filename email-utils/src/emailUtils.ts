@@ -13,7 +13,7 @@ export async function generateProofFromBlueprintAndEml(
   blueprintId: string,
   emlFilePath: string,
   opts?: VerifyOptions,
-): Promise<unknown> {
+): Promise<Proof> {
   console.log('[prove4d] Initializing ZKEmail SDK (local mode, debug)...');
   const sdk = initZkEmailSdk({ logging: { level: 'debug', enabled: true } });
 

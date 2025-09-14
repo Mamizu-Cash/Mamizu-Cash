@@ -7,7 +7,9 @@ import { getCreatorTxHashFromAddress } from './getCreatorTxHash.js';
 import { createPublicClient, http } from 'viem';
 import { baseSepolia } from 'viem/chains';
 import { replayCreateOnKaigan } from './replayCreateOnKaigan.js';
-
+import fs from 'fs';
+import type { Proof } from '@zk-email/sdk';
+    
 const program = new Command();
 
 program
@@ -148,6 +150,42 @@ program
       process.exit(0);
     } catch (error) {
       console.error('Error replaying creation tx on Kaigan:', error);
+      process.exit(1);
+    }
+  });
+
+// New command: generate JSON fixture for ZkEmailVerifier test
+program
+  .command('gen-fixture')
+  .description('Generate proof fixture JSON for ZkEmailVerifier test')
+  .option(
+    '--blueprint <blueprintId>',
+    'Blueprint registry ID (default: yuki-js/mamizu_cash_reg@v4)',
+    'yuki-js/mamizu_cash_reg@v4',
+  )
+  .requiredOption('--eml <emlFilePath>', 'Path to the .eml file')
+  .option('--verifier <address>', 'Override verifier contract address (0x...)')
+  .option('--version <n>', 'Override version param (default 1)', (v) => BigInt(v))
+  .option('--out <path>', 'Output fixture path', './fixtures/proof.json')
+  .action(async (options) => {
+    try {
+      const proof = await generateProofFromBlueprintAndEml(
+        options.blueprint,
+        options.eml,
+        {
+          addressOverride: options.verifier,
+          versionParam: options.version,
+        },
+      );
+      const fixture = {
+        proofData: proof.props.proofData,
+        publicOutputs: proof.props.publicOutputs,
+      };
+      fs.writeFileSync(options.out, JSON.stringify(fixture, null, 2));
+      console.log('Fixture generated at', options.out);
+      process.exit(0);
+    } catch (error) {
+      console.error('Error generating fixture:', error);
       process.exit(1);
     }
   });
