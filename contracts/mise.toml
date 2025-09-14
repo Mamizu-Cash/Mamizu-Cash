@@ -62,16 +62,19 @@ run = '''
 set -euo pipefail
 echo "Generating Business Verifier ABIs..."
 forge build --silent
-if [ -f "out/AlwaysAllow.sol/AlwaysAllow.json" ] && [ -f "out/BusinessVerifier.sol/BusinessVerifier.json" ]; then
+if [ -f "out/AlwaysAllow.sol/AlwaysAllow.json" ] && [ -f "out/BusinessVerifier.sol/BusinessVerifier.json" ] && [ -f "out/KnownCompanyUnti.sol/KnownCompanyUnti.json" ]; then
   echo "ABIs generated:"
   echo "  - out/AlwaysAllow.sol/AlwaysAllow.json"
   echo "  - out/BusinessVerifier.sol/BusinessVerifier.json"
+  echo "  - out/KnownCompanyUnti.sol/KnownCompanyUnti.json"
   # Extract ABI only for frontend
   jq '.abi' out/AlwaysAllow.sol/AlwaysAllow.json > out/AlwaysAllow.abi.json 2>/dev/null || echo "jq not available for AlwaysAllow"
   jq '.abi' out/BusinessVerifier.sol/BusinessVerifier.json > out/BusinessVerifier.abi.json 2>/dev/null || echo "jq not available for BusinessVerifier"
+  jq '.abi' out/KnownCompanyUnti.sol/KnownCompanyUnti.json > out/KnownCompanyUnti.abi.json 2>/dev/null || echo "jq not available for KnownCompanyUnti"
   echo "Extracted ABIs:"
   echo "  - out/AlwaysAllow.abi.json"
   echo "  - out/BusinessVerifier.abi.json"
+  echo "  - out/KnownCompanyUnti.abi.json"
 else
   echo "Error: Contract JSON files not found"
   exit 1
