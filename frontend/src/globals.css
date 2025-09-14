@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/* Tailwind v4 Theme Configuration */
+@theme {
+  /* Three Color Theory - Mamizu Cash Brand Colors */
+
+  /* Primary (60%): Deep Ocean Blue */
+  --color-primary: hsl(221 83% 53%);
+  --color-primary-foreground: hsl(210 40% 98%);
+
+  /* Secondary (30%): Cyan Blue */
+  --color-secondary: hsl(195 100% 60%);
+  --color-secondary-foreground: hsl(222.2 84% 4.9%);
+
+  /* Accent (10%): Coral Red for CTAs */
+  --color-accent: hsl(348 83% 47%);
+  --color-accent-foreground: hsl(210 40% 98%);
+
+  /* Status Colors */
+  --color-success: hsl(142.1 76.2% 36.3%);
+  --color-success-foreground: hsl(210 40% 98%);
+  --color-warning: hsl(47.9 95.8% 53.1%);
+  --color-warning-foreground: hsl(222.2 84% 4.9%);
+  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-destructive-foreground: hsl(210 40% 98%);
+
+  /* Base Colors */
+  --color-background: hsl(0 0% 100%);
+  --color-foreground: hsl(222.2 84% 4.9%);
+  --color-muted: hsl(210 40% 96%);
+  --color-muted-foreground: hsl(215.4 16.3% 46.9%);
+  --color-border: hsl(214.3 31.8% 91.4%);
+  --color-input: hsl(214.3 31.8% 91.4%);
+  --color-ring: hsl(221 83% 53%);
+
+  /* Card Colors */
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(222.2 84% 4.9%);
+
+  /* Popover Colors */
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(222.2 84% 4.9%);
+}
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+
+    /* Compatibility layer for shadcn/ui components */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Primary: Deep Ocean Blue */
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+
+    /* Secondary: Cyan Blue */
+    --secondary: 195 100% 60%;
+    --secondary-foreground: 222.2 84% 4.9%;
+
+    /* Accent: Coral Red for CTAs */
+    --accent: 348 83% 47%;
+    --accent-foreground: 210 40% 98%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221 83% 53%;
+
+    /* Additional colors */
+    --success: 142.1 76.2% 36.3%;
+    --warning: 47.9 95.8% 53.1%;
+    --error: 0 84.2% 60.2%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}

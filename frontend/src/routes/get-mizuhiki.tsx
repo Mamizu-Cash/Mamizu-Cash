@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink, User } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const Route = createFileRoute("/get-mizuhiki")({
   component: GetMizuhikiScreen,
@@ -7,137 +10,50 @@ export const Route = createFileRoute("/get-mizuhiki")({
 
 function GetMizuhikiScreen() {
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-        padding: "2rem",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "600px",
-          margin: "0 auto",
-          backgroundColor: "white",
-          borderRadius: "16px",
-          padding: "3rem",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          textAlign: "center",
-        }}
-      >
-        {/* Header */}
-        <div style={{ marginBottom: "3rem" }}>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "100px",
-              height: "100px",
-              backgroundColor: "#3b82f6",
-              borderRadius: "50%",
-              marginBottom: "2rem",
-            }}
-          >
-            <User size={50} color="white" />
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 py-8">
+      <Card className="w-full max-w-2xl border-0 bg-background/95 shadow-xl backdrop-blur">
+        <CardHeader className="space-y-6 text-center">
+          <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary">
+            <User size={50} className="text-white" />
           </div>
-          <h1
-            style={{
-              fontSize: "2.5rem",
-              fontWeight: "bold",
-              color: "#1e293b",
-              marginBottom: "1rem",
-            }}
-          >
-            Mizuhiki SBT取得
-          </h1>
-          <p
-            style={{
-              color: "#64748b",
-              fontSize: "1.2rem",
-              lineHeight: "1.6",
-              marginBottom: "2rem",
-            }}
-          >
-            個人向けKYC認証でプライベート送金に参加
-          </p>
-        </div>
-
-        {/* Main Message */}
-        <div
-          style={{
-            backgroundColor: "#eff6ff",
-            padding: "2.5rem",
-            borderRadius: "16px",
-            marginBottom: "3rem",
-            border: "2px solid #3b82f6",
-          }}
-        >
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "60px",
-              height: "60px",
-              backgroundColor: "#3b82f6",
-              borderRadius: "50%",
-              marginBottom: "1.5rem",
-            }}
-          >
-            <ExternalLink size={30} color="white" />
+          <div className="space-y-2">
+            <CardTitle className="bg-gradient-to-r from-primary to-secondary bg-clip-text font-bold text-4xl text-transparent">
+              Mizuhiki SBT取得
+            </CardTitle>
+            <CardDescription className="text-lg">
+              個人向けKYC認証でプライベート送金に参加
+            </CardDescription>
           </div>
-          <h2
-            style={{
-              fontSize: "1.8rem",
-              fontWeight: "bold",
-              color: "#1e40af",
-              marginBottom: "1rem",
-            }}
-          >
-            外部サービス
-          </h2>
-          <p
-            style={{
-              fontSize: "1.3rem",
-              color: "#1e40af",
-              lineHeight: "1.6",
-              fontWeight: "500",
-            }}
-          >
-            Japan Smart ChainのMizuhiki Attestorが発行します。
-          </p>
-        </div>
+        </CardHeader>
 
-        {/* Action Buttons */}
-        <div
-          style={{
-            display: "flex",
-            gap: "1rem",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          <a
-            href="/"
-            style={{
-              padding: "1.2rem 2.5rem",
-              backgroundColor: "#3b82f6",
-              color: "white",
-              textDecoration: "none",
-              borderRadius: "12px",
-              fontSize: "1.1rem",
-              fontWeight: "600",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              transition: "background-color 0.2s",
-            }}
-          >
-            ホームに戻る
-          </a>
-        </div>
-      </div>
+        <CardContent className="space-y-8">
+          {/* Main Message */}
+          <Alert className="border-primary bg-primary/5">
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary">
+                <ExternalLink size={30} className="text-white" />
+              </div>
+              <div className="space-y-2">
+                <AlertTitle className="text-2xl text-primary">外部サービス</AlertTitle>
+                <AlertDescription className="font-medium text-primary text-xl">
+                  Japan Smart ChainのMizuhiki Attestorが発行します。
+                </AlertDescription>
+              </div>
+            </div>
+          </Alert>
+
+          {/* Action Buttons */}
+          <div className="flex justify-center">
+            <Button
+              asChild
+              size="lg"
+              className="bg-gradient-to-r from-primary to-secondary px-8 py-6 font-semibold text-lg transition-all hover:scale-102 hover:from-primary/90 hover:to-secondary/90 hover:shadow-lg"
+            >
+              <a href="/">ホームに戻る</a>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
