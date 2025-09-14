@@ -2,24 +2,38 @@
 // based from https://github.com/tornadocash/tornado-core/blob/master/src/cli.js
 
 const fs = require('fs')
-const snarkjs = require('snarkjs')
 const crypto = require('crypto')
-const circomlib = require('circomlibjs')
-const bigInt = snarkjs.bigInt
+const circomlibjs = require('circomlibjs')
+const { utils } = require('ffjavascript')
 const merkleTree = require('fixed-merkle-tree')
 const program = require('commander')
 
 const MERKLE_TREE_HEIGHT = 20;
 
+let babyJub;
+let pedersenHasher;
+
 /** Generate random number of specified byte length */
-const rbigint = nbytes => snarkjs.bigInt.leBuff2int(crypto.randomBytes(nbytes))
+const rbigint = nbytes => utils.leBuff2int(crypto.randomBytes(nbytes))
 
 /** Compute pedersen hash */
-const pedersenHash = data => circomlib.babyJub.unpackPoint(circomlib.pedersenHash.hash(data))[0]
+const pedersenHash = data => {
+  const hash = pedersenHasher.hash(data);
+  const unpacked = babyJub.unpackPoint(hash);
+  return utils.leBuff2int(unpacked[0]);
+}
 
 /** BigNumber to hex string of specified length */
 function toHex(number, length = 32) {
-  const str = number instanceof Buffer ? number.toString('hex') : bigInt(number).toString(16)
+  let str;
+  if (number instanceof Buffer) {
+    str = number.toString('hex');
+  } else if (typeof number === 'object' && number.toString) {
+    // Handle ffjavascript F field element
+    str = number.toString(16);
+  } else {
+    str = BigInt(number).toString(16);
+  }
   return '0x' + str.padStart(length * 2, '0')
 }
 
@@ -28,17 +42,17 @@ function toHex(number, length = 32) {
  */
 function createDeposit({ nullifier, secret }) {
   const deposit = { nullifier, secret }
-  deposit.preimage = Buffer.concat([deposit.nullifier.leInt2Buff(31), deposit.secret.leInt2Buff(31)])
+  deposit.preimage = Buffer.concat([utils.leInt2Buff(deposit.nullifier, 31), utils.leInt2Buff(deposit.secret, 31)])
   deposit.commitment = pedersenHash(deposit.preimage)
   deposit.commitmentHex = toHex(deposit.commitment)
-  deposit.nullifierHash = pedersenHash(deposit.nullifier.leInt2Buff(31))
+  deposit.nullifierHash = pedersenHash(utils.leInt2Buff(deposit.nullifier, 31))
   deposit.nullifierHex = toHex(deposit.nullifierHash)
   return deposit
 }
 
 function generateMerkleProof(depositEventsJsonPath, leafIndex) {
   const depositEventsJson = JSON.parse(fs.readFileSync(__dirname + "/../" + depositEventsJsonPath))
-  const leaves = depositEventsJson.commitments.map(commitment => bigInt(commitment).toString())
+  const leaves = depositEventsJson.commitments.map(commitment => BigInt(commitment).toString())
   const tree = new merkleTree(MERKLE_TREE_HEIGHT, leaves)
   const { pathElements, pathIndices } = tree.path(leafIndex)
   return { pathElements, pathIndices, root: tree.root() }
@@ -52,14 +66,14 @@ async function generateInput({ depositEventsJsonPath, nullifier, nullifierHash, 
   const input = {
     // Public snark inputs
     root: root,
-    nullifierHash: bigInt(nullifierHash).toString(),
-    recipient: bigInt(recipient).toString(),
-    relayer: bigInt(relayerAddress).toString(),
-    fee: bigInt(fee).toString(),
+    nullifierHash: BigInt(nullifierHash).toString(),
+    recipient: BigInt(recipient).toString(),
+    relayer: BigInt(relayerAddress).toString(),
+    fee: BigInt(fee).toString(),
 
     // Private snark inputs
-    nullifier: bigInt(nullifier).toString(),
-    secret: bigInt(secret).toString(),
+    nullifier: BigInt(nullifier).toString(),
+    secret: BigInt(secret).toString(),
     pathElements: pathElements,
     pathIndices: pathIndices,
   }
@@ -68,6 +82,10 @@ async function generateInput({ depositEventsJsonPath, nullifier, nullifierHash, 
 }
 
 async function main() {
+  // Initialize circomlib modules
+  babyJub = await circomlibjs.buildBabyjub();
+  pedersenHasher = await circomlibjs.buildPedersenHash();
+
   program
     .command('gen-deposit')
     .description('Generate a deposit object (nullifier, secret, preimage, and commitment) and print it to stdout as JSON data')
