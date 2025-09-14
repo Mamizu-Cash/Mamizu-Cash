@@ -3,6 +3,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import Header from "../components/Header";
 import { ToastContainer, ToastProvider } from "../components/ui/Toast";
+import { Web3Providers } from "../lib/web3/providers";
 
 // Conditionally import devtools only in development
 const DevtoolsComponent = () => {
@@ -16,11 +17,13 @@ const DevtoolsComponent = () => {
 
 export const Route = createRootRoute({
   component: () => (
-    <ToastProvider>
-      <Header />
-      <Outlet />
-      <ToastContainer />
-      <DevtoolsComponent />
-    </ToastProvider>
+    <Web3Providers>
+      <ToastProvider>
+        <Header />
+        <Outlet />
+        <ToastContainer />
+        <DevtoolsComponent />
+      </ToastProvider>
+    </Web3Providers>
   ),
 });

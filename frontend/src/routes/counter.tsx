@@ -1,0 +1,134 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "../components/ConnectButton";
+import { Button } from "../components/ui/Button/Button";
+import { useCounter } from "../hooks/useCounter";
+import { CONTRACT_ADDRESSES } from "../lib/web3/contracts";
+import styles from "./counter.module.css";
+
+export const Route = createFileRoute("/counter")({
+  component: CounterPage,
+});
+
+function CounterPage() {
+  const { isConnected } = useAccount();
+  const {
+    count,
+    increment,
+    decrement,
+    setCount,
+    reset,
+    isIncrementPending,
+    isDecrementPending,
+    isSetCountPending,
+    isResetPending,
+    isCountLoading,
+    refetchCount,
+  } = useCounter();
+
+  const handleSetCount = () => {
+    const newValue = prompt("Enter new count value:");
+    if (newValue !== null) {
+      const value = BigInt(newValue);
+      setCount(value);
+    }
+  };
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <h1 className={styles.title}>Counter Contract</h1>
+        <p className={styles.description}>
+          Interact with the Counter smart contract on Kaigan Chain
+        </p>
+
+        {/* Wallet Connection */}
+        <div className={styles.connectSection}>
+          <h3 className={styles.connectTitle}>Wallet Connection</h3>
+          <ConnectButton />
+        </div>
+
+        {/* Counter Interface */}
+        {isConnected ? (
+          <div className={styles.counterSection}>
+            <div className={styles.counterValue}>
+              {isCountLoading ||
+              isIncrementPending ||
+              isDecrementPending ||
+              isSetCountPending ||
+              isResetPending
+                ? "Loading..."
+                : count !== undefined && count !== null
+                  ? count.toString()
+                  : "--"}
+            </div>
+
+            <div className={styles.buttonGroup}>
+              <Button onClick={increment} disabled={isIncrementPending} variant="primary">
+                {isIncrementPending ? "Incrementing..." : "Increment"}
+              </Button>
+
+              <Button onClick={decrement} disabled={isDecrementPending} variant="secondary">
+                {isDecrementPending ? "Decrementing..." : "Decrement"}
+              </Button>
+
+              <Button onClick={handleSetCount} disabled={isSetCountPending} variant="secondary">
+                {isSetCountPending ? "Setting..." : "Set Count"}
+              </Button>
+
+              <Button onClick={reset} disabled={isResetPending} variant="secondary">
+                {isResetPending ? "Resetting..." : "Reset"}
+              </Button>
+
+              <Button onClick={() => refetchCount()} variant="secondary">
+                Refresh
+              </Button>
+            </div>
+
+            {/* Transaction Status */}
+            <div className={styles.statusSection}>
+              {isIncrementPending && (
+                <div className={`${styles.status} ${styles.loading}`}>
+                  <span>⏳</span>
+                  <span>Increment transaction pending...</span>
+                </div>
+              )}
+
+              {isDecrementPending && (
+                <div className={`${styles.status} ${styles.loading}`}>
+                  <span>⏳</span>
+                  <span>Decrement transaction pending...</span>
+                </div>
+              )}
+
+              {isSetCountPending && (
+                <div className={`${styles.status} ${styles.loading}`}>
+                  <span>⏳</span>
+                  <span>Set count transaction pending...</span>
+                </div>
+              )}
+
+              {isResetPending && (
+                <div className={`${styles.status} ${styles.loading}`}>
+                  <span>⏳</span>
+                  <span>Reset transaction pending...</span>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div style={{ textAlign: "center", color: "#6b7280" }}>
+            Please connect your wallet to interact with the contract
+          </div>
+        )}
+
+        {/* Contract Info */}
+        <div className={styles.contractInfo}>
+          <div className={styles.contractTitle}>Contract Information</div>
+          <div className={styles.contractAddress}>Address: {CONTRACT_ADDRESSES.COUNTER}</div>
+          <div className={styles.contractAddress}>Chain: JSC Kaigan Testnet (ID: 5278000)</div>
+        </div>
+      </div>
+    </div>
+  );
+}
