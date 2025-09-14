@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { ConnectButton } from "./ConnectButton";
 
 export default function Header() {
   return (
@@ -23,7 +24,14 @@ export default function Header() {
         <div style={{ padding: "0 8px", fontWeight: "bold" }}>
           <Link to="/withdraw">Withdraw</Link>
         </div>
+        <div style={{ padding: "0 8px", fontWeight: "bold" }}>
+          <Link to="/profile">Profile</Link>
+        </div>
       </nav>
+
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <ConnectButton />
+      </div>
     </header>
   );
 }
