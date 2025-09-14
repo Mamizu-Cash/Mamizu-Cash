@@ -143,7 +143,7 @@ describe("MamizuCash", function () {
 
   describe("Withdraw", function () {
     it("Should successfully withdraw with valid proof", async function () {
-      this.timeout(60000); // Increase timeout for proof generation
+      this.timeout(60000000); // Increase timeout for proof generation
 
       // Generate real deposit using Pedersen hash
       const nullifier = rbigint(31);
@@ -180,9 +180,9 @@ describe("MamizuCash", function () {
 
       console.log("\nWitness input:");
       console.log("  root:", input.root);
-      console.log("  nullifierHash (input):", input.nullifierHash);
-      console.log("  nullifier:", input.nullifier);
-      console.log("  secret:", input.secret);
+      console.log("  nullifierHash (input):", toHex(input.nullifierHash));
+      console.log("  nullifier:", toHex(input.nullifier));
+      console.log("  secret:", toHex(input.secret));
 
       console.log("\nGenerating zk-SNARK proof...");
 

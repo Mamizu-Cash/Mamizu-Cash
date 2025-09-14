@@ -47,6 +47,8 @@ template Withdraw(levels) {
     hasher.nullifier <== nullifier;
     hasher.secret <== secret;
     hasher.nullifierHash === nullifierHash;
+    log(nullifierHash);
+    log(hasher.nullifierHash);
 
     component tree = MerkleTreeChecker(levels);
     tree.leaf <== hasher.commitment;
