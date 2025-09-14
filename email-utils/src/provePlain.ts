@@ -1,6 +1,5 @@
-import { initZkEmailSdk, Proof } from '@zk-email/sdk';
+import { initZkEmailSdk } from '@zk-email/sdk';
 import fs from 'fs/promises';
-import { verifyProofDirectOnChain, type VerifyOptions } from './verifyOnChain.js';
 
 /**
  * Generates a zero-knowledge proof from an EML file and blueprint ID.
@@ -12,7 +11,6 @@ import { verifyProofDirectOnChain, type VerifyOptions } from './verifyOnChain.js
 export async function generateProofFromBlueprintAndEml(
   blueprintId: string,
   emlFilePath: string,
-  opts?: VerifyOptions,
 ): Promise<unknown> {
   console.log('[prove4d] Initializing ZKEmail SDK (local mode, debug)...');
   const sdk = initZkEmailSdk({ logging: { level: 'debug', enabled: true } });
@@ -29,7 +27,10 @@ export async function generateProofFromBlueprintAndEml(
   const proof = await prover.generateProof(eml);
 
   console.log('[prove4d] Verifying on-chain (Verifier contract direct)...');
-  const verifOnChain = await verifyProofDirectOnChain(proof as Proof, opts);
+  // @ts-ignore
+  const { verifyProofDirectOnChain } = await import('./verifyOnChain.js');
+  // Use default options, or allow override if needed
+  const verifOnChain = await verifyProofDirectOnChain(proof);
 
   console.log(`[prove4d] On-chain verification result: ${verifOnChain}`);
 

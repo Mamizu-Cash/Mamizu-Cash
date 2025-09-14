@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { generateProofFromBlueprintAndEml } from './emailUtils.js';
+import { generateProofFromBlueprintAndEml as provePlain } from './provePlain.js';
 import { transplantBlueprintToKaigan } from './transplantContract.js';
 import { getVerifierAddressFromBlueprint } from './getVerifierAddress.js';
 import { getCreatorTxHashFromAddress } from './getCreatorTxHash.js';
@@ -12,7 +13,6 @@ const program = new Command();
 program
   .command('prove4d')
   .description('Generate a ZK proof from blueprint and EML file using zk email sdk')
-  .version('0.1.0', '--version', 'Show CLI version')
   .option(
     '--blueprint <blueprintId>',
     'Blueprint registry ID (default: yuki-js/mamizu_cash_reg@v4)',
@@ -20,13 +20,35 @@ program
   )
   .requiredOption('--eml <emlFilePath>', 'Path to the .eml file')
   .option('--verifier <address>', 'Override verifier contract address (0x...)')
-  .option('--version <n>', 'Override verify(version,...) first parameter (default 1)', (v) => BigInt(v))
+  .option('--version <n>', 'Override verify(version,...) first parameter (default 1)', (v) =>
+    BigInt(v),
+  )
   .action(async (options) => {
     try {
       const proof = await generateProofFromBlueprintAndEml(options.blueprint, options.eml, {
         addressOverride: options.verifier,
         versionParam: options.version,
       });
+      console.log('Proof generated.');
+      process.exit(0);
+    } catch (error) {
+      console.error('Error generating proof:', error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('proveplain')
+  .description('Generate a ZK proof from blueprint and EML file using zk email sdk')
+  .option(
+    '--blueprint <blueprintId>',
+    'Blueprint registry ID (default: yuki-js/mamizu_cash_reg@v4)',
+    'yuki-js/mamizu_cash_reg@v4',
+  )
+  .requiredOption('--eml <emlFilePath>', 'Path to the .eml file')
+  .action(async (options) => {
+    try {
+      const proof = await provePlain(options.blueprint, options.eml);
       console.log('Proof generated.');
       process.exit(0);
     } catch (error) {
