@@ -15,5 +15,10 @@
     "hardhat": "^3.0.6",
     "mocha": "^11.7.2",
     "typescript": "~5.8.0"
+  },
+  "dependencies": {
+    "@noble/hashes": "^2.0.0",
+    "@openzeppelin/contracts": "^5.4.0",
+    "ffjavascript": "^0.3.1"
   }
 }
