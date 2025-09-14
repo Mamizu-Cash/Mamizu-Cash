@@ -73,7 +73,7 @@ function CounterPage() {
                 {isSetCountPending ? "Setting..." : "Set Count"}
               </Button>
 
-              <Button onClick={reset} disabled={isResetPending} variant="danger">
+              <Button onClick={reset} disabled={isResetPending} variant="secondary">
                 {isResetPending ? "Resetting..." : "Reset"}
               </Button>
 

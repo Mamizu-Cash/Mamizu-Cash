@@ -1,11 +1,15 @@
+"use client";
+
+import { createAppKit } from "@reown/appkit";
+import type { AppKitNetwork } from "@reown/appkit/networks";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { QueryClient } from "@tanstack/react-query";
 import { defineChain } from "viem";
-import { createConfig, http, injected } from "wagmi";
 
 // JSC Kaigan Testnet configuration
-export const kaigan = defineChain({
-  id: Number(import.meta.env.VITE_CHAIN_ID) || 5278000,
-  name: import.meta.env.VITE_CHAIN_NAME || "JSC Kaigan Testnet",
+const kaigan = defineChain({
+  id: 5278000,
+  name: "JSC Kaigan Testnet",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",
@@ -13,38 +17,51 @@ export const kaigan = defineChain({
   },
   rpcUrls: {
     default: {
-      http: [
-        import.meta.env.VITE_RPC_URL ||
-          "https://rpc.kaigan.jsc.dev/rpc?token=QjxBt0CfU0eNzOHSJEvZA1FIzEK8hd2sJsosgP7TU0Q",
-      ],
+      http: ["https://rpc.kaigan.jsc.dev/rpc?token=QjxBt0CfU0eNzOHSJEvZA1FIzEK8hd2sJsosgP7TU0Q"],
     },
   },
   blockExplorers: {
     default: {
       name: "Kaigan Explorer",
-      url: import.meta.env.VITE_BLOCK_EXPLORER || "https://explorer.kaigan.jsc.dev",
+      url: "https://explorer.kaigan.jsc.dev",
     },
   },
+  testnet: true,
+}) satisfies AppKitNetwork;
+
+const projectId = "demo-project-id";
+const networks = [kaigan] satisfies [AppKitNetwork, ...AppKitNetwork[]];
+
+// AppKit主導で接続UXを管理
+const wagmiAdapter = new WagmiAdapter({
+  ssr: false,
+  projectId,
+  networks,
 });
 
-export const wagmiConfig = createConfig({
-  chains: [kaigan],
-  connectors: [injected({ target: "metaMask" }), injected({ target: "injected" })],
-  transports: {
-    [kaigan.id]: http(
-      import.meta.env.VITE_RPC_URL ||
-        "https://rpc.kaigan.jsc.dev/rpc?token=QjxBt0CfU0eNzOHSJEvZA1FIzEK8hd2sJsosgP7TU0Q",
-    ),
+// wagmiはReactフック層だけに限定
+export const wagmiConfig = wagmiAdapter.wagmiConfig;
+
+// AppKit（接続モーダル等）を起動
+createAppKit({
+  adapters: [wagmiAdapter],
+  projectId,
+  networks,
+  features: {
+    email: false,
+  },
+  metadata: {
+    name: "Mamizu Cash",
+    description: "Privacy-focused transaction mixer on Kaigan",
+    url: "http://localhost:3000",
+    icons: ["http://localhost:3000/icon.png"],
   },
 });
 
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30_000, // 30 seconds
-      retry: 3,
-    },
-    mutations: {
+      staleTime: 30_000,
       retry: 3,
     },
   },
