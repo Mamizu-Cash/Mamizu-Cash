@@ -1,5 +1,5 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import Header from "../components/Header";
 
@@ -9,12 +9,8 @@ const DevtoolsComponent = () => {
     return null;
   }
 
-  // For now, disable devtools to allow build to pass
-  return (
-    <div style={{ position: "fixed", bottom: 0, left: 0 }}>
-      <TanStackRouterDevtoolsPanel />
-    </div>
-  );
+  // Use floating devtools with collapse functionality
+  return <TanStackRouterDevtools initialIsOpen={false} />;
 };
 
 export const Route = createRootRoute({

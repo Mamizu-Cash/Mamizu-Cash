@@ -6,7 +6,8 @@
       "Bash(npx biome check:*)",
       "Bash(mise k:*)",
       "Bash(lsb_release:*)",
-      "mcp__context7__resolve-library-id"
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs"
     ],
     "deny": [],
     "ask": []
