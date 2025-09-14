@@ -1,8 +1,51 @@
 import { expect } from "chai";
 import { network } from "hardhat";
+import { writeFileSync, mkdirSync, existsSync } from "fs";
 import type { MamizuCash, MockHasher, Verifier } from "../types/ethers-contracts/index.js";
 import { createCode, abi } from "../utils/mimcsponge_gencontract.js";
+import {
+  initializeCircomlib,
+  createDeposit,
+  rbigint,
+  toHex,
+  generateInput,
+  generateProof,
+  formatProofForSolidity
+} from "../utils/deposit.js";
 const { ethers } = await network.connect();
+
+// Helper function to save deposit events to JSON file
+async function saveTmpDepositEventsJson(mamizuCash: MamizuCash) {
+  // Query all Deposit events
+  const filter = mamizuCash.filters.Deposit();
+  const logs = await mamizuCash.queryFilter(filter);
+
+  // Extract commitments and leaf indices from logs
+  const commitments: string[] = [];
+  const leafIndices: string[] = [];
+
+  for (const log of logs) {
+    if (log.args) {
+      commitments.push(log.args.commitment);
+      leafIndices.push(log.args.leafIndex.toString());
+    }
+  }
+
+  // Create JSON object
+  const depositEventsJson = {
+    commitments: commitments,
+    leafIndices: leafIndices
+  };
+
+  // Ensure tmp directory exists
+  if (!existsSync("tmp")) {
+    mkdirSync("tmp", { recursive: true });
+  }
+
+  // Write to file
+  writeFileSync("tmp/deposit_events.json", JSON.stringify(depositEventsJson, null, 2));
+  console.log(`Saved ${commitments.length} deposit events to tmp/deposit_events.json`);
+}
 
 describe("MamizuCash", function () {
   let mamizuCash: MamizuCash;
@@ -13,6 +56,11 @@ describe("MamizuCash", function () {
 
   const denomination = ethers.parseEther("1.0"); // 1 ETH
   const merkleTreeHeight = 20;
+
+  before(async function () {
+    // Initialize circomlib modules once before all tests
+    await initializeCircomlib();
+  });
 
   beforeEach(async function () {
     [owner, user] = await ethers.getSigners();
@@ -58,10 +106,21 @@ describe("MamizuCash", function () {
 
   describe("Deposit", function () {
     it("Should successfully deposit with correct amount and emit event", async function () {
-      // Generate commitment within the field size
-      const FIELD_SIZE = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
-      const rawCommitment = ethers.keccak256(ethers.toUtf8Bytes("test-commitment"));
-      const commitment = ethers.toBeHex(BigInt(rawCommitment) % FIELD_SIZE, 32);
+      // Generate real deposit using Pedersen hash from cli.js
+      const nullifier = rbigint(31);
+      const secret = rbigint(31);
+      const deposit = createDeposit({ nullifier, secret });
+      const commitment = deposit.commitmentHex;
+
+      const output = {
+        nullifier: toHex(deposit.nullifier),
+        nullifierHash: toHex(deposit.nullifierHash),
+        secret: toHex(deposit.secret),
+        preimage: `0x${deposit.preimage.toString("hex")}`,
+        commitment: deposit.commitmentHex
+      }
+      console.log(JSON.stringify(output))
+      console.log(user.address)
 
       const tx = await mamizuCash.connect(user).deposit(commitment, { value: denomination });
       const receipt = await tx.wait();
@@ -76,52 +135,92 @@ describe("MamizuCash", function () {
 
       // Verify contract balance
       expect(await ethers.provider.getBalance(await mamizuCash.getAddress())).to.equal(denomination);
+
+      // Save deposit events to JSON file
+      await saveTmpDepositEventsJson(mamizuCash);
     });
   });
 
   describe("Withdraw", function () {
     it("Should successfully withdraw with valid proof", async function () {
-      // Generate commitment and nullifier within the field size
-      const FIELD_SIZE = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
-      const rawCommitment = ethers.keccak256(ethers.toUtf8Bytes("test-commitment"));
-      const commitment = ethers.toBeHex(BigInt(rawCommitment) % FIELD_SIZE, 32);
-      const rawNullifier = ethers.keccak256(ethers.toUtf8Bytes("test-nullifier"));
-      const nullifierHash = ethers.toBeHex(BigInt(rawNullifier) % FIELD_SIZE, 32);
+      this.timeout(60000); // Increase timeout for proof generation
+
+      // Generate real deposit using Pedersen hash
+      const nullifier = rbigint(31);
+      const secret = rbigint(31);
+      const deposit = createDeposit({ nullifier, secret });
+
+      // Log deposit info for debugging
+      console.log("\nDeposit info for withdraw test:");
+      console.log("  nullifier:", toHex(nullifier));
+      console.log("  secret:", toHex(secret));
+      console.log("  nullifierHash:", deposit.nullifierHex);
+      console.log("  commitment:", deposit.commitmentHex);
+
+      // Perform deposit
+      await mamizuCash.connect(user).deposit(deposit.commitmentHex, { value: denomination });
+      await saveTmpDepositEventsJson(mamizuCash);
+
+      // Withdraw parameters
       const recipient = user.address;
-      const relayer = ethers.Wallet.createRandom().address; // Use different address for relayer
+      const relayer = ethers.Wallet.createRandom().address;
       const fee = ethers.parseEther("0.1");
 
-      // First deposit
-      await mamizuCash.connect(user).deposit(commitment, { value: denomination });
+      // Generate witness input for zk-SNARK
+      const input = await generateInput({
+        depositEventsJsonPath: "tmp/deposit_events.json",
+        nullifier: deposit.nullifier,
+        nullifierHash: deposit.nullifierHash,
+        secret: deposit.secret,
+        leafIndex: 0,
+        recipient: recipient,
+        relayerAddress: relayer,
+        fee: fee.toString()
+      });
 
-      // Get the merkle root after deposit
-      const root = await mamizuCash.getLastRoot();
+      console.log("\nWitness input:");
+      console.log("  root:", input.root);
+      console.log("  nullifierHash (input):", input.nullifierHash);
+      console.log("  nullifier:", input.nullifier);
+      console.log("  secret:", input.secret);
 
-      // Create mock proof (8 uint256 values)
-      const mockProof = ethers.AbiCoder.defaultAbiCoder().encode(
-        ["uint256[8]"],
-        [[1, 2, 3, 4, 5, 6, 7, 8]]
+      console.log("\nGenerating zk-SNARK proof...");
+
+      // Generate proof using snarkjs
+      const { proof, publicSignals } = await generateProof(
+        input,
+        "circuits/withdraw_js/withdraw.wasm",
+        "circuits/build/withdraw_0001.zkey"
       );
 
+      console.log("Proof generated successfully!");
+
+      // Format proof for Solidity (based on gen_poof_calldata.py)
+      const solidityProof = formatProofForSolidity(proof);
+
+      // Check initial balances
       const initialRecipientBalance = await ethers.provider.getBalance(recipient);
       const initialRelayerBalance = await ethers.provider.getBalance(relayer);
-      const initialContractBalance = await ethers.provider.getBalance(await mamizuCash.getAddress());
 
+      // Get merkle root
+      const root = await mamizuCash.getLastRoot();
+
+      // Execute withdrawal
       await expect(
         mamizuCash.connect(owner).withdraw(
-          mockProof,
+          solidityProof,
           root,
-          nullifierHash,
+          deposit.nullifierHex,
           recipient,
           relayer,
           fee
         )
       )
         .to.emit(mamizuCash, "Withdrawal")
-        .withArgs(recipient, nullifierHash, relayer, fee);
+        .withArgs(recipient, deposit.nullifierHex, relayer, fee);
 
       // Verify nullifier is spent
-      expect(await mamizuCash.isSpent(nullifierHash)).to.be.true;
+      expect(await mamizuCash.isSpent(deposit.nullifierHex)).to.be.true;
 
       // Verify balances changed correctly
       const finalRecipientBalance = await ethers.provider.getBalance(recipient);
@@ -130,7 +229,7 @@ describe("MamizuCash", function () {
 
       expect(finalRecipientBalance - initialRecipientBalance).to.equal(denomination - fee);
       expect(finalRelayerBalance - initialRelayerBalance).to.equal(fee);
-      expect(initialContractBalance - finalContractBalance).to.equal(denomination);
+      expect(await ethers.provider.getBalance(await mamizuCash.getAddress())).to.equal(0n);
     });
   });
 });
