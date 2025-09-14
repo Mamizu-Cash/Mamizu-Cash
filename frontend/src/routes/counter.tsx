@@ -58,7 +58,7 @@ function CounterPage() {
               isSetCountPending ||
               isResetPending
                 ? "Loading..."
-                : count !== undefined
+                : count !== undefined && count !== null
                   ? count.toString()
                   : "--"}
             </div>
