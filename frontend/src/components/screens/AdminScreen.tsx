@@ -1,5 +1,5 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { updateVerifierState } from "../../lib/verifierApi";
 import { ControlPanel } from "../admin/ControlPanel";
 import { ParticipantsTable } from "../admin/ParticipantsTable";
