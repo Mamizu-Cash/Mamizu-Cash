@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Building, CheckCircle, FileUp, Key, Mail, Shield } from "lucide-react";
 import { useState } from "react";
+import { generateBusinessVerificationEmailUrl } from "../lib/emailUtils";
 import {
   type CredentialInfo,
   generateMockHash,
@@ -79,19 +80,21 @@ function GetUntiScreen() {
 
   return (
     <div
+      className="main-container"
       style={{
         minHeight: "100vh",
         backgroundColor: "#f8fafc",
-        padding: "2rem",
+        padding: "1rem",
       }}
     >
       <div
+        className="main-card"
         style={{
-          maxWidth: "600px",
+          maxWidth: "800px",
           margin: "0 auto",
           backgroundColor: "white",
           borderRadius: "16px",
-          padding: "3rem",
+          padding: "2rem",
           boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
         }}
       >
@@ -269,7 +272,7 @@ function GetUntiScreen() {
               </p>
 
               <a
-                href="mailto:verify@mamizu.cash?subject=Mamizu Cash UNTI認証申請&body=Mamizu Cash UNTI認証を申請します。%0A%0A※このメールを企業ドメインから送信してください。%0A%0A----%0AMamizu Cash UNTI認証システム"
+                href={generateBusinessVerificationEmailUrl()}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -930,6 +933,14 @@ function GetUntiScreen() {
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 768px) {
+          .main-container {
+            padding: 0.5rem !important;
+          }
+          .main-card {
+            padding: 1.5rem !important;
+          }
         }
       `}</style>
     </div>

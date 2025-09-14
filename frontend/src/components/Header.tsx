@@ -21,9 +21,6 @@ export default function Header() {
           <Link to="/deposit">Deposit</Link>
         </div>
         <div style={{ padding: "0 8px", fontWeight: "bold" }}>
-          <Link to="/generate-link">Generate Link</Link>
-        </div>
-        <div style={{ padding: "0 8px", fontWeight: "bold" }}>
           <Link to="/withdraw">Withdraw</Link>
         </div>
       </nav>

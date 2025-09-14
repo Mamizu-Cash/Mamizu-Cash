@@ -1,6 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, Building, Lock, Shield } from "lucide-react";
-import { useState } from "react";
+import {
+  ArrowRight,
+  Building,
+  CheckCircle,
+  Copy,
+  FileText,
+  Link2,
+  Lock,
+  Mail,
+  QrCode,
+  Share2,
+  Shield,
+} from "lucide-react";
+import { useId, useState } from "react";
+import { useToastHelpers } from "../components/ui/Toast";
+import { generateShareEmailUrl } from "../lib/emailUtils";
+import styles from "./deposit.module.css";
 
 export const Route = createFileRoute("/deposit")({
   component: DepositScreen,
@@ -13,278 +28,473 @@ const DENOMINATIONS = [
   { value: "100", label: "100 ETH", usd: "$400,000" },
 ];
 
+type ProcessingState = "idle" | "generating" | "broadcasting" | "confirming" | "complete" | "error";
+
 function DepositScreen() {
   const [selectedAmount, setSelectedAmount] = useState("1");
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingState, setProcessingState] = useState<ProcessingState>("idle");
+  const [progress, setProgress] = useState(0);
+  const { showSuccess, showError, showInfo } = useToastHelpers();
 
-  const handleDeposit = () => {
-    setIsProcessing(true);
-    // Mock processing delay
+  // Generate unique IDs for accessibility
+  const privacyFeaturesId = useId();
+  const amountSelectionId = useId();
+  const linkGenerationSectionId = useId();
+
+  // Link generation states
+  const [generatedUrl, setGeneratedUrl] = useState("");
+  const [showQR, setShowQR] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isGeneratingLink, setIsGeneratingLink] = useState(false);
+
+  // Mock withdrawal URL
+  const MOCK_URL =
+    "https://mamizu.cash/withdraw#eyJub3RlIjoiMHg4NGY3YjVhMjNkNGU2YzE4IiwicG9vbCI6IjB4YWJjZGVmIn0";
+
+  const generateUrl = () => {
+    setIsGeneratingLink(true);
     setTimeout(() => {
-      setIsProcessing(false);
-      // Navigate to URL generation
-    }, 2000);
+      setGeneratedUrl(MOCK_URL);
+      setIsGeneratingLink(false);
+    }, 1500);
   };
 
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(generatedUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const shareOptions = [
+    {
+      icon: Mail,
+      label: "Email",
+      action: () =>
+        window.open(generateShareEmailUrl(generatedUrl, "[Mamizu-Cash] Withdrawal Link")),
+    },
+    {
+      icon: FileText,
+      label: "Invoice",
+      action: () => console.log("Add to invoice"),
+    },
+    {
+      icon: Share2,
+      label: "Share",
+      action: () => navigator.share?.({ url: generatedUrl }),
+    },
+  ];
+
+  const handleDeposit = async () => {
+    showInfo("Starting Private Deposit", `Initiating secure deposit of ${selectedAmount} ETH`, {
+      duration: 3000,
+    });
+
+    setProcessingState("generating");
+    setProgress(25);
+
+    try {
+      // Simulate commitment generation
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      showInfo("Generating Proof", "Creating zero-knowledge commitment...", { duration: 2000 });
+
+      setProcessingState("broadcasting");
+      setProgress(50);
+
+      // Simulate transaction broadcast
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      showInfo("Broadcasting Transaction", "Sending to Japan Smart Chain Kaigan...", {
+        duration: 2000,
+      });
+
+      setProcessingState("confirming");
+      setProgress(75);
+
+      // Simulate confirmation
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      setProcessingState("complete");
+      setProgress(100);
+
+      // Show success message
+      showSuccess(
+        "Deposit Successful!",
+        `Successfully deposited ${selectedAmount} ETH with complete privacy`,
+        {
+          duration: 5000,
+          action: {
+            label: "View Link",
+            onClick: () => {
+              // Scroll to link generation section
+              document.getElementById(linkGenerationSectionId)?.scrollIntoView({
+                behavior: "smooth",
+              });
+            },
+          },
+        },
+      );
+
+      // Auto-generate link after deposit success
+      setTimeout(() => {
+        generateUrl();
+      }, 1000);
+    } catch (error) {
+      console.error("Deposit failed:", error);
+      setProcessingState("error");
+      setProgress(0);
+
+      showError(
+        "Deposit Failed",
+        "An error occurred while processing your deposit. Please check your wallet connection and try again.",
+        {
+          action: {
+            label: "Retry",
+            onClick: () => {
+              setProcessingState("idle");
+              handleDeposit();
+            },
+          },
+        },
+      );
+
+      // Reset after error display
+      setTimeout(() => {
+        setProcessingState("idle");
+      }, 3000);
+    }
+  };
+
+  const getProcessingMessage = () => {
+    switch (processingState) {
+      case "generating":
+        return "Generating commitment and nullifier...";
+      case "broadcasting":
+        return "Broadcasting transaction to network...";
+      case "confirming":
+        return "Waiting for blockchain confirmation...";
+      case "complete":
+        return "Deposit completed successfully!";
+      case "error":
+        return "An error occurred. Please try again.";
+      default:
+        return "";
+    }
+  };
+
+  const getProgressSteps = () => {
+    const steps = [
+      { id: "commitment", text: "Generating zero-knowledge commitment" },
+      { id: "nullifier", text: "Creating cryptographic nullifier" },
+      { id: "broadcast", text: "Broadcasting to Japan Smart Chain Kaigan" },
+      { id: "confirmation", text: "Awaiting network confirmation" },
+    ];
+
+    return steps.map((step, index) => {
+      const isActive = index < Math.floor(progress / 25);
+      return {
+        id: step.id,
+        step: step.text,
+        isActive,
+      };
+    });
+  };
+
+  const isProcessing = processingState !== "idle" && processingState !== "complete";
+  const isDisabled = isProcessing || processingState === "complete";
+
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#f8fafc",
-        padding: "2rem",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "600px",
-          margin: "0 auto",
-          backgroundColor: "white",
-          borderRadius: "16px",
-          padding: "3rem",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-        }}
-      >
+    <div className={styles.container}>
+      <div className={styles.card}>
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "80px",
-              height: "80px",
-              backgroundColor: "#3b82f6",
-              borderRadius: "50%",
-              marginBottom: "1rem",
-            }}
-          >
-            <Shield size={40} color="white" />
+        <header className={styles.header}>
+          <div className={styles.iconContainer} role="img" aria-label="Security shield">
+            <Shield size={40} color="white" aria-hidden="true" />
           </div>
-          <h1
-            style={{
-              fontSize: "2rem",
-              fontWeight: "bold",
-              color: "#1e293b",
-              marginBottom: "0.5rem",
-            }}
-          >
-            Private Deposit
-          </h1>
-          <p
-            style={{
-              color: "#64748b",
-              fontSize: "1.1rem",
-              lineHeight: "1.6",
-            }}
-          >
+          <h1 className={styles.title}>Private Deposit</h1>
+          <p className={styles.subtitle}>
             Deposit funds into the shield pool for completely private transactions
           </p>
-        </div>
+        </header>
 
         {/* Privacy Features */}
-        <div
-          style={{
-            backgroundColor: "#eff6ff",
-            padding: "1.5rem",
-            borderRadius: "12px",
-            marginBottom: "2rem",
-            border: "1px solid #dbeafe",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              marginBottom: "1rem",
-            }}
-          >
-            <Lock size={20} color="#3b82f6" />
-            <span style={{ fontWeight: "600", color: "#1e293b" }}>Enterprise-Grade Privacy</span>
+        <section className={styles.privacyFeatures} aria-labelledby={privacyFeaturesId}>
+          <div className={styles.privacyHeader}>
+            <Lock size={20} color="var(--color-primary-600)" aria-hidden="true" />
+            <h2 id={privacyFeaturesId} className={styles.privacyTitle}>
+              Enterprise-Grade Privacy
+            </h2>
           </div>
-          <ul
-            style={{
-              listStyle: "none",
-              padding: 0,
-              margin: 0,
-              color: "#475569",
-            }}
-          >
-            <li style={{ marginBottom: "0.5rem" }}>✓ Zero-knowledge proof technology</li>
-            <li style={{ marginBottom: "0.5rem" }}>✓ KYC/KYB compliant transactions only</li>
-            <li style={{ marginBottom: "0.5rem" }}>✓ Complete transaction unlinkability</li>
-            <li>✓ Auditable by authorized parties</li>
+          <ul className={styles.featuresList}>
+            <li className={styles.featureItem}>
+              <span className={styles.featureIcon} aria-hidden="true">
+                ✓
+              </span>
+              Zero-knowledge proof technology
+            </li>
+            <li className={styles.featureItem}>
+              <span className={styles.featureIcon} aria-hidden="true">
+                ✓
+              </span>
+              KYC/KYB compliant transactions only
+            </li>
+            <li className={styles.featureItem}>
+              <span className={styles.featureIcon} aria-hidden="true">
+                ✓
+              </span>
+              Complete transaction unlinkability
+            </li>
+            <li className={styles.featureItem}>
+              <span className={styles.featureIcon} aria-hidden="true">
+                ✓
+              </span>
+              Auditable by authorized parties
+            </li>
           </ul>
-        </div>
+        </section>
 
         {/* Amount Selection */}
-        <div style={{ marginBottom: "2rem" }}>
-          <label
-            style={{
-              display: "block",
-              fontSize: "1.1rem",
-              fontWeight: "600",
-              color: "#1e293b",
-              marginBottom: "1rem",
-            }}
-          >
+        <section className={styles.amountSection} aria-labelledby={amountSelectionId}>
+          <label id={amountSelectionId} className={styles.amountLabel}>
             Select Deposit Amount
           </label>
           <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              gap: "1rem",
-            }}
+            className={styles.denominationsGrid}
+            role="radiogroup"
+            aria-labelledby={amountSelectionId}
           >
             {DENOMINATIONS.map((denom) => (
               <button
                 key={denom.value}
                 onClick={() => setSelectedAmount(denom.value)}
-                style={{
-                  padding: "1rem",
-                  border:
-                    selectedAmount === denom.value ? "2px solid #3b82f6" : "2px solid #e2e8f0",
-                  borderRadius: "12px",
-                  backgroundColor: selectedAmount === denom.value ? "#eff6ff" : "white",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                  textAlign: "left",
-                }}
+                className={`${styles.denominationCard} ${
+                  selectedAmount === denom.value ? styles.selected : ""
+                }`}
+                role="radio"
+                aria-checked={selectedAmount === denom.value}
+                aria-label={`${denom.label}, approximately ${denom.usd}`}
+                disabled={isDisabled}
               >
-                <div
-                  style={{
-                    fontSize: "1.25rem",
-                    fontWeight: "bold",
-                    color: "#1e293b",
-                    marginBottom: "0.25rem",
-                  }}
-                >
-                  {denom.label}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#64748b",
-                  }}
-                >
-                  ≈ {denom.usd}
-                </div>
+                <div className={styles.denominationAmount}>{denom.label}</div>
+                <div className={styles.denominationUsd}>≈ {denom.usd}</div>
               </button>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Trust Signals */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "2rem",
-            marginBottom: "2rem",
-            padding: "1rem",
-            backgroundColor: "#f8fafc",
-            borderRadius: "8px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Building size={16} color="#10b981" />
-            <span style={{ fontSize: "0.9rem", color: "#374151" }}>Enterprise Ready</span>
+        <section className={styles.trustSignals} aria-label="Security features">
+          <div className={styles.trustSignal}>
+            <Building size={16} className={styles.trustIcon} aria-hidden="true" />
+            <span className={styles.trustText}>Enterprise Ready</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Shield size={16} color="#10b981" />
-            <span style={{ fontSize: "0.9rem", color: "#374151" }}>Auditable</span>
+          <div className={styles.trustSignal}>
+            <Shield size={16} className={styles.trustIcon} aria-hidden="true" />
+            <span className={styles.trustText}>Auditable</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Lock size={16} color="#10b981" />
-            <span style={{ fontSize: "0.9rem", color: "#374151" }}>ZK Verified</span>
+          <div className={styles.trustSignal}>
+            <Lock size={16} className={styles.trustIcon} aria-hidden="true" />
+            <span className={styles.trustText}>ZK Verified</span>
           </div>
-        </div>
+        </section>
 
         {/* Deposit Button */}
         <button
           onClick={handleDeposit}
-          disabled={isProcessing}
-          style={{
-            width: "100%",
-            padding: "1rem 2rem",
-            backgroundColor: isProcessing ? "#94a3b8" : "#3b82f6",
-            color: "white",
-            border: "none",
-            borderRadius: "12px",
-            fontSize: "1.1rem",
-            fontWeight: "600",
-            cursor: isProcessing ? "not-allowed" : "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-            transition: "background-color 0.2s",
-          }}
+          disabled={isDisabled}
+          className={`${styles.depositButton} ${
+            isProcessing
+              ? styles.processing
+              : processingState === "complete"
+                ? styles.successIndicator
+                : styles.primary
+          }`}
+          aria-label={`Deposit ${selectedAmount} ETH securely`}
         >
-          {isProcessing ? (
-            "Processing Deposit..."
+          {processingState === "complete" ? (
+            <>
+              <CheckCircle size={20} aria-hidden="true" />
+              Deposit Complete!
+            </>
+          ) : isProcessing ? (
+            <>
+              <div className={styles.spinner} aria-hidden="true" />
+              Processing...
+            </>
           ) : (
             <>
               Deposit {selectedAmount} ETH
-              <ArrowRight size={20} />
+              <ArrowRight size={20} aria-hidden="true" />
             </>
           )}
         </button>
 
         {/* Progress Indicator */}
         {isProcessing && (
-          <div
-            style={{
-              marginTop: "1.5rem",
-              padding: "1rem",
-              backgroundColor: "#fffbeb",
-              borderRadius: "8px",
-              border: "1px solid #fed7aa",
-            }}
+          <section
+            className={`${styles.loadingIndicator} ${
+              processingState === "error" ? styles.errorIndicator : ""
+            }`}
+            role="status"
+            aria-live="polite"
+            aria-label="Transaction progress"
           >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                marginBottom: "0.5rem",
-              }}
-            >
-              <div
-                style={{
-                  width: "16px",
-                  height: "16px",
-                  border: "2px solid #f59e0b",
-                  borderTop: "2px solid transparent",
-                  borderRadius: "50%",
-                  animation: "spin 1s linear infinite",
-                }}
-              />
-              <span style={{ color: "#92400e", fontWeight: "500" }}>
-                Creating secure deposit...
-              </span>
+            <div className={styles.loadingHeader}>
+              {processingState !== "error" && <div className={styles.spinner} aria-hidden="true" />}
+              <span className={styles.loadingTitle}>{getProcessingMessage()}</span>
             </div>
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.9rem",
-                color: "#a16207",
-              }}
-            >
-              Generating commitment and nullifier on-chain
+            <p className={styles.loadingDescription}>
+              {processingState === "error"
+                ? "Please check your wallet connection and try again."
+                : "This may take a few moments as we ensure maximum privacy and security."}
             </p>
-          </div>
+
+            {/* Progress Bar */}
+            {processingState !== "error" && (
+              <div className="progress-bar" style={{ marginTop: "var(--spacing-3)" }}>
+                <div
+                  className="progress-fill"
+                  style={{ width: `${progress}%` }}
+                  aria-valuenow={progress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  role="progressbar"
+                  aria-label="Processing progress"
+                />
+              </div>
+            )}
+
+            {/* Detailed Steps */}
+            {processingState !== "error" && (
+              <div className={styles.progressSteps}>
+                <ul className={styles.stepsList}>
+                  {getProgressSteps().map(({ id, step, isActive }) => (
+                    <li
+                      key={id}
+                      className={styles.stepItem}
+                      aria-current={isActive ? "step" : undefined}
+                    >
+                      {step}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Link Generation Section - Show after successful deposit */}
+        {processingState === "complete" && (
+          <section
+            id={linkGenerationSectionId}
+            className={styles.linkGenerationSection}
+            aria-label="Withdrawal link generation"
+          >
+            {/* Link Generation Header */}
+            <div className={styles.linkHeader}>
+              <div className={styles.linkIconContainer}>
+                <Link2 size={30} color="white" aria-hidden="true" />
+              </div>
+              <h2 className={styles.linkTitle}>Share Withdrawal Link</h2>
+              <p className={styles.linkSubtitle}>
+                Generate a secure link for the recipient to withdraw funds privately
+              </p>
+            </div>
+
+            {/* Generate Button or URL Display */}
+            {!generatedUrl ? (
+              <button
+                onClick={generateUrl}
+                disabled={isGeneratingLink}
+                className={`${styles.generateButton} ${isGeneratingLink ? styles.generating : ""}`}
+              >
+                {isGeneratingLink ? (
+                  <>
+                    <div className={styles.spinner} />
+                    Generating Secure Link...
+                  </>
+                ) : (
+                  <>
+                    <Link2 size={20} />
+                    Generate Withdrawal Link
+                  </>
+                )}
+              </button>
+            ) : (
+              <>
+                {/* Generated URL */}
+                <div className={styles.urlContainer}>
+                  <label className={styles.urlLabel}>Withdrawal URL</label>
+                  <div className={styles.urlDisplay}>{generatedUrl}</div>
+                </div>
+
+                {/* Copy Button */}
+                <button
+                  onClick={copyToClipboard}
+                  className={`${styles.copyButton} ${copied ? styles.copied : ""}`}
+                >
+                  {copied ? (
+                    <>
+                      <CheckCircle size={18} />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={18} />
+                      Copy Link
+                    </>
+                  )}
+                </button>
+
+                {/* QR Code Toggle */}
+                <button
+                  onClick={() => setShowQR(!showQR)}
+                  className={`${styles.qrToggleButton} ${showQR ? styles.active : ""}`}
+                >
+                  <QrCode size={18} />
+                  {showQR ? "Hide QR Code" : "Show QR Code"}
+                </button>
+
+                {/* QR Code Display */}
+                {showQR && (
+                  <div className={styles.qrCodeContainer}>
+                    <div className={styles.qrCodePlaceholder}>
+                      QR Code
+                      <br />
+                      (Mock)
+                    </div>
+                    <p className={styles.qrDescription}>Scan to open withdrawal link</p>
+                  </div>
+                )}
+
+                {/* Share Options */}
+                <div className={styles.shareSection}>
+                  <h3 className={styles.shareTitle}>Quick Share</h3>
+                  <div className={styles.shareGrid}>
+                    {shareOptions.map((option) => (
+                      <button
+                        key={option.label}
+                        onClick={option.action}
+                        className={styles.shareButton}
+                      >
+                        <option.icon size={24} color="#166534" />
+                        <span className={styles.shareLabel}>{option.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Security Notice */}
+            <div className={styles.securityNotice}>
+              <p className={styles.securityText}>
+                <strong>Security:</strong> Only users with valid KYC/KYB credentials (Mizuhiki SBT
+                or UNTI) can withdraw using this link. The link contains encrypted withdrawal
+                information that's processed locally.
+              </p>
+            </div>
+          </section>
         )}
       </div>
-
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }

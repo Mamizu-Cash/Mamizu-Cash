@@ -2,6 +2,7 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import Header from "../components/Header";
+import { ToastContainer, ToastProvider } from "../components/ui/Toast";
 
 // Conditionally import devtools only in development
 const DevtoolsComponent = () => {
@@ -15,10 +16,11 @@ const DevtoolsComponent = () => {
 
 export const Route = createRootRoute({
   component: () => (
-    <>
+    <ToastProvider>
       <Header />
       <Outlet />
+      <ToastContainer />
       <DevtoolsComponent />
-    </>
+    </ToastProvider>
   ),
 });
