@@ -188,39 +188,120 @@ function DepositScreen() {
             </div>
             <div className="space-y-2">
               <CardTitle className="bg-gradient-to-r from-primary to-secondary bg-clip-text font-bold text-3xl text-transparent">
-                Private Deposit
+                プライベート送金
               </CardTitle>
               <CardDescription className="text-lg">
-                Deposit funds into the shield pool for completely private transactions
+                競争優位を守る企業向けシールドプール入金
               </CardDescription>
             </div>
           </CardHeader>
 
           <CardContent className="space-y-8">
+            {/* Practical Use Cases */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <Building size={20} className="text-primary" />
+                <h2 className="font-semibold text-xl">実務への組み込み</h2>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {/* Invoice Integration */}
+                <Card className="border-primary/20 bg-primary/5">
+                  <CardContent className="space-y-4 pt-6">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                        <FileText size={24} className="text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-primary">請求書統合</h3>
+                        <p className="text-primary text-sm">既存の業務フローにシームレス組み込み</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle size={14} className="text-primary" />
+                        <span>請求書PDF内に支払いURL自動挿入</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle size={14} className="text-primary" />
+                        <span>QRコード付きでモバイル対応</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle size={14} className="text-primary" />
+                        <span>ワンタイム表示で情報漏洩防止</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Email Integration */}
+                <Card className="border-secondary/20 bg-secondary/5">
+                  <CardContent className="space-y-4 pt-6">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary/10">
+                        <Mail size={24} className="text-secondary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-secondary">メール連携</h3>
+                        <p className="text-secondary text-sm">企業間コミュニケーション強化</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle size={14} className="text-secondary" />
+                        <span>メールテンプレートに支払いリンク埋込</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle size={14} className="text-secondary" />
+                        <span>受取側の資格確認を自動実行</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle size={14} className="text-secondary" />
+                        <span>相手国情報の完全秘匿を保証</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Business Scenario Example */}
+              <Alert className="border-primary/30 bg-primary/5">
+                <Building size={16} className="text-primary" />
+                <AlertTitle className="text-primary">実際の利用シーン例</AlertTitle>
+                <AlertDescription className="text-primary">
+                  <div className="mt-2 space-y-2">
+                    <p><strong>クロスボーダー決済：</strong> 海外サプライヤーへの支払いで、相手国や取引額の相関を競合他社に推測されるリスクを排除</p>
+                    <p><strong>戦略的取引：</strong> M&A検討時の機密費用や、新規事業パートナーとの協業費用を完全に秘匿</p>
+                    <p><strong>内部統制：</strong> 規制当局による完全監査は可能だが、日常的な取引詳細は外部から観測不能</p>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            </div>
+
             {/* Privacy Features */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Lock size={20} className="text-primary" />
                 <h2 id={privacyFeaturesId} className="font-semibold text-xl">
-                  Enterprise-Grade Privacy
+                  経営機密保護技術
                 </h2>
               </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3">
                   <CheckCircle size={16} className="shrink-0 text-success" />
-                  <span className="font-medium text-sm">Zero-knowledge proof technology</span>
+                  <span className="font-medium text-sm">ゼロ知識証明で取引先を完全秘匿</span>
                 </div>
                 <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3">
                   <CheckCircle size={16} className="shrink-0 text-success" />
-                  <span className="font-medium text-sm">KYC/KYB compliant transactions only</span>
+                  <span className="font-medium text-sm">KYC/KYB認証済み参加者のみ</span>
                 </div>
                 <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3">
                   <CheckCircle size={16} className="shrink-0 text-success" />
-                  <span className="font-medium text-sm">Complete transaction unlinkability</span>
+                  <span className="font-medium text-sm">金額・相手国の相関を排除</span>
                 </div>
                 <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3">
                   <CheckCircle size={16} className="shrink-0 text-success" />
-                  <span className="font-medium text-sm">Auditable by authorized parties</span>
+                  <span className="font-medium text-sm">規制当局による完全監査対応</span>
                 </div>
               </div>
             </div>

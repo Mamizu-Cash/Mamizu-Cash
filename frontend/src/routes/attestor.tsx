@@ -315,21 +315,21 @@ function AttestorScreen() {
           <div className="space-y-6">
             {!credential ? (
               // Pre-verification state
-              <Card className="border-accent bg-accent/5 shadow-xl">
+              <Card className="border-warning bg-warning/5 shadow-xl">
                 <CardContent className="pt-8 text-center">
                   <div className="mb-6 flex justify-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-warning">
                       <Shield size={32} className="text-white" />
                     </div>
                   </div>
-                  <CardTitle className="mb-4 font-bold text-2xl text-accent">
+                  <CardTitle className="mb-4 font-bold text-2xl text-warning-foreground">
                     {isProcessing ? "検証中..." : "オンチェーン検証&UNTI発行"}
                   </CardTitle>
 
                   {zkProof && (
-                    <Alert className="mb-6 border-accent bg-background">
-                      <Key size={18} className="text-accent" />
-                      <AlertTitle className="text-accent">生成されたZK Proof:</AlertTitle>
+                    <Alert className="mb-6 border-warning bg-background">
+                      <Key size={18} className="text-warning" />
+                      <AlertTitle className="text-warning-foreground">生成されたZK Proof:</AlertTitle>
                       <AlertDescription>
                         <div className="mt-2 break-all rounded-md bg-muted p-3 font-mono text-success text-xs">
                           {zkProof}
@@ -338,7 +338,7 @@ function AttestorScreen() {
                     </Alert>
                   )}
 
-                  <CardDescription className="mb-6 text-accent">
+                  <CardDescription className="mb-6 text-warning-foreground">
                     {isProcessing
                       ? "スマートコントラクトで検証中です。検証成功後、UNTIトークンが自動発行されます。"
                       : "スマートコントラクトにProofを送信して、DKIM署名の正当性を検証します。検証が成功すると、UNTIトークンが発行されます。"}
@@ -371,7 +371,7 @@ function AttestorScreen() {
                     disabled={
                       isProcessing || isStampWithDataPending || !isConnected || !!isEligible
                     }
-                    className="w-full bg-accent text-white hover:bg-accent/90 disabled:opacity-50"
+                    className="w-full bg-primary text-white hover:bg-primary/90 disabled:opacity-50"
                   >
                     {isProcessing || isStampWithDataPending ? (
                       <>

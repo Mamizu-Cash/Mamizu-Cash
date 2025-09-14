@@ -47,7 +47,7 @@ function GetMizuhikiScreen() {
             <Button
               asChild
               size="lg"
-              className="bg-gradient-to-r from-primary to-secondary px-8 py-6 font-semibold text-lg transition-all hover:scale-102 hover:from-primary/90 hover:to-secondary/90 hover:shadow-lg"
+              className="bg-primary hover:bg-primary/90 px-8 py-6 font-semibold text-lg"
             >
               <a href="/">ホームに戻る</a>
             </Button>

@@ -245,7 +245,7 @@ function GetUntiScreen() {
             </Card>
 
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
-              <Button asChild className="bg-accent hover:bg-accent/90">
+              <Button asChild className="bg-primary hover:bg-primary/90">
                 <a href="/attestor" className="flex items-center gap-2">
                   <FileUp size={20} />
                   Attestorページへ

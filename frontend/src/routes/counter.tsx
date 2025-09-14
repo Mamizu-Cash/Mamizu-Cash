@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Activity, RefreshCw, RotateCcw, Settings, TrendingDown, TrendingUp } from "lucide-react";
+import { Activity, Award, RefreshCw, RotateCcw, Settings, TrendingDown, TrendingUp } from "lucide-react";
 import { useAccount } from "wagmi";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConnectButton } from "../components/ConnectButton";
 import { useCounter } from "../hooks/useCounter";
+import { useMizuhikiSBT } from "../hooks/useMizuhikiSBT";
 import { CONTRACT_ADDRESSES } from "../lib/web3/contracts";
 
 export const Route = createFileRoute("/counter")({
@@ -15,16 +16,19 @@ export const Route = createFileRoute("/counter")({
 
 function CounterPage() {
   const { isConnected } = useAccount();
+  const { hasSBT, isLoading: isSBTLoading } = useMizuhikiSBT();
   const {
     count,
     increment,
     decrement,
     setCount,
     reset,
+    mizuhikiIncrement,
     isIncrementPending,
     isDecrementPending,
     isSetCountPending,
     isResetPending,
+    isMizuhikiIncrementPending,
     isCountLoading,
     refetchCount,
   } = useCounter();
@@ -42,7 +46,8 @@ function CounterPage() {
     isIncrementPending ||
     isDecrementPending ||
     isSetCountPending ||
-    isResetPending;
+    isResetPending ||
+    isMizuhikiIncrementPending;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 py-8">
@@ -74,8 +79,27 @@ function CounterPage() {
               Wallet Connection
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex justify-center">
-            <ConnectButton />
+          <CardContent className="space-y-4">
+            <div className="flex justify-center">
+              <ConnectButton />
+            </div>
+
+            {/* Mizuhiki SBT Status */}
+            {isConnected && (
+              <div className="rounded-lg border bg-muted/50 p-3 text-center">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Award size={16} />
+                  <span className="font-semibold text-sm">Mizuhiki SBT Status</span>
+                </div>
+                {isSBTLoading ? (
+                  <Badge variant="secondary">Loading...</Badge>
+                ) : hasSBT ? (
+                  <Badge className="bg-green-500 text-white">Verified Holder</Badge>
+                ) : (
+                  <Badge variant="destructive">Not Verified</Badge>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -122,6 +146,20 @@ function CounterPage() {
                   </Button>
 
                   <Button
+                    onClick={mizuhikiIncrement}
+                    disabled={isMizuhikiIncrementPending || !hasSBT}
+                    className="h-12 bg-accent hover:bg-accent/90 disabled:opacity-50"
+                    title={!hasSBT ? "Requires Mizuhiki SBT" : ""}
+                  >
+                    <Award size={20} className="mr-2" />
+                    {isMizuhikiIncrementPending
+                      ? "Incrementing..."
+                      : hasSBT
+                        ? "Mizuhiki Increment"
+                        : "Mizuhiki Increment (SBT Required)"}
+                  </Button>
+
+                  <Button
                     onClick={decrement}
                     disabled={isDecrementPending}
                     variant="outline"
@@ -160,16 +198,35 @@ function CounterPage() {
                     Refresh
                   </Button>
                 </div>
+
+                {/* SBT Requirement Notice */}
+                {!hasSBT && (
+                  <Alert className="border-warning bg-warning/10">
+                    <Award size={16} />
+                    <AlertTitle className="text-warning-foreground">Mizuhiki SBT Required</AlertTitle>
+                    <AlertDescription className="text-warning-foreground">
+                      To use the Mizuhiki Increment function, you need to hold a Mizuhiki Verified SBT token.{" "}
+                      <a href="/get-mizuhiki" className="underline hover:text-warning">
+                        Get your SBT here
+                      </a>
+                    </AlertDescription>
+                  </Alert>
+                )}
               </CardContent>
             </Card>
 
             {/* Transaction Status */}
-            {(isIncrementPending || isDecrementPending || isSetCountPending || isResetPending) && (
+            {(isIncrementPending ||
+              isDecrementPending ||
+              isSetCountPending ||
+              isResetPending ||
+              isMizuhikiIncrementPending) && (
               <Alert className="border-warning bg-warning/10">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-warning border-t-transparent" />
                 <AlertTitle className="text-warning-foreground">Transaction Pending</AlertTitle>
                 <AlertDescription className="text-warning-foreground">
                   {isIncrementPending && "Increment transaction pending..."}
+                  {isMizuhikiIncrementPending && "Mizuhiki increment transaction pending..."}
                   {isDecrementPending && "Decrement transaction pending..."}
                   {isSetCountPending && "Set count transaction pending..."}
                   {isResetPending && "Reset transaction pending..."}

@@ -342,12 +342,12 @@ function ProfileScreen() {
               {/* Service Actions - Only available with verification */}
               {hasAnyVerification && (
                 <>
-                  <Button asChild className="bg-success hover:bg-success/90">
+                  <Button asChild className="bg-primary hover:bg-primary/90">
                     <a href="/deposit">プライベート送金</a>
                   </Button>
 
-                  <Button asChild className="bg-accent hover:bg-accent/90">
-                    <a href="/withdraw">資金引き出し</a>
+                  <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/10">
+                    <a href="/withdraw">支払いを受け取る</a>
                   </Button>
                 </>
               )}

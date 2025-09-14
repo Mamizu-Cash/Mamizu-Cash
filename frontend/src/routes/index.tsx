@@ -36,20 +36,20 @@ function App() {
             </h1>
 
             <p className="mx-auto max-w-3xl text-muted-foreground text-xl leading-relaxed md:text-2xl">
-              Zero-knowledge privacy payments with enterprise compliance
+              取引の秘匿は贅沢ではなく、競争優位の必然です
             </p>
 
             <p className="mx-auto max-w-2xl text-foreground/80 text-lg leading-relaxed">
-              Secure, compliant, and completely private cross-border transactions for businesses.
-              Protect your commercial relationships while maintaining full regulatory compliance.
+              クロスボーダー決済で交渉力を守る。規制準拠しながら経営機密を保護する企業向けプライバシー決済レイヤ。
+              相手国やサプライチェーン情報の流出を防ぎ、ビジネス上の優位性を維持します。
             </p>
           </div>
 
           {/* CTA Buttons */}
           <div className="flex flex-col justify-center gap-4 pt-8 sm:flex-row">
-            <Button size="lg" className="bg-accent px-8 py-6 text-lg hover:bg-accent/90" asChild>
+            <Button size="lg" className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg" asChild>
               <a href="/deposit">
-                Start Private Transfer
+                安全な送金を開始
                 <ArrowRight className="ml-2 h-5 w-5" />
               </a>
             </Button>
@@ -57,11 +57,11 @@ function App() {
             <Button
               variant="outline"
               size="lg"
-              className="border-primary px-8 py-6 text-lg text-primary hover:bg-primary/10"
+              className="border-secondary text-secondary hover:bg-secondary/10 px-8 py-6 text-lg"
               asChild
             >
               <a href="/withdraw">
-                Receive Payment
+                支払いを受け取る
                 <Download className="ml-2 h-5 w-5" />
               </a>
             </Button>
@@ -76,11 +76,11 @@ function App() {
                 <div className="mx-auto mb-4 w-fit rounded-full bg-primary/10 p-3">
                   <Shield className="h-8 w-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl">Zero-Knowledge Privacy</CardTitle>
+                <CardTitle className="text-xl">経営機密を保護</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-center text-base leading-relaxed">
-                  Complete transaction unlinkability using advanced cryptographic proofs
+                  取引先や金額の相関を完全に秘匿。競合他社に戦略を読み取られるリスクを排除
                 </CardDescription>
               </CardContent>
             </Card>
@@ -90,11 +90,11 @@ function App() {
                 <div className="mx-auto mb-4 w-fit rounded-full bg-secondary/10 p-3">
                   <Users className="h-8 w-8 text-secondary" />
                 </div>
-                <CardTitle className="text-xl">Enterprise Compliant</CardTitle>
+                <CardTitle className="text-xl">規制準拠＋監査可能</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-center text-base leading-relaxed">
-                  KYC/KYB verified participants only. Fully auditable by regulators
+                  KYC/KYB認証済み参加者のみ。規制当局による完全監査が可能
                 </CardDescription>
               </CardContent>
             </Card>
@@ -104,11 +104,11 @@ function App() {
                 <div className="mx-auto mb-4 w-fit rounded-full bg-accent/10 p-3">
                   <LinkIcon className="h-8 w-8 text-accent" />
                 </div>
-                <CardTitle className="text-xl">Simple Integration</CardTitle>
+                <CardTitle className="text-xl">実務への組み込み</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-center text-base leading-relaxed">
-                  Share payment links via email, invoices, or QR codes seamlessly
+                  請求書やメールに支払いURLを添付。既存の業務フローにシームレスに統合
                 </CardDescription>
               </CardContent>
             </Card>
@@ -118,10 +118,10 @@ function App() {
         {/* Credential Verification Section */}
         <section className="rounded-3xl bg-card/50 py-20">
           <div className="mb-16 text-center">
-            <h2 className="mb-4 font-bold text-3xl md:text-4xl">Get Verified to Participate</h2>
+            <h2 className="mb-4 font-bold text-3xl md:text-4xl">双方の資格確認で安全性を担保</h2>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              To use Mamizu Cash, you need either a Mizuhiki SBT (individual) or UNTI credential
-              (corporate). Choose your verification type below.
+              送金者・受取者の双方がMizuhiki SBT（個人）またはUNTI（法人）を必ず保有していなければ取引は成立しません。
+              規制に従いながら不正利用を防止する仕組みです。
             </p>
           </div>
 
@@ -132,16 +132,16 @@ function App() {
                 <div className="mx-auto mb-4 w-fit rounded-full bg-primary/10 p-4 transition-colors group-hover:bg-primary/20">
                   <Users className="h-10 w-10 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Individual (Mizuhiki SBT)</CardTitle>
+                <CardTitle className="text-2xl">個人利用（Mizuhiki SBT）</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <CardDescription className="text-center text-base">
-                  Personal KYC verification for individual users. Get your Mizuhiki Verified SBT to
-                  participate in private transactions.
+                  個人向けKYC認証。Mizuhiki Verified SBTを取得することで、
+                  プライベート取引への参加資格を得られます。
                 </CardDescription>
                 <Button className="w-full bg-primary hover:bg-primary/90" asChild>
                   <a href="/get-mizuhiki">
-                    Get Mizuhiki SBT
+                    Mizuhiki SBT取得
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
@@ -154,12 +154,12 @@ function App() {
                 <div className="mx-auto mb-4 w-fit rounded-full bg-secondary/10 p-4 transition-colors group-hover:bg-secondary/20">
                   <Shield className="h-10 w-10 text-secondary" />
                 </div>
-                <CardTitle className="text-2xl">Corporate (UNTI)</CardTitle>
+                <CardTitle className="text-2xl">企業利用（UNTI）</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <CardDescription className="text-center text-base">
-                  Business KYB verification through ZK Email DKIM proof. Get your UNTI credential
-                  for enterprise transactions.
+                  ZK Email DKIM証明による企業向けKYB認証。UNTIクリデンシャルを取得し、
+                  企業間取引で経営機密を保護します。
                 </CardDescription>
                 <Button
                   className="w-full border-secondary text-secondary hover:bg-secondary/10"
@@ -167,7 +167,7 @@ function App() {
                   asChild
                 >
                   <a href="/get-unti">
-                    Get UNTI Credential
+                    UNTIクリデンシャル取得
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
@@ -177,19 +177,18 @@ function App() {
 
           <div className="mt-12 rounded-xl bg-muted/50 p-6">
             <p className="text-center text-muted-foreground">
-              <strong>Note:</strong> Both sender and receiver must have valid credentials to
-              complete a private transaction. This ensures regulatory compliance and prevents
-              misuse.
+              <strong>重要:</strong> 送金者・受取者の双方が有効な資格を持っていなければプライベート取引は完了しません。
+              これにより規制遵守と不正利用防止を両立しています。
             </p>
           </div>
         </section>
 
         {/* Technology Section */}
         <section className="py-20 text-center">
-          <h2 className="mb-4 font-bold text-3xl md:text-4xl">Built on Japan Smart Chain Kaigan</h2>
+          <h2 className="mb-4 font-bold text-3xl md:text-4xl">Japan Smart Chain Kaigan上で実現</h2>
           <p className="mx-auto mb-8 max-w-3xl text-lg text-muted-foreground">
-            Leveraging Ethereum-compatible infrastructure with native compliance features and
-            onshore governance for enterprise adoption.
+            Mizuhikiがネイティブに存在し、Ethereum等価のため既存ツールチェーンをそのまま使用可能。
+            オンショア検証のガバナンスが企業利用に説得力を与えています。
           </p>
 
           <Badge variant="outline" className="px-4 py-2 text-sm">
