@@ -9,7 +9,8 @@
       "mcp__context7__resolve-library-id",
       "mcp__context7__get-library-docs",
       "Bash(fd:*)",
-      "Bash(rip:*)"
+      "Bash(rip:*)",
+      "Bash(cast wallet import:*)"
     ],
     "deny": [],
     "ask": []
