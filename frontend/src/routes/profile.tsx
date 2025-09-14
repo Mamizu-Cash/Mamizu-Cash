@@ -346,7 +346,11 @@ function ProfileScreen() {
                     <a href="/deposit">プライベート送金</a>
                   </Button>
 
-                  <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/10">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="border-primary text-primary hover:bg-primary/10"
+                  >
                     <a href="/withdraw">支払いを受け取る</a>
                   </Button>
                 </>

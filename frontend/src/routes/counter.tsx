@@ -1,5 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Activity, Award, RefreshCw, RotateCcw, Settings, TrendingDown, TrendingUp } from "lucide-react";
+import {
+  Activity,
+  Award,
+  RefreshCw,
+  RotateCcw,
+  Settings,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
 import { useAccount } from "wagmi";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -87,7 +95,7 @@ function CounterPage() {
             {/* Mizuhiki SBT Status */}
             {isConnected && (
               <div className="rounded-lg border bg-muted/50 p-3 text-center">
-                <div className="flex items-center justify-center gap-2 mb-1">
+                <div className="mb-1 flex items-center justify-center gap-2">
                   <Award size={16} />
                   <span className="font-semibold text-sm">Mizuhiki SBT Status</span>
                 </div>
@@ -203,9 +211,12 @@ function CounterPage() {
                 {!hasSBT && (
                   <Alert className="border-warning bg-warning/10">
                     <Award size={16} />
-                    <AlertTitle className="text-warning-foreground">Mizuhiki SBT Required</AlertTitle>
+                    <AlertTitle className="text-warning-foreground">
+                      Mizuhiki SBT Required
+                    </AlertTitle>
                     <AlertDescription className="text-warning-foreground">
-                      To use the Mizuhiki Increment function, you need to hold a Mizuhiki Verified SBT token.{" "}
+                      To use the Mizuhiki Increment function, you need to hold a Mizuhiki Verified
+                      SBT token.{" "}
                       <a href="/get-mizuhiki" className="underline hover:text-warning">
                         Get your SBT here
                       </a>

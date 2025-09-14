@@ -270,9 +270,18 @@ function DepositScreen() {
                 <AlertTitle className="text-primary">実際の利用シーン例</AlertTitle>
                 <AlertDescription className="text-primary">
                   <div className="mt-2 space-y-2">
-                    <p><strong>クロスボーダー決済：</strong> 海外サプライヤーへの支払いで、相手国や取引額の相関を競合他社に推測されるリスクを排除</p>
-                    <p><strong>戦略的取引：</strong> M&A検討時の機密費用や、新規事業パートナーとの協業費用を完全に秘匿</p>
-                    <p><strong>内部統制：</strong> 規制当局による完全監査は可能だが、日常的な取引詳細は外部から観測不能</p>
+                    <p>
+                      <strong>クロスボーダー決済：</strong>{" "}
+                      海外サプライヤーへの支払いで、相手国や取引額の相関を競合他社に推測されるリスクを排除
+                    </p>
+                    <p>
+                      <strong>戦略的取引：</strong>{" "}
+                      M&A検討時の機密費用や、新規事業パートナーとの協業費用を完全に秘匿
+                    </p>
+                    <p>
+                      <strong>内部統制：</strong>{" "}
+                      規制当局による完全監査は可能だが、日常的な取引詳細は外部から観測不能
+                    </p>
                   </div>
                 </AlertDescription>
               </Alert>

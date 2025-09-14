@@ -3,7 +3,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import Header from "../components/Header";
 import { Toaster } from "../components/ui/sonner";
-import { ToastProvider, ToastContainer } from "../components/ui/Toast";
+import { ToastContainer, ToastProvider } from "../components/ui/Toast";
 import { Web3Providers } from "../lib/web3/providers";
 
 // Conditionally import devtools only in development

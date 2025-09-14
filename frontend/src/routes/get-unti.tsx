@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Building, CheckCircle, FileUp, Mail } from "lucide-react";
+import { Building, CheckCircle, Mail } from "lucide-react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -232,23 +232,38 @@ function GetUntiScreen() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-primary">
                   <Building size={20} />
-                  次のステップ
+                  Business UNTI発行プロセス
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ol className="list-inside list-decimal space-y-2 text-primary">
-                  <li>送信したメールのEMLファイルをダウンロード</li>
-                  <li>Attestorページでファイルをアップロード</li>
-                  <li>DKIM検証とUNTI発行を完了</li>
-                </ol>
+                <div className="space-y-3 text-primary">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={16} className="text-primary" />
+                    <span className="font-medium">メール送信完了</span>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <p>• 送信されたメールは管理者により確認されます</p>
+                    <p>• DKIM署名の自動検証が実行されます</p>
+                    <p>• 企業ドメイン所有権の確認が行われます</p>
+                    <p>• 検証完了後、Business UNTIトークンが自動発行されます</p>
+                  </div>
+                  <div className="mt-4 rounded-lg border border-primary/20 bg-background p-3">
+                    <p className="text-center font-medium">Business UNTI発行をお待ちください</p>
+                    <p className="text-center text-sm opacity-80">発行完了時に通知が届きます</p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
-              <Button asChild className="bg-primary hover:bg-primary/90">
-                <a href="/attestor" className="flex items-center gap-2">
-                  <FileUp size={20} />
-                  Attestorページへ
+              <Button
+                asChild
+                variant="outline"
+                className="border-primary text-primary hover:bg-primary/10"
+              >
+                <a href="/profile" className="flex items-center gap-2">
+                  <CheckCircle size={20} />
+                  発行ステータス確認
                 </a>
               </Button>
               <Button

@@ -1,13 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle, ExternalLink, FileUp, Key, Shield } from "lucide-react";
+import { CheckCircle, FileUp, Key, Shield } from "lucide-react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { useBusinessVerifier } from "../hooks/useBusinessVerifier";
 import {
   type CredentialInfo,
@@ -123,362 +117,746 @@ function AttestorScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 py-8">
-      <div className="container mx-auto max-w-4xl space-y-8 px-4">
+    <div
+      className="main-container"
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#f8fafc",
+        padding: "1rem",
+      }}
+    >
+      <div
+        className="main-card"
+        style={{
+          maxWidth: "800px",
+          margin: "0 auto",
+          backgroundColor: "white",
+          borderRadius: "16px",
+          padding: "2rem",
+          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+        }}
+      >
         {/* Header */}
-        <Card className="border-0 bg-background/95 shadow-xl backdrop-blur">
-          <CardHeader className="space-y-6 pb-8 text-center">
-            <div className="flex justify-center">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary">
-                <Shield size={40} className="text-white" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <CardTitle className="bg-gradient-to-r from-primary to-secondary bg-clip-text font-bold text-3xl text-transparent">
-                UNTI Attestor
-              </CardTitle>
-              <CardDescription className="text-lg">EML検証とUNTI発行</CardDescription>
-            </div>
-          </CardHeader>
-        </Card>
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+          <h1
+            style={{
+              fontSize: "2rem",
+              fontWeight: "bold",
+              color: "#1e293b",
+              marginBottom: "0.5rem",
+            }}
+          >
+            管理画面
+          </h1>
+          <p
+            style={{
+              color: "#64748b",
+              fontSize: "1.1rem",
+              lineHeight: "1.6",
+            }}
+          >
+            オペレータまたはロボットは、EMLを検証してください。
+          </p>
+        </div>
 
         {/* UNTI Status Check */}
         {isConnected && (
-          <Alert
-            className={isEligible ? "border-success bg-success/5" : "border-warning bg-warning/5"}
+          <div
+            style={{
+              backgroundColor: isEligible ? "#f0fdf4" : "#fefce8",
+              padding: "1rem",
+              borderRadius: "8px",
+              border: `1px solid ${isEligible ? "#bbf7d0" : "#fef08a"}`,
+              marginBottom: "2rem",
+              textAlign: "center",
+            }}
           >
-            <div className="flex items-center gap-2">
-              {isEligible ? (
-                <CheckCircle size={18} className="text-success" />
-              ) : (
-                <Shield size={18} className="text-warning" />
-              )}
-              <AlertTitle className={isEligible ? "text-success" : "text-warning-foreground"}>
-                {isEligible ? "UNTIトークン保有済み" : "UNTI未取得"}
-              </AlertTitle>
-            </div>
-            <AlertDescription className={isEligible ? "text-success" : "text-warning-foreground"}>
-              {isEligible ? (
-                <>
+            {isEligible ? (
+              <div>
+                <p style={{ margin: "0 0 0.5rem 0", color: "#166534", fontWeight: "500" }}>
+                  ✅ UNTIトークン保有済み
+                </p>
+                <p style={{ margin: "0", color: "#047857", fontSize: "0.875rem" }}>
                   既に企業認証が完了しています。
-                  <Button variant="link" asChild className="ml-1 h-auto p-0 text-success underline">
-                    <a href="/profile">プロフィールページで確認</a>
-                  </Button>
-                </>
-              ) : (
-                "プライベート送金を利用するには企業認証が必要です"
-              )}
-            </AlertDescription>
-          </Alert>
+                  <a
+                    href="/profile"
+                    style={{ color: "#047857", textDecoration: "underline", marginLeft: "4px" }}
+                  >
+                    プロフィールページで確認
+                  </a>
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p style={{ margin: "0 0 0.5rem 0", color: "#ca8a04", fontWeight: "500" }}>
+                  ⚠️ UNTI未取得
+                </p>
+                <p style={{ margin: "0", color: "#a16207", fontSize: "0.875rem" }}>
+                  プライベート送金を利用するには企業認証が必要です
+                </p>
+              </div>
+            )}
+          </div>
         )}
 
         {/* Progress Steps */}
-        <Card className="border-0 bg-background/95 shadow-xl backdrop-blur">
-          <CardContent className="pt-6">
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              {steps.map((step, index) => {
-                const currentIndex = getCurrentStepIndex();
-                const isActive = step.key === currentStep;
-                const isCompleted = index < currentIndex;
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "3rem",
+            gap: "1rem",
+            flexWrap: "wrap",
+          }}
+        >
+          {steps.map((step, index) => {
+            const currentIndex = getCurrentStepIndex();
+            const isActive = step.key === currentStep;
+            const isCompleted = index < currentIndex;
 
-                return (
-                  <div key={step.key} className="flex items-center">
-                    <div className="flex flex-col items-center gap-2">
-                      <div
-                        className={`flex h-12 w-12 items-center justify-center rounded-full transition-colors ${
-                          isCompleted || isActive
-                            ? "bg-gradient-to-r from-primary to-secondary text-white"
-                            : "bg-muted text-muted-foreground"
-                        }`}
-                      >
-                        <step.icon size={24} />
-                      </div>
-                      <span
-                        className={`text-sm ${
-                          isCompleted || isActive
-                            ? "font-semibold text-foreground"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        {step.label}
-                      </span>
-                    </div>
-                    {index < steps.length - 1 && (
-                      <Separator
-                        orientation="horizontal"
-                        className={`-mt-8 mx-2 w-8 ${
-                          isCompleted ? "bg-gradient-to-r from-primary to-secondary" : "bg-muted"
-                        }`}
-                      />
-                    )}
+            return (
+              <div key={step.key} style={{ display: "flex", alignItems: "center" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "48px",
+                      height: "48px",
+                      backgroundColor: isCompleted ? "#0ea5e9" : isActive ? "#0ea5e9" : "#e2e8f0",
+                      borderRadius: "50%",
+                      color: isCompleted || isActive ? "white" : "#64748b",
+                    }}
+                  >
+                    <step.icon size={24} />
                   </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+                  <span
+                    style={{
+                      fontSize: "0.875rem",
+                      color: isCompleted || isActive ? "#1e293b" : "#64748b",
+                      fontWeight: isActive ? "600" : "normal",
+                    }}
+                  >
+                    {step.label}
+                  </span>
+                </div>
+                {index < steps.length - 1 && (
+                  <div
+                    style={{
+                      width: "30px",
+                      height: "2px",
+                      backgroundColor: isCompleted ? "#0ea5e9" : "#e2e8f0",
+                      marginTop: "-24px",
+                      marginLeft: "0.5rem",
+                      marginRight: "0.5rem",
+                    }}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
 
         {/* EML Upload Step */}
         {currentStep === "upload" && (
-          <Card className="border-primary bg-primary/5 shadow-xl">
-            <CardContent className="pt-8 text-center">
-              <div className="mb-6 flex justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary">
-                  <FileUp size={32} className="text-white" />
-                </div>
-              </div>
-              <CardTitle className="mb-4 font-bold text-2xl text-primary">
-                EMLファイルをアップロード
-              </CardTitle>
-              <CardDescription className="mb-6 text-primary">
+          <div>
+            <div
+              style={{
+                backgroundColor: "#f0f9ff",
+                padding: "2rem",
+                borderRadius: "12px",
+                marginBottom: "2rem",
+                border: "1px solid #0ea5e9",
+                textAlign: "center",
+              }}
+            >
+              <p
+                style={{
+                  margin: "0 0 1.5rem 0",
+                  color: "#0c4a6e",
+                  fontSize: "0.9rem",
+                  lineHeight: "1.6",
+                }}
+              >
                 送信したメールのEMLファイルをダウンロードして、こちらにアップロードしてください。
                 <br />
                 EMLファイルからDKIM署名を抽出してゼロ知識証明を生成します。
-              </CardDescription>
+              </p>
 
-              <div className="mb-6 rounded-lg border-2 border-primary border-dashed bg-background p-8">
-                <Input
+              <div
+                style={{
+                  border: "2px dashed #0ea5e9",
+                  borderRadius: "8px",
+                  padding: "2rem",
+                  marginBottom: "1rem",
+                  backgroundColor: "white",
+                }}
+              >
+                <input
                   type="file"
                   accept=".eml"
                   onChange={handleEmlUpload}
-                  className="cursor-pointer border-none p-2 text-center"
+                  style={{
+                    width: "100%",
+                    padding: "0.5rem",
+                    fontSize: "1rem",
+                    border: "none",
+                    outline: "none",
+                    cursor: "pointer",
+                  }}
                 />
                 {emlFile && (
-                  <Alert className="mt-4 border-success bg-success/10">
-                    <CheckCircle size={16} className="text-success" />
-                    <AlertDescription className="ml-2 text-success">
-                      {emlFile.name} ({(emlFile.size / 1024).toFixed(1)}KB)
-                    </AlertDescription>
-                  </Alert>
+                  <div
+                    style={{
+                      marginTop: "1rem",
+                      padding: "0.75rem",
+                      backgroundColor: "#dcfce7",
+                      borderRadius: "6px",
+                      border: "1px solid #16a34a",
+                    }}
+                  >
+                    <span style={{ color: "#166534", fontSize: "0.9rem" }}>
+                      ✓ {emlFile.name} ({(emlFile.size / 1024).toFixed(1)}KB)
+                    </span>
+                  </div>
                 )}
               </div>
 
-              <Button
+              <button
                 onClick={handleProofGeneration}
                 disabled={!emlFile}
-                className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50"
+                style={{
+                  width: "100%",
+                  padding: "1rem 2rem",
+                  backgroundColor: !emlFile ? "#94a3b8" : "#0ea5e9",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  cursor: !emlFile ? "not-allowed" : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                }}
               >
-                <Key size={20} className="mr-2" />
-                ZK Proof生成開始
-              </Button>
-            </CardContent>
-          </Card>
+                <Key size={20} />
+                リレー稼働
+              </button>
+            </div>
+          </div>
         )}
 
         {/* ZK Proof Generation Step */}
         {currentStep === "proof" && (
-          <Card className="border-warning bg-warning/5 shadow-xl">
-            <CardContent className="space-y-6 pt-8 text-center">
-              <div className="flex justify-center">
-                <div className="h-16 w-16 animate-spin rounded-full border-4 border-muted border-t-warning" />
+          <div style={{ textAlign: "center" }}>
+            <div
+              style={{
+                width: "60px",
+                height: "60px",
+                border: "4px solid #e2e8f0",
+                borderTop: "4px solid #f59e0b",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite",
+                margin: "2rem auto",
+              }}
+            />
+            <h2
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                color: "#1e293b",
+                marginBottom: "1rem",
+              }}
+            >
+              ZK Proof生成中...
+            </h2>
+            <p
+              style={{
+                color: "#64748b",
+                fontSize: "1rem",
+                marginBottom: "2rem",
+              }}
+            >
+              EMLファイルからDKIM署名を抽出してゼロ知識証明を生成しています
+            </p>
+
+            <div
+              style={{
+                backgroundColor: "#fffbeb",
+                padding: "1rem",
+                borderRadius: "8px",
+                border: "1px solid #fed7aa",
+                textAlign: "left",
+              }}
+            >
+              <p
+                style={{
+                  margin: "0 0 0.5rem 0",
+                  fontSize: "0.9rem",
+                  color: "#92400e",
+                  fontWeight: "500",
+                }}
+              >
+                処理中...
+              </p>
+              <div
+                style={{
+                  fontSize: "0.8rem",
+                  color: "#a16207",
+                  lineHeight: "1.4",
+                }}
+              >
+                • EMLファイルを解析中
+                <br />• DKIM署名を抽出中
+                <br />• RSA署名を検証中
+                <br />• ゼロ知識証明を生成中
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <CardTitle className="font-bold text-2xl text-warning-foreground">
-                  ZK Proof生成中...
-                </CardTitle>
-                <CardDescription className="text-warning-foreground">
-                  EMLファイルからDKIM署名を抽出してゼロ知識証明を生成しています
-                </CardDescription>
+            {zkProof && (
+              <div
+                style={{
+                  marginTop: "1.5rem",
+                  padding: "1rem",
+                  backgroundColor: "#f0fdf4",
+                  borderRadius: "8px",
+                  border: "1px solid #bbf7d0",
+                }}
+              >
+                <h3
+                  style={{
+                    margin: "0 0 0.5rem 0",
+                    color: "#14532d",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                  }}
+                >
+                  ✓ ZK Proof生成完了
+                </h3>
+                <div
+                  style={{
+                    backgroundColor: "white",
+                    padding: "0.75rem",
+                    borderRadius: "6px",
+                    border: "1px solid #bbf7d0",
+                    fontFamily: "monospace",
+                    fontSize: "0.8rem",
+                    color: "#059669",
+                    wordBreak: "break-all",
+                  }}
+                >
+                  {zkProof.slice(0, 32)}...{zkProof.slice(-32)}
+                </div>
               </div>
-
-              <Alert className="border-warning bg-warning/10">
-                <Key size={18} className="text-warning" />
-                <AlertTitle className="text-warning-foreground">処理中...</AlertTitle>
-                <AlertDescription className="text-left text-warning-foreground">
-                  <ul className="space-y-1 text-sm">
-                    <li>• EMLファイルを解析中</li>
-                    <li>• DKIM署名を抽出中</li>
-                    <li>• RSA署名を検証中</li>
-                    <li>• ゼロ知識証明を生成中</li>
-                  </ul>
-                </AlertDescription>
-              </Alert>
-
-              {zkProof && (
-                <Alert className="border-success bg-success/10">
-                  <CheckCircle size={18} className="text-success" />
-                  <AlertTitle className="text-success">✓ ZK Proof生成完了</AlertTitle>
-                  <AlertDescription className="text-success">
-                    <div className="mt-2 break-all rounded-md border border-success/20 bg-background p-3 font-mono text-xs">
-                      {zkProof.slice(0, 32)}...{zkProof.slice(-32)}
-                    </div>
-                  </AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
+            )}
+          </div>
         )}
 
         {/* Verification & Issuance Step */}
         {currentStep === "verify" && (
-          <div className="space-y-6">
+          <div>
             {!credential ? (
               // Pre-verification state
-              <Card className="border-warning bg-warning/5 shadow-xl">
-                <CardContent className="pt-8 text-center">
-                  <div className="mb-6 flex justify-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-warning">
-                      <Shield size={32} className="text-white" />
-                    </div>
-                  </div>
-                  <CardTitle className="mb-4 font-bold text-2xl text-warning-foreground">
-                    {isProcessing ? "検証中..." : "オンチェーン検証&UNTI発行"}
-                  </CardTitle>
+              <div
+                style={{
+                  backgroundColor: "#fefce8",
+                  padding: "2rem",
+                  borderRadius: "12px",
+                  marginBottom: "2rem",
+                  border: "1px solid #facc15",
+                  textAlign: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "60px",
+                    height: "60px",
+                    backgroundColor: "#facc15",
+                    borderRadius: "50%",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <Shield size={30} color="#1e293b" />
+                </div>
+                <h3
+                  style={{
+                    margin: "0 0 1rem 0",
+                    color: "#1e293b",
+                    fontSize: "1.2rem",
+                    fontWeight: "600",
+                  }}
+                >
+                  {isProcessing ? "検証中..." : "オンチェーン検証&UNTI発行"}
+                </h3>
 
-                  {zkProof && (
-                    <Alert className="mb-6 border-warning bg-background">
-                      <Key size={18} className="text-warning" />
-                      <AlertTitle className="text-warning-foreground">生成されたZK Proof:</AlertTitle>
-                      <AlertDescription>
-                        <div className="mt-2 break-all rounded-md bg-muted p-3 font-mono text-success text-xs">
-                          {zkProof}
-                        </div>
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  <CardDescription className="mb-6 text-warning-foreground">
-                    {isProcessing
-                      ? "スマートコントラクトで検証中です。検証成功後、UNTIトークンが自動発行されます。"
-                      : "スマートコントラクトにProofを送信して、DKIM署名の正当性を検証します。検証が成功すると、UNTIトークンが発行されます。"}
-                  </CardDescription>
-
-                  {(isProcessing || isStampWithDataPending) && (
-                    <Alert className="mb-6 border-warning bg-warning/10">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-warning border-t-transparent" />
-                      <AlertTitle className="text-warning-foreground">処理中...</AlertTitle>
-                      <AlertDescription className="text-left text-warning-foreground">
-                        <ul className="space-y-1 text-sm">
-                          <li>• ZK Proofを送信中</li>
-                          <li>• スマートコントラクトで検証中</li>
-                          <li>• DKIM署名の正当性を確認中</li>
-                          <li>• UNTIトークンを発行中</li>
-                        </ul>
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  {stampWithDataError && (
-                    <Alert variant="destructive" className="mb-6">
-                      <AlertTitle>エラー: トランザクションが失敗しました</AlertTitle>
-                      <AlertDescription>{stampWithDataError.message}</AlertDescription>
-                    </Alert>
-                  )}
-
-                  <Button
-                    onClick={handleVerification}
-                    disabled={
-                      isProcessing || isStampWithDataPending || !isConnected || !!isEligible
-                    }
-                    className="w-full bg-primary text-white hover:bg-primary/90 disabled:opacity-50"
+                {zkProof && (
+                  <div
+                    style={{
+                      backgroundColor: "white",
+                      padding: "1rem",
+                      borderRadius: "8px",
+                      marginBottom: "1.5rem",
+                      border: "1px solid #facc15",
+                    }}
                   >
-                    {isProcessing || isStampWithDataPending ? (
-                      <>
-                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                        検証&発行中...
-                      </>
-                    ) : !isConnected ? (
-                      <>
-                        <Shield size={20} className="mr-2" />
-                        ウォレットを接続してください
-                      </>
-                    ) : isEligible ? (
-                      <>
-                        <CheckCircle size={20} className="mr-2" />
-                        既にUNTI発行済み
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle size={20} className="mr-2" />
-                        検証してUNTI発行
-                      </>
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              // Post-verification success state
-              <Card className="border-success bg-success/5 shadow-xl">
-                <CardContent className="space-y-6 pt-8 text-center">
-                  <div className="flex justify-center">
-                    <div className="flex h-24 w-24 items-center justify-center rounded-full bg-success">
-                      <CheckCircle size={60} className="text-white" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <CardTitle className="font-bold text-3xl text-success">
-                      UNTI発行完了！
-                    </CardTitle>
-                    <CardDescription className="text-lg text-success">
-                      企業向けUNTI (ERC-6268) が正常に発行されました
-                    </CardDescription>
-                  </div>
-
-                  <div className="space-y-4 rounded-lg border border-success/20 bg-success/10 p-6">
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-success">UNTIトークンID:</span>
-                      <Badge variant="outline" className="border-success font-mono text-success">
-                        {credential.tokenId}
-                      </Badge>
-                    </div>
-                    <Separator className="bg-success/20" />
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-success">企業名:</span>
-                      <span className="text-success">{credential.userInfo?.companyName}</span>
-                    </div>
-                    <Separator className="bg-success/20" />
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-success">トランザクション:</span>
-                      <Button variant="link" asChild className="h-auto p-0 text-success">
-                        <a
-                          href={`${KAIGAN_EXPLORER_URL}/tx/${credential.transactionHash}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 font-mono text-sm"
-                        >
-                          {credential.transactionHash?.slice(0, 10)}...
-                          {credential.transactionHash?.slice(-8)}
-                          <ExternalLink size={14} />
-                        </a>
-                      </Button>
-                    </div>
-                    <Separator className="bg-success/20" />
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-success">発行日時:</span>
-                      <span className="text-success">
-                        {new Date(credential.issuedAt).toLocaleString("ja-JP")}
+                    <div style={{ marginBottom: "0.5rem" }}>
+                      <span
+                        style={{
+                          fontSize: "0.9rem",
+                          color: "#ca8a04",
+                          fontWeight: "500",
+                        }}
+                      >
+                        生成されたZK Proof:
                       </span>
                     </div>
-                  </div>
-
-                  <Alert className="border-primary bg-primary/5">
-                    <CheckCircle size={18} className="text-primary" />
-                    <AlertTitle className="text-primary">おめでとうございます！</AlertTitle>
-                    <AlertDescription className="text-primary">
-                      企業としてMamizu Cashのプライベート送金機能を利用できます。
-                    </AlertDescription>
-                  </Alert>
-
-                  <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                    <Button asChild className="bg-primary hover:bg-primary/90">
-                      <a href="/withdraw">送金を受け取る</a>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="border-primary text-primary hover:bg-primary/10"
+                    <div
+                      style={{
+                        fontFamily: "monospace",
+                        fontSize: "0.75rem",
+                        color: "#059669",
+                        wordBreak: "break-all",
+                        backgroundColor: "#f8fafc",
+                        padding: "0.5rem",
+                        borderRadius: "4px",
+                      }}
                     >
-                      <a href="/">ホームに戻る</a>
-                    </Button>
+                      {zkProof}
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                )}
+
+                <p
+                  style={{
+                    margin: "0 0 1.5rem 0",
+                    color: "#ca8a04",
+                    fontSize: "0.9rem",
+                    lineHeight: "1.6",
+                  }}
+                >
+                  {isProcessing
+                    ? "スマートコントラクトで検証中です。検証成功後、UNTIトークンが自動発行されます。"
+                    : "スマートコントラクトにProofを送信して、DKIM署名の正当性を検証します。検証が成功すると、UNTIトークンが発行されます。"}
+                </p>
+
+                {(isProcessing || isStampWithDataPending) && (
+                  <div
+                    style={{
+                      backgroundColor: "#fffbeb",
+                      padding: "1rem",
+                      borderRadius: "8px",
+                      border: "1px solid #fed7aa",
+                      textAlign: "left",
+                      marginBottom: "1.5rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#a16207",
+                        lineHeight: "1.4",
+                      }}
+                    >
+                      • ZK Proofを送信中
+                      <br />• スマートコントラクトで検証中
+                      <br />• DKIM署名の正当性を確認中
+                      <br />• UNTIトークンを発行中
+                    </div>
+                  </div>
+                )}
+
+                {stampWithDataError && (
+                  <div
+                    style={{
+                      backgroundColor: "#fef2f2",
+                      padding: "1rem",
+                      borderRadius: "8px",
+                      border: "1px solid #fecaca",
+                      textAlign: "left",
+                      marginBottom: "1.5rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#dc2626",
+                        lineHeight: "1.4",
+                      }}
+                    >
+                      <strong>エラー:</strong> トランザクションが失敗しました。
+                      <br />
+                      {stampWithDataError.message}
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onClick={handleVerification}
+                  disabled={isProcessing || isStampWithDataPending || !isConnected || !!isEligible}
+                  style={{
+                    width: "100%",
+                    padding: "1rem 2rem",
+                    backgroundColor:
+                      isProcessing || isStampWithDataPending
+                        ? "#94a3b8"
+                        : !isConnected || !!isEligible
+                          ? "#e2e8f0"
+                          : "#facc15",
+                    color: "#1e293b",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    cursor:
+                      isProcessing || isStampWithDataPending || !isConnected || !!isEligible
+                        ? "not-allowed"
+                        : "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  {isProcessing || isStampWithDataPending ? (
+                    <>
+                      <div
+                        style={{
+                          width: "16px",
+                          height: "16px",
+                          border: "2px solid #1e293b",
+                          borderTop: "2px solid transparent",
+                          borderRadius: "50%",
+                          animation: "spin 1s linear infinite",
+                        }}
+                      />
+                      検証&発行中...
+                    </>
+                  ) : !isConnected ? (
+                    <>
+                      <Shield size={20} />
+                      ウォレットを接続してください
+                    </>
+                  ) : isEligible ? (
+                    <>
+                      <CheckCircle size={20} />
+                      既にUNTI発行済み
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle size={20} />
+                      検証してUNTI発行
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : (
+              // Post-verification success state
+              <div style={{ textAlign: "center" }}>
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100px",
+                    height: "100px",
+                    backgroundColor: "#10b981",
+                    borderRadius: "50%",
+                    marginBottom: "2rem",
+                  }}
+                >
+                  <CheckCircle size={60} color="white" />
+                </div>
+
+                <h2
+                  style={{
+                    fontSize: "2rem",
+                    fontWeight: "bold",
+                    color: "#1e293b",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  UNTI発行完了！
+                </h2>
+
+                <p
+                  style={{
+                    color: "#64748b",
+                    fontSize: "1.1rem",
+                    lineHeight: "1.6",
+                    marginBottom: "2rem",
+                  }}
+                >
+                  企業向けUNTI (ERC-6268) が正常に発行されました
+                </p>
+
+                <div
+                  style={{
+                    backgroundColor: "#f0fdf4",
+                    padding: "1.5rem",
+                    borderRadius: "12px",
+                    marginBottom: "2rem",
+                    border: "1px solid #bbf7d0",
+                    textAlign: "left",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
+                    <span style={{ color: "#166534", fontWeight: "500" }}>UNTIトークンID:</span>
+                    <span style={{ fontFamily: "monospace", color: "#14532d" }}>
+                      {credential.tokenId}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
+                    <span style={{ color: "#166534", fontWeight: "500" }}>企業名:</span>
+                    <span style={{ color: "#14532d" }}>{credential.userInfo?.companyName}</span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
+                    <span style={{ color: "#166534", fontWeight: "500" }}>トランザクション:</span>
+                    <a
+                      href={`${KAIGAN_EXPLORER_URL}/tx/${credential.transactionHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        fontFamily: "monospace",
+                        fontSize: "0.875rem",
+                        color: "#059669",
+                        textDecoration: "underline",
+                      }}
+                    >
+                      {credential.transactionHash?.slice(0, 10)}...
+                      {credential.transactionHash?.slice(-8)}
+                    </a>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span style={{ color: "#166534", fontWeight: "500" }}>発行日時:</span>
+                    <span style={{ color: "#14532d" }}>
+                      {new Date(credential.issuedAt).toLocaleString("ja-JP")}
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    backgroundColor: "#eff6ff",
+                    padding: "1rem",
+                    borderRadius: "8px",
+                    marginBottom: "2rem",
+                    border: "1px solid #dbeafe",
+                  }}
+                >
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "0.9rem",
+                      color: "#1e40af",
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    <strong>おめでとうございます！</strong> 企業としてMamizu
+                    Cashのプライベート送金機能を利用できます。
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "1rem",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                  }}
+                >
+                  <a
+                    href="/withdraw"
+                    style={{
+                      padding: "1rem 2rem",
+                      backgroundColor: "#8b5cf6",
+                      color: "white",
+                      textDecoration: "none",
+                      borderRadius: "12px",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    送金を受け取る
+                  </a>
+                  <a
+                    href="/"
+                    style={{
+                      padding: "1rem 2rem",
+                      backgroundColor: "white",
+                      color: "#8b5cf6",
+                      textDecoration: "none",
+                      borderRadius: "12px",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      border: "2px solid #8b5cf6",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    ホームに戻る
+                  </a>
+                </div>
+              </div>
             )}
           </div>
         )}
       </div>
+
+      <style>{`
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </div>
   );
 }

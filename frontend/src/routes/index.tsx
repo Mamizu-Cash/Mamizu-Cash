@@ -47,7 +47,7 @@ function App() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col justify-center gap-4 pt-8 sm:flex-row">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg" asChild>
+            <Button size="lg" className="bg-primary px-8 py-6 text-lg hover:bg-primary/90" asChild>
               <a href="/deposit">
                 安全な送金を開始
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -57,7 +57,7 @@ function App() {
             <Button
               variant="outline"
               size="lg"
-              className="border-secondary text-secondary hover:bg-secondary/10 px-8 py-6 text-lg"
+              className="border-secondary px-8 py-6 text-lg text-secondary hover:bg-secondary/10"
               asChild
             >
               <a href="/withdraw">
@@ -120,7 +120,8 @@ function App() {
           <div className="mb-16 text-center">
             <h2 className="mb-4 font-bold text-3xl md:text-4xl">双方の資格確認で安全性を担保</h2>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              送金者・受取者の双方がMizuhiki SBT（個人）またはUNTI（法人）を必ず保有していなければ取引は成立しません。
+              送金者・受取者の双方がMizuhiki
+              SBT（個人）またはUNTI（法人）を必ず保有していなければ取引は成立しません。
               規制に従いながら不正利用を防止する仕組みです。
             </p>
           </div>
@@ -177,7 +178,8 @@ function App() {
 
           <div className="mt-12 rounded-xl bg-muted/50 p-6">
             <p className="text-center text-muted-foreground">
-              <strong>重要:</strong> 送金者・受取者の双方が有効な資格を持っていなければプライベート取引は完了しません。
+              <strong>重要:</strong>{" "}
+              送金者・受取者の双方が有効な資格を持っていなければプライベート取引は完了しません。
               これにより規制遵守と不正利用防止を両立しています。
             </p>
           </div>

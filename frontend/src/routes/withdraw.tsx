@@ -130,10 +130,18 @@ function WithdrawScreen() {
                 <AlertTitle className="text-success">実務で安心な設計</AlertTitle>
                 <AlertDescription className="text-success">
                   <div className="mt-2 space-y-1 text-sm">
-                    <div>• <strong>ワンタイム表示：</strong> 一度開封後は再表示不可能</div>
-                    <div>• <strong>宛先バインド：</strong> 特定の受取人にのみ紐付け可能</div>
-                    <div>• <strong>QRコード対応：</strong> モバイルでの安全な共有</div>
-                    <div>• <strong>時限設定：</strong> 指定期間後の自動無効化（将来実装）</div>
+                    <div>
+                      • <strong>ワンタイム表示：</strong> 一度開封後は再表示不可能
+                    </div>
+                    <div>
+                      • <strong>宛先バインド：</strong> 特定の受取人にのみ紐付け可能
+                    </div>
+                    <div>
+                      • <strong>QRコード対応：</strong> モバイルでの安全な共有
+                    </div>
+                    <div>
+                      • <strong>時限設定：</strong> 指定期間後の自動無効化（将来実装）
+                    </div>
                   </div>
                 </AlertDescription>
               </Alert>
@@ -166,10 +174,7 @@ function WithdrawScreen() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">送金者情報:</span>
-                  <Badge
-                    variant="outline"
-                    className="border-primary/30 bg-primary/10 text-primary"
-                  >
+                  <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
                     観測不可能
                   </Badge>
                 </div>
@@ -210,9 +215,7 @@ function WithdrawScreen() {
               </div>
 
               {credentialStatus === "checking" && (
-                <AlertDescription>
-                  Mizuhiki SBTまたはUNTI資格を確認中...
-                </AlertDescription>
+                <AlertDescription>Mizuhiki SBTまたはUNTI資格を確認中...</AlertDescription>
               )}
 
               {credentialStatus === "valid" && credential && (
