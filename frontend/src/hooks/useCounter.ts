@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import CounterAbi from "../abi/Counter.abi.json";
 import { useToastHelpers } from "../components/ui/Toast";
@@ -6,6 +6,7 @@ import { CONTRACT_ADDRESSES } from "../lib/web3/contracts";
 
 export function useCounter() {
   const { showSuccess, showError } = useToastHelpers();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Read functions
   const {
@@ -115,29 +116,41 @@ export function useCounter() {
   // Effect for handling transaction success
   useEffect(() => {
     if (isIncrementSuccess) {
-      refetchCount();
-      showSuccess("Success!", "Counter incremented successfully");
+      setIsRefreshing(true);
+      refetchCount().finally(() => {
+        setIsRefreshing(false);
+        showSuccess("Success!", "Counter incremented successfully");
+      });
     }
   }, [isIncrementSuccess, refetchCount, showSuccess]);
 
   useEffect(() => {
     if (isDecrementSuccess) {
-      refetchCount();
-      showSuccess("Success!", "Counter decremented successfully");
+      setIsRefreshing(true);
+      refetchCount().finally(() => {
+        setIsRefreshing(false);
+        showSuccess("Success!", "Counter decremented successfully");
+      });
     }
   }, [isDecrementSuccess, refetchCount, showSuccess]);
 
   useEffect(() => {
     if (isSetCountSuccess) {
-      refetchCount();
-      showSuccess("Success!", "Counter value set successfully");
+      setIsRefreshing(true);
+      refetchCount().finally(() => {
+        setIsRefreshing(false);
+        showSuccess("Success!", "Counter value set successfully");
+      });
     }
   }, [isSetCountSuccess, refetchCount, showSuccess]);
 
   useEffect(() => {
     if (isResetSuccess) {
-      refetchCount();
-      showSuccess("Success!", "Counter reset successfully");
+      setIsRefreshing(true);
+      refetchCount().finally(() => {
+        setIsRefreshing(false);
+        showSuccess("Success!", "Counter reset successfully");
+      });
     }
   }, [isResetSuccess, refetchCount, showSuccess]);
 
@@ -168,11 +181,11 @@ export function useCounter() {
 
   return {
     // Read data
-    count: count ?? 0n,
-    getCountValue: getCountValue ?? 0n,
+    count,
+    getCountValue,
 
     // Loading states
-    isCountLoading,
+    isCountLoading: isCountLoading || isRefreshing,
     isGetCountLoading,
     isIncrementPending: isIncrementPending || isIncrementConfirming,
     isDecrementPending: isDecrementPending || isDecrementConfirming,

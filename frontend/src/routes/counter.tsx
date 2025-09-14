@@ -22,6 +22,7 @@ function CounterPage() {
     isDecrementPending,
     isSetCountPending,
     isResetPending,
+    isCountLoading,
     refetchCount,
   } = useCounter();
 
@@ -50,7 +51,17 @@ function CounterPage() {
         {/* Counter Interface */}
         {isConnected ? (
           <div className={styles.counterSection}>
-            <div className={styles.counterValue}>{count.toString()}</div>
+            <div className={styles.counterValue}>
+              {isCountLoading ||
+              isIncrementPending ||
+              isDecrementPending ||
+              isSetCountPending ||
+              isResetPending
+                ? "Loading..."
+                : count !== undefined
+                  ? count.toString()
+                  : "--"}
+            </div>
 
             <div className={styles.buttonGroup}>
               <Button onClick={increment} disabled={isIncrementPending} variant="primary">
