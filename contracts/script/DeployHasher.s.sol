@@ -13,7 +13,8 @@ contract DeployHasher is Script {
         string memory jsonContent = vm.readFile(jsonPath);
 
         // Extract bytecode from JSON
-        string memory bytecodeStr = vm.parseJson(jsonContent, ".bytecode");
+        bytes memory bytecodeBytes = vm.parseJson(jsonContent, ".bytecode");
+        string memory bytecodeStr = string(bytecodeBytes);
         bytes memory bytecode = vm.parseBytes(bytecodeStr);
 
         // Deploy the contract

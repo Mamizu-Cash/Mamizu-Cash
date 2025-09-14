@@ -5,7 +5,7 @@ import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 /// @notice Interface for BusinessVerifier contract
 interface IBusinessVerifier {
-    function isEligible(address account) external view returns (bool);
+    function isEligible(address account, bytes calldata data) external view returns (bool);
 }
 
 /// @title Simple Counter Contract
@@ -85,8 +85,22 @@ contract Counter {
     /// @dev Only accounts eligible according to BusinessVerifier can call this function
     function untiIncrement() public {
         require(
-            IBusinessVerifier(BUSINESS_VERIFIER).isEligible(msg.sender),
+            IBusinessVerifier(BUSINESS_VERIFIER).isEligible(msg.sender, bytes("")),
             "Counter: caller must hold UNTI token"
+        );
+
+        uint256 oldValue = count;
+        count += 1;
+        emit CountChanged(count, oldValue);
+    }
+
+    /// @notice Increment the counter by 1 (Compliant users only)
+    /// @dev Only accounts holding either Mizuhiki SBT or UNTI token can call this function
+    function compliantIncrement() public {
+        require(
+            IERC721(MIZUHIKI_SBT).balanceOf(msg.sender) > 0 ||
+            IBusinessVerifier(BUSINESS_VERIFIER).isEligible(msg.sender, bytes("")),
+            "Counter: caller must hold either Mizuhiki SBT or UNTI token"
         );
 
         uint256 oldValue = count;
