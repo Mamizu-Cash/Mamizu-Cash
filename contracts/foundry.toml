@@ -3,4 +3,13 @@ src = "src"
 out = "out"
 libs = ["lib"]
 
+# Load environment variables from .env file
+dotenv = ".env"
+
+# File system permissions for reading .env file
+fs_permissions = [{ access = "read", path = "./" }]
+
+[rpc_endpoints]
+kaigan = "https://rpc.kaigan.jsc.dev/rpc?token=QjxBt0CfU0eNzOHSJEvZA1FIzEK8hd2sJsosgP7TU0Q"
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

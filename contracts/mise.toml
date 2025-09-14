@@ -1,0 +1,46 @@
+[tools]
+forge = "latest"
+
+[tasks.compile]
+description = "Compile all contracts"
+alias = "c"
+run = "forge build"
+
+[tasks.test]
+description = "Run tests"
+alias = "t"
+run = "forge test -vv"
+
+[tasks.deploy-counter]
+description = "Deploy Counter contract using Foundry keystore"
+alias = "dc"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Deploying Counter contract using keystore..."
+forge create src/Counter.sol:Counter --rpc-url kaigan --account deployer --password "password123"
+'''
+
+[tasks.abigen-counter]
+description = "Generate Counter ABI for frontend"
+alias = "ac"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Generating Counter ABI..."
+forge build --silent
+if [ -f "out/Counter.sol/Counter.json" ]; then
+  echo "ABI generated at: out/Counter.sol/Counter.json"
+  # オプション: フロントエンド用にABIだけ抽出
+  jq '.abi' out/Counter.sol/Counter.json > out/Counter.abi.json 2>/dev/null || echo "jq not available, skipping ABI extraction"
+  echo "Extracted ABI at: out/Counter.abi.json"
+else
+  echo "Error: Counter.json not found"
+  exit 1
+fi
+'''
+
+[tasks.clean]
+description = "Clean build artifacts and cache"
+alias = "cl"
+run = "forge clean"
