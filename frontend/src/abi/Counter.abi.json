@@ -6,6 +6,19 @@
   },
   {
     "type": "function",
+    "name": "BUSINESS_VERIFIER",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "MIZUHIKI_SBT",
     "inputs": [],
     "outputs": [
@@ -81,6 +94,13 @@
         "internalType": "uint256"
       }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "untiIncrement",
+    "inputs": [],
     "outputs": [],
     "stateMutability": "nonpayable"
   },

@@ -66,6 +66,13 @@ export function useCounter() {
     error: mizuhikiIncrementError,
   } = useWriteContract();
 
+  const {
+    writeContract: untiIncrement,
+    isPending: isUntiIncrementPending,
+    data: untiIncrementTxHash,
+    error: untiIncrementError,
+  } = useWriteContract();
+
   // Transaction receipts
   const { isLoading: isIncrementConfirming, isSuccess: isIncrementSuccess } =
     useWaitForTransactionReceipt({
@@ -89,6 +96,11 @@ export function useCounter() {
   const { isLoading: isMizuhikiIncrementConfirming, isSuccess: isMizuhikiIncrementSuccess } =
     useWaitForTransactionReceipt({
       hash: mizuhikiIncrementTxHash,
+    });
+
+  const { isLoading: isUntiIncrementConfirming, isSuccess: isUntiIncrementSuccess } =
+    useWaitForTransactionReceipt({
+      hash: untiIncrementTxHash,
     });
 
   // Helper functions
@@ -130,6 +142,14 @@ export function useCounter() {
       address: CONTRACT_ADDRESSES.COUNTER,
       abi: CounterAbi,
       functionName: "mizuhikiIncrement",
+    });
+  };
+
+  const handleUntiIncrement = () => {
+    untiIncrement({
+      address: CONTRACT_ADDRESSES.COUNTER,
+      abi: CounterAbi,
+      functionName: "untiIncrement",
     });
   };
 
@@ -184,6 +204,16 @@ export function useCounter() {
     }
   }, [isMizuhikiIncrementSuccess, refetchCount, showSuccess]);
 
+  useEffect(() => {
+    if (isUntiIncrementSuccess) {
+      setIsRefreshing(true);
+      refetchCount().finally(() => {
+        setIsRefreshing(false);
+        showSuccess("Success!", "UNTI increment completed successfully");
+      });
+    }
+  }, [isUntiIncrementSuccess, refetchCount, showSuccess]);
+
   // Effect for handling transaction errors
   useEffect(() => {
     if (incrementError) {
@@ -215,6 +245,12 @@ export function useCounter() {
     }
   }, [mizuhikiIncrementError, showError]);
 
+  useEffect(() => {
+    if (untiIncrementError) {
+      showError("UNTI Increment Failed", untiIncrementError.message);
+    }
+  }, [untiIncrementError, showError]);
+
   return {
     // Read data
     count,
@@ -228,6 +264,7 @@ export function useCounter() {
     isSetCountPending: isSetCountPending || isSetCountConfirming,
     isResetPending: isResetPending || isResetConfirming,
     isMizuhikiIncrementPending: isMizuhikiIncrementPending || isMizuhikiIncrementConfirming,
+    isUntiIncrementPending: isUntiIncrementPending || isUntiIncrementConfirming,
 
     // Actions
     increment: handleIncrement,
@@ -235,6 +272,7 @@ export function useCounter() {
     setCount: handleSetCount,
     reset: handleReset,
     mizuhikiIncrement: handleMizuhikiIncrement,
+    untiIncrement: handleUntiIncrement,
     refetchCount,
 
     // Errors

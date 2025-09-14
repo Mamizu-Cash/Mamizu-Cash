@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   Activity,
   Award,
+  Building,
   RefreshCw,
   RotateCcw,
   Settings,
@@ -14,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConnectButton } from "../components/ConnectButton";
+import { useBusinessVerifier } from "../hooks/useBusinessVerifier";
 import { useCounter } from "../hooks/useCounter";
 import { useMizuhikiSBT } from "../hooks/useMizuhikiSBT";
 import { CONTRACT_ADDRESSES } from "../lib/web3/contracts";
@@ -25,6 +27,7 @@ export const Route = createFileRoute("/counter")({
 function CounterPage() {
   const { isConnected } = useAccount();
   const { hasSBT, isLoading: isSBTLoading } = useMizuhikiSBT();
+  const { isEligible: hasUNTI, isEligibleLoading: isUNTILoading } = useBusinessVerifier();
   const {
     count,
     increment,
@@ -32,11 +35,13 @@ function CounterPage() {
     setCount,
     reset,
     mizuhikiIncrement,
+    untiIncrement,
     isIncrementPending,
     isDecrementPending,
     isSetCountPending,
     isResetPending,
     isMizuhikiIncrementPending,
+    isUntiIncrementPending,
     isCountLoading,
     refetchCount,
   } = useCounter();
@@ -108,6 +113,23 @@ function CounterPage() {
                 )}
               </div>
             )}
+
+            {/* UNTI Status */}
+            {isConnected && (
+              <div className="rounded-lg border bg-muted/50 p-3 text-center">
+                <div className="mb-1 flex items-center justify-center gap-2">
+                  <Building size={16} />
+                  <span className="font-semibold text-sm">UNTI Token Status</span>
+                </div>
+                {isUNTILoading ? (
+                  <Badge variant="secondary">Loading...</Badge>
+                ) : hasUNTI ? (
+                  <Badge className="bg-blue-500 text-white">Eligible Holder</Badge>
+                ) : (
+                  <Badge variant="destructive">Not Eligible</Badge>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -165,6 +187,20 @@ function CounterPage() {
                       : hasSBT
                         ? "Mizuhiki Increment"
                         : "Mizuhiki Increment (SBT Required)"}
+                  </Button>
+
+                  <Button
+                    onClick={untiIncrement}
+                    disabled={isUntiIncrementPending || !hasUNTI}
+                    className="h-12 bg-secondary hover:bg-secondary/90 disabled:opacity-50"
+                    title={!hasUNTI ? "Requires UNTI Token" : ""}
+                  >
+                    <Building size={20} className="mr-2" />
+                    {isUntiIncrementPending
+                      ? "Incrementing..."
+                      : hasUNTI
+                        ? "UNTI Increment"
+                        : "UNTI Increment (Token Required)"}
                   </Button>
 
                   <Button
