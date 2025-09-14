@@ -24,7 +24,19 @@
       "Bash(mise tasks:*)",
       "Read(//home/fuyutarow/.foundry/keystores/**)",
       "Bash(mise deploy-counter:*)",
-      "Bash(forge create:*)"
+      "Bash(forge create:*)",
+      "Bash(mise test-deposit:*)",
+      "WebSearch",
+      "WebFetch(domain:docs.circom.io)",
+      "Bash(circom:*)",
+      "Bash(npx hardhat test:*)",
+      "Bash(mise run:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(cast wallet list:*)",
+      "WebFetch(domain:stackoverflow.com)",
+      "Bash(mise trust:*)",
+      "Bash(mise install:*)"
     ],
     "deny": [],
     "ask": []

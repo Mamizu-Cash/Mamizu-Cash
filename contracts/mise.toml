@@ -18,7 +18,7 @@ run = '''
 #!/usr/bin/env bash
 set -euo pipefail
 echo "Deploying Counter contract using keystore..."
-forge create src/Counter.sol:Counter --rpc-url kaigan --account deployer --password "password123"
+forge create src/Counter.sol:Counter --rpc-url kaigan --account deployer --password "password123" --broadcast
 '''
 
 [tasks.abigen-counter]
@@ -83,6 +83,17 @@ else
   echo "Error: Contract JSON files not found"
   exit 1
 fi
+'''
+
+[tasks.test-deposit]
+description = "Run MamizuCash deposit tests with Hardhat"
+alias = "td"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Running MamizuCash deposit tests..."
+cd ../privacy-pool
+npx hardhat test --grep "deposit"
 '''
 
 [tasks.clean]

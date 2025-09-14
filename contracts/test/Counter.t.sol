@@ -149,4 +149,27 @@ contract CounterTest is Test {
             "MIZUHIKI_SBT address should be correct"
         );
     }
+
+    /// @notice Test untiIncrement reverts for non-UNTI holder
+    function test_UntiIncrementReverts() public {
+        // This should revert because the test address doesn't hold UNTI token
+        vm.expectRevert();
+        counter.untiIncrement();
+    }
+
+    /// @notice Test compliantIncrement reverts for non-compliant user
+    function test_CompliantIncrementReverts() public {
+        // This should revert because the test address holds neither Mizuhiki SBT nor UNTI token
+        vm.expectRevert();
+        counter.compliantIncrement();
+    }
+
+    /// @notice Test BUSINESS_VERIFIER constant is set correctly
+    function test_BusinessVerifierAddress() public view {
+        assertEq(
+            counter.BUSINESS_VERIFIER(),
+            0xb44AbA22CfC4b58B2Cdf9be059D3ba94CD051638,
+            "BUSINESS_VERIFIER address should be correct"
+        );
+    }
 }

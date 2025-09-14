@@ -7,6 +7,7 @@ import * as snarkjs from 'snarkjs';
 
 let babyJub: any;
 let pedersenHasher: any;
+let mimcSponge: any;
 let initialized = false;
 
 /** Initialize circomlib modules */
@@ -14,6 +15,7 @@ export async function initializeCircomlib() {
   if (!initialized) {
     babyJub = await circomlibjs.buildBabyjub();
     pedersenHasher = await circomlibjs.buildPedersenHash();
+    mimcSponge = await circomlibjs.buildMimcSponge();
     initialized = true;
   }
 }
@@ -23,14 +25,42 @@ export const rbigint = (nbytes: number): bigint => {
   return utils.leBuff2int(randomBytes(nbytes));
 };
 
-/** Compute pedersen hash */
+/** Compute pedersen hash (matches Circom Pedersen component) */
 const pedersenHash = (data: Buffer): any => {
   if (!pedersenHasher) {
     throw new Error('Circomlib not initialized. Call initializeCircomlib() first.');
   }
   const hash = pedersenHasher.hash(data);
   const unpacked = babyJub.unpackPoint(hash);
-  return utils.leBuff2int(unpacked[0]);
+  // Use F.toObject to get the x coordinate as BigInt (matches Circom out[0])
+  return babyJub.F.toObject(unpacked[0]);
+};
+
+/** Compute MiMC sponge hash for Merkle tree (matches Circom implementation) */
+const mimcSpongeHash = (left: string, right: string): string => {
+  if (!mimcSponge) {
+    throw new Error('Circomlib not initialized. Call initializeCircomlib() first.');
+  }
+  // MiMCSponge(2, 220, 1) to match Circom circuit
+  const hash = mimcSponge.multiHash([BigInt(left), BigInt(right)], 0, 1);
+  console.log('MiMC inputs:', left, right);
+  console.log('MiMC hash result:', hash, 'type:', typeof hash, 'isArray:', Array.isArray(hash));
+
+  // Handle different return types from mimcSponge.multiHash
+  if (hash instanceof Uint8Array) {
+    // Convert Uint8Array directly to BigInt using little-endian
+    const result = utils.leBuff2int(Buffer.from(hash)).toString();
+    console.log('MiMC result (Uint8Array):', result);
+    return result;
+  } else if (Array.isArray(hash)) {
+    const result = hash[0].toString();
+    console.log('MiMC result (Array):', result);
+    return result;
+  } else {
+    const result = hash.toString();
+    console.log('MiMC result (other):', result);
+    return result;
+  }
 };
 
 /** BigNumber to hex string of specified length */
@@ -92,7 +122,9 @@ export function createDeposit({ nullifier, secret }: { nullifier: bigint; secret
 export function generateMerkleProof(depositEventsJsonPath: string, leafIndex: number) {
   const depositEventsJson = JSON.parse(readFileSync(depositEventsJsonPath, 'utf8'));
   const leaves = depositEventsJson.commitments.map((commitment: string) => BigInt(commitment).toString());
-  const tree = new MerkleTree(20, leaves);
+  const tree = new MerkleTree(20, leaves, {
+    hashFunction: mimcSpongeHash
+  });
   const { pathElements, pathIndices } = tree.path(leafIndex);
   return { pathElements, pathIndices, root: tree.root };
 }

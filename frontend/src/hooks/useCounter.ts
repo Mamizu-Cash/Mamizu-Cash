@@ -66,6 +66,20 @@ export function useCounter() {
     error: mizuhikiIncrementError,
   } = useWriteContract();
 
+  const {
+    writeContract: untiIncrement,
+    isPending: isUntiIncrementPending,
+    data: untiIncrementTxHash,
+    error: untiIncrementError,
+  } = useWriteContract();
+
+  const {
+    writeContract: compliantIncrement,
+    isPending: isCompliantIncrementPending,
+    data: compliantIncrementTxHash,
+    error: compliantIncrementError,
+  } = useWriteContract();
+
   // Transaction receipts
   const { isLoading: isIncrementConfirming, isSuccess: isIncrementSuccess } =
     useWaitForTransactionReceipt({
@@ -89,6 +103,16 @@ export function useCounter() {
   const { isLoading: isMizuhikiIncrementConfirming, isSuccess: isMizuhikiIncrementSuccess } =
     useWaitForTransactionReceipt({
       hash: mizuhikiIncrementTxHash,
+    });
+
+  const { isLoading: isUntiIncrementConfirming, isSuccess: isUntiIncrementSuccess } =
+    useWaitForTransactionReceipt({
+      hash: untiIncrementTxHash,
+    });
+
+  const { isLoading: isCompliantIncrementConfirming, isSuccess: isCompliantIncrementSuccess } =
+    useWaitForTransactionReceipt({
+      hash: compliantIncrementTxHash,
     });
 
   // Helper functions
@@ -130,6 +154,22 @@ export function useCounter() {
       address: CONTRACT_ADDRESSES.COUNTER,
       abi: CounterAbi,
       functionName: "mizuhikiIncrement",
+    });
+  };
+
+  const handleUntiIncrement = () => {
+    untiIncrement({
+      address: CONTRACT_ADDRESSES.COUNTER,
+      abi: CounterAbi,
+      functionName: "untiIncrement",
+    });
+  };
+
+  const handleCompliantIncrement = () => {
+    compliantIncrement({
+      address: CONTRACT_ADDRESSES.COUNTER,
+      abi: CounterAbi,
+      functionName: "compliantIncrement",
     });
   };
 
@@ -184,6 +224,26 @@ export function useCounter() {
     }
   }, [isMizuhikiIncrementSuccess, refetchCount, showSuccess]);
 
+  useEffect(() => {
+    if (isUntiIncrementSuccess) {
+      setIsRefreshing(true);
+      refetchCount().finally(() => {
+        setIsRefreshing(false);
+        showSuccess("Success!", "UNTI increment completed successfully");
+      });
+    }
+  }, [isUntiIncrementSuccess, refetchCount, showSuccess]);
+
+  useEffect(() => {
+    if (isCompliantIncrementSuccess) {
+      setIsRefreshing(true);
+      refetchCount().finally(() => {
+        setIsRefreshing(false);
+        showSuccess("Success!", "Compliant increment completed successfully");
+      });
+    }
+  }, [isCompliantIncrementSuccess, refetchCount, showSuccess]);
+
   // Effect for handling transaction errors
   useEffect(() => {
     if (incrementError) {
@@ -215,6 +275,18 @@ export function useCounter() {
     }
   }, [mizuhikiIncrementError, showError]);
 
+  useEffect(() => {
+    if (untiIncrementError) {
+      showError("UNTI Increment Failed", untiIncrementError.message);
+    }
+  }, [untiIncrementError, showError]);
+
+  useEffect(() => {
+    if (compliantIncrementError) {
+      showError("Compliant Increment Failed", compliantIncrementError.message);
+    }
+  }, [compliantIncrementError, showError]);
+
   return {
     // Read data
     count,
@@ -228,6 +300,8 @@ export function useCounter() {
     isSetCountPending: isSetCountPending || isSetCountConfirming,
     isResetPending: isResetPending || isResetConfirming,
     isMizuhikiIncrementPending: isMizuhikiIncrementPending || isMizuhikiIncrementConfirming,
+    isUntiIncrementPending: isUntiIncrementPending || isUntiIncrementConfirming,
+    isCompliantIncrementPending: isCompliantIncrementPending || isCompliantIncrementConfirming,
 
     // Actions
     increment: handleIncrement,
@@ -235,6 +309,8 @@ export function useCounter() {
     setCount: handleSetCount,
     reset: handleReset,
     mizuhikiIncrement: handleMizuhikiIncrement,
+    untiIncrement: handleUntiIncrement,
+    compliantIncrement: handleCompliantIncrement,
     refetchCount,
 
     // Errors

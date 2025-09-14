@@ -1,0 +1,131 @@
+[tools]
+node = "22"
+npm = "latest"
+
+[tasks.compile]
+description = "Compile all contracts with Hardhat"
+alias = "c"
+run = "npx hardhat compile"
+
+[tasks.test]
+description = "Run Hardhat tests"
+alias = "t"
+run = "npx hardhat test"
+
+[tasks.deploy-hasher]
+description = "Compile and deploy Hasher contract"
+alias = "dh"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Compiling Hasher circuit..."
+node utils/compileHasher.js
+echo "Hasher bytecode generated at circuits/build/Hasher.json"
+'''
+
+[tasks.deploy-mamizu]
+description = "Deploy MamizuCash contracts to Kaigan testnet"
+alias = "dm"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Deploying MamizuCash to Kaigan testnet..."
+source .env 2>/dev/null || true
+KAIGAN_PRIVATE_KEY="${KAIGAN_PRIVATE_KEY:-0x65d7efd64916f2b857e9d8af652e4915e418620a2bc751a466471d139571cfad}"
+export KAIGAN_PRIVATE_KEY
+npx hardhat run scripts/deploy.ts --network kaigan
+'''
+
+[tasks.verify-circuit]
+description = "Generate and verify zk-SNARK proof"
+alias = "vc"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Verifying circuit setup..."
+cd circuits
+if [ -f "withdraw.r1cs" ]; then
+  echo "Circuit files found"
+else
+  echo "Circuit files not found, run compile first"
+  exit 1
+fi
+'''
+
+[tasks.build-circuit]
+description = "Build circom circuit"
+alias = "bc"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Building circom circuit..."
+cd circuits
+npm run build
+'''
+
+[tasks.generate-proof]
+description = "Generate example proof"
+alias = "gp"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Generating example proof..."
+node utils/cli.js generate-proof --amount 0.1
+'''
+
+[tasks.clean]
+description = "Clean build artifacts"
+alias = "cl"
+run = "npx hardhat clean"
+
+[tasks.install]
+description = "Install dependencies"
+alias = "i"
+run = "npm install"
+
+[tasks.abigen-mamizu]
+description = "Generate MamizuCash ABIs for frontend"
+alias = "am"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Generating MamizuCash ABIs..."
+npx hardhat compile --quiet
+
+# Create frontend ABI directory if it doesn't exist
+mkdir -p ../frontend/src/abi
+
+# Extract ABIs for frontend
+if [ -f "artifacts/contracts/MamizuCash.sol/MamizuCash.json" ]; then
+  jq '.abi' artifacts/contracts/MamizuCash.sol/MamizuCash.json > ../frontend/src/abi/MamizuCash.abi.json 2>/dev/null || echo "jq not available for MamizuCash"
+  echo "✓ MamizuCash ABI extracted"
+fi
+
+if [ -f "artifacts/contracts/Verifier.sol/Verifier.json" ]; then
+  jq '.abi' artifacts/contracts/Verifier.sol/Verifier.json > ../frontend/src/abi/Verifier.abi.json 2>/dev/null || echo "jq not available for Verifier"
+  echo "✓ Verifier ABI extracted"
+fi
+
+if [ -f "artifacts/contracts/MerkleTreeWithHistory.sol/MerkleTreeWithHistory.json" ]; then
+  jq '.abi' artifacts/contracts/MerkleTreeWithHistory.sol/MerkleTreeWithHistory.json > ../frontend/src/abi/MerkleTreeWithHistory.abi.json 2>/dev/null || echo "jq not available for MerkleTreeWithHistory"
+  echo "✓ MerkleTreeWithHistory ABI extracted"
+fi
+
+# Also extract Hasher ABI from circuits
+if [ -f "circuits/build/Hasher.json" ]; then
+  jq '.abi' circuits/build/Hasher.json > ../frontend/src/abi/Hasher.abi.json 2>/dev/null || echo "jq not available for Hasher"
+  echo "✓ Hasher ABI extracted"
+fi
+
+echo ""
+echo "ABIs generated at:"
+echo "  - ../frontend/src/abi/MamizuCash.abi.json"
+echo "  - ../frontend/src/abi/Verifier.abi.json"
+echo "  - ../frontend/src/abi/MerkleTreeWithHistory.abi.json"
+echo "  - ../frontend/src/abi/Hasher.abi.json"
+'''
+
+[tasks.abigen-all]
+description = "Generate all ABIs for frontend"
+alias = "aa"
+run = "mise run abigen-mamizu"

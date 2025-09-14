@@ -1,0 +1,15 @@
+{
+  "network": "kaigan",
+  "chainId": "5278000",
+  "contracts": {
+    "Hasher": "0x4000950Bb94482C5D4C3ab59D37cd4651A127c20",
+    "Verifier": "0xCdf2097F03FE6E9EDD29dF31344C68f3190928f3",
+    "MamizuCash": "0x8D55735Fd78284A4B87a9C4dd9eA88C24BD8dD4e"
+  },
+  "config": {
+    "denomination": "100000000000000000",
+    "merkleTreeHeight": 20
+  },
+  "deployer": "0xA9a34A136373B8FB5913817949452BEa7ef40E48",
+  "timestamp": "2025-09-14T20:41:08.631Z"
+}
