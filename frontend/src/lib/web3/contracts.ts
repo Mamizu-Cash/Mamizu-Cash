@@ -14,5 +14,10 @@ export const CONTRACT_ADDRESSES = {
     "0x74a1924549587b7d19398771c6c5ea3b7ae3c32a",
 } as const;
 
-// Chain ID
-export const KAIGAN_CHAIN_ID = 5278000;
+// Chain configuration
+export const KAIGAN_CHAIN_ID = Number(import.meta.env.VITE_CHAIN_ID) || 5278000;
+export const KAIGAN_RPC_URL =
+  import.meta.env.VITE_RPC_URL ||
+  "https://rpc.kaigan.jsc.dev/rpc?token=QjxBt0CfU0eNzOHSJEvZA1FIzEK8hd2sJsosgP7TU0Q";
+export const KAIGAN_EXPLORER_URL =
+  import.meta.env.VITE_BLOCK_EXPLORER || "https://explorer.kaigan.jsc.dev";

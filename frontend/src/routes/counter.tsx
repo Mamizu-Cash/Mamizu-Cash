@@ -183,7 +183,7 @@ function CounterPage() {
         <div className={styles.contractInfo}>
           <div className={styles.contractTitle}>Contract Information</div>
           <div className={styles.contractAddress}>Address: {CONTRACT_ADDRESSES.COUNTER}</div>
-          <div className={styles.contractAddress}>Chain: Kaigan (ID: 5278000)</div>
+          <div className={styles.contractAddress}>Chain: JSC Kaigan Testnet (ID: 5278000)</div>
         </div>
       </div>
     </div>
