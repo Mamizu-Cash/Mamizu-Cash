@@ -32,7 +32,11 @@
       "Bash(npx hardhat test:*)",
       "Bash(mise run:*)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(cast wallet list:*)",
+      "WebFetch(domain:stackoverflow.com)",
+      "Bash(mise trust:*)",
+      "Bash(mise install:*)"
     ],
     "deny": [],
     "ask": []
