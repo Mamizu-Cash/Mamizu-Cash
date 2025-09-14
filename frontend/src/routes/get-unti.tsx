@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Building, CheckCircle, FileUp, Key, Mail, Shield } from "lucide-react";
 import { useState } from "react";
+import { useAccount } from "wagmi";
+import { useBusinessVerifier } from "../hooks/useBusinessVerifier";
 import { generateBusinessVerificationEmailUrl } from "../lib/emailUtils";
 import {
   type CredentialInfo,
   generateMockHash,
-  generateMockTokenId,
   simulateProcessingDelay,
 } from "../lib/mockCredentials";
+import { KAIGAN_EXPLORER_URL } from "../lib/web3/contracts";
 
 export const Route = createFileRoute("/get-unti")({
   component: GetUntiScreen,
@@ -21,6 +23,19 @@ function GetUntiScreen() {
   const [credential, setCredential] = useState<CredentialInfo | null>(null);
   const [emlFile, setEmlFile] = useState<File | null>(null);
   const [zkProof, setZkProof] = useState<string | null>(null);
+
+  // Wallet and BusinessVerifier integration
+  const { address: userAddress, isConnected } = useAccount();
+  const {
+    isEligible,
+    computedTokenId,
+    stampWithData,
+    isStampWithDataPending,
+    stampWithDataTxHash,
+    stampWithDataError,
+    refetchIsEligible,
+    refetchComputedTokenId,
+  } = useBusinessVerifier();
 
   const handleEmailSent = () => {
     setCurrentStep("upload");
@@ -47,24 +62,53 @@ function GetUntiScreen() {
   };
 
   const handleVerification = async () => {
-    setIsProcessing(true);
+    if (!isConnected || !userAddress) {
+      alert("ウォレットを接続してください");
+      return;
+    }
 
-    await simulateProcessingDelay(3000);
+    if (isEligible) {
+      alert("既にUNTIトークンを保有しています。重複発行はできません。");
+      return;
+    }
 
-    const newCredential: CredentialInfo = {
-      type: "unti",
-      issuedAt: Date.now(),
-      transactionHash: generateMockHash(),
-      tokenId: generateMockTokenId(),
-      userInfo: {
-        companyName: "Mock Company", // 固定値
-        email: "mock@company.com", // 固定値
-      },
-    };
+    if (!zkProof) {
+      alert("ZK Proofが生成されていません");
+      return;
+    }
 
-    setCredential(newCredential);
-    setIsProcessing(false);
-    // setCurrentStep("success"); を削除 - verify画面内で完了状態を表示
+    try {
+      setIsProcessing(true);
+
+      // Convert zkProof to hex bytes for contract call
+      const zkProofHex = zkProof.startsWith("0x") ? zkProof : `0x${zkProof}`;
+
+      // Call BusinessVerifier.stamp(data) with ZK proof
+      await stampWithData(zkProofHex as `0x${string}`);
+
+      // Wait for transaction confirmation is handled by the hook
+      // After successful transaction, refetch data and create credential
+      await refetchIsEligible();
+      await refetchComputedTokenId();
+
+      const newCredential: CredentialInfo = {
+        type: "unti",
+        issuedAt: Date.now(),
+        transactionHash: stampWithDataTxHash ?? "0x...",
+        tokenId: computedTokenId?.toString() ?? "0",
+        userInfo: {
+          companyName: "Verified Company", // Could be extracted from DKIM data
+          email: "company@example.com", // Could be extracted from DKIM data
+        },
+      };
+
+      setCredential(newCredential);
+      setIsProcessing(false);
+    } catch (error) {
+      console.error("Verification failed:", error);
+      alert("検証に失敗しました。詳細はコンソールをご確認ください。");
+      setIsProcessing(false);
+    }
   };
 
   const steps = [
@@ -134,6 +178,46 @@ function GetUntiScreen() {
             企業向けKYB認証でプライベート送金に参加
           </p>
         </div>
+
+        {/* UNTI Status Check */}
+        {isConnected && (
+          <div
+            style={{
+              backgroundColor: isEligible ? "#f0fdf4" : "#fefce8",
+              padding: "1rem",
+              borderRadius: "8px",
+              border: `1px solid ${isEligible ? "#bbf7d0" : "#fef08a"}`,
+              marginBottom: "2rem",
+              textAlign: "center",
+            }}
+          >
+            {isEligible ? (
+              <div>
+                <p style={{ margin: "0 0 0.5rem 0", color: "#166534", fontWeight: "500" }}>
+                  ✅ UNTIトークン保有済み
+                </p>
+                <p style={{ margin: "0", color: "#047857", fontSize: "0.875rem" }}>
+                  既に企業認証が完了しています。
+                  <a
+                    href="/profile"
+                    style={{ color: "#047857", textDecoration: "underline", marginLeft: "4px" }}
+                  >
+                    プロフィールページで確認
+                  </a>
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p style={{ margin: "0 0 0.5rem 0", color: "#ca8a04", fontWeight: "500" }}>
+                  ⚠️ UNTI未取得
+                </p>
+                <p style={{ margin: "0", color: "#a16207", fontSize: "0.875rem" }}>
+                  プライベート送金を利用するには企業認証が必要です
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Progress Steps */}
         <div
@@ -686,7 +770,7 @@ function GetUntiScreen() {
                     : "スマートコントラクトにProofを送信して、DKIM署名の正当性を検証します。検証が成功すると、UNTIトークンが発行されます。"}
                 </p>
 
-                {_isProcessing && (
+                {(_isProcessing || isStampWithDataPending) && (
                   <div
                     style={{
                       backgroundColor: "#fffbeb",
@@ -712,26 +796,59 @@ function GetUntiScreen() {
                   </div>
                 )}
 
+                {stampWithDataError && (
+                  <div
+                    style={{
+                      backgroundColor: "#fef2f2",
+                      padding: "1rem",
+                      borderRadius: "8px",
+                      border: "1px solid #fecaca",
+                      textAlign: "left",
+                      marginBottom: "1.5rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#dc2626",
+                        lineHeight: "1.4",
+                      }}
+                    >
+                      <strong>エラー:</strong> トランザクションが失敗しました。
+                      <br />
+                      {stampWithDataError.message}
+                    </div>
+                  </div>
+                )}
+
                 <button
                   onClick={handleVerification}
-                  disabled={_isProcessing}
+                  disabled={_isProcessing || isStampWithDataPending || !isConnected || !!isEligible}
                   style={{
                     width: "100%",
                     padding: "1rem 2rem",
-                    backgroundColor: _isProcessing ? "#94a3b8" : "#facc15",
+                    backgroundColor:
+                      _isProcessing || isStampWithDataPending
+                        ? "#94a3b8"
+                        : !isConnected || !!isEligible
+                          ? "#e2e8f0"
+                          : "#facc15",
                     color: "#1e293b",
                     border: "none",
                     borderRadius: "8px",
                     fontSize: "1rem",
                     fontWeight: "600",
-                    cursor: _isProcessing ? "not-allowed" : "pointer",
+                    cursor:
+                      _isProcessing || isStampWithDataPending || !isConnected || !!isEligible
+                        ? "not-allowed"
+                        : "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     gap: "0.5rem",
                   }}
                 >
-                  {_isProcessing ? (
+                  {_isProcessing || isStampWithDataPending ? (
                     <>
                       <div
                         style={{
@@ -744,6 +861,16 @@ function GetUntiScreen() {
                         }}
                       />
                       検証&発行中...
+                    </>
+                  ) : !isConnected ? (
+                    <>
+                      <Shield size={20} />
+                      ウォレットを接続してください
+                    </>
+                  ) : isEligible ? (
+                    <>
+                      <CheckCircle size={20} />
+                      既にUNTI発行済み
                     </>
                   ) : (
                     <>
@@ -836,12 +963,20 @@ function GetUntiScreen() {
                     }}
                   >
                     <span style={{ color: "#166534", fontWeight: "500" }}>トランザクション:</span>
-                    <span
-                      style={{ fontFamily: "monospace", fontSize: "0.875rem", color: "#059669" }}
+                    <a
+                      href={`${KAIGAN_EXPLORER_URL}/tx/${credential.transactionHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        fontFamily: "monospace",
+                        fontSize: "0.875rem",
+                        color: "#059669",
+                        textDecoration: "underline",
+                      }}
                     >
                       {credential.transactionHash?.slice(0, 10)}...
                       {credential.transactionHash?.slice(-8)}
-                    </span>
+                    </a>
                   </div>
                   <div
                     style={{
