@@ -15,9 +15,12 @@
   },
   "dependencies": {
     "@zk-email/sdk": "^2.0.6",
-    "commander": "^11.0.0"
+    "commander": "^11.0.0",
+    "snarkjs": "^0.7.3",
+    "viem": "^2.9.32"
   },
   "devDependencies": {
+    "@types/snarkjs": "^0.7.9",
     "eslint": "^8.50.0",
     "prettier": "^3.2.5",
     "typescript": "^5.3.3"

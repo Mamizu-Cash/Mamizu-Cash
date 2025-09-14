@@ -10,4 +10,4 @@ EML_PATH="../docs/verify-email.eml"
 npm run --prefix "$(dirname "$0")/.." build
 
 # Run the CLI
-node "$(dirname "$0")/../dist/index.js" --blueprint "$BLUEPRINT_ID" --eml "$EML_PATH"
+node "$(dirname "$0")/../dist/index.js" prove4d --blueprint "$BLUEPRINT_ID" --eml "$EML_PATH" --verifier 0x41D77C2c66E0c039129d7c0B8C08e0f551e713f2

@@ -13,16 +13,22 @@ program
   .command('prove4d')
   .description('Generate a ZK proof from blueprint and EML file using zk email sdk')
   .version('0.1.0', '--version', 'Show CLI version')
-  .requiredOption(
+  .option(
     '--blueprint <blueprintId>',
-    'Blueprint registry ID (e.g. Bisht13/SuccinctZKResidencyInvite@v3)',
+    'Blueprint registry ID (default: yuki-js/mamizu_cash_reg@v4)',
+    'yuki-js/mamizu_cash_reg@v4',
   )
   .requiredOption('--eml <emlFilePath>', 'Path to the .eml file')
+  .option('--verifier <address>', 'Override verifier contract address (0x...)')
+  .option('--version <n>', 'Override verify(version,...) first parameter (default 1)', (v) => BigInt(v))
   .action(async (options) => {
     try {
-      const proof = await generateProofFromBlueprintAndEml(options.blueprint, options.eml);
-      console.log('Proof generated:');
-      console.log(JSON.stringify(proof, null, 2));
+      const proof = await generateProofFromBlueprintAndEml(options.blueprint, options.eml, {
+        addressOverride: options.verifier,
+        versionParam: options.version,
+      });
+      console.log('Proof generated.');
+      process.exit(0);
     } catch (error) {
       console.error('Error generating proof:', error);
       process.exit(1);
@@ -32,12 +38,16 @@ program
 program
   .command('transplant-base-to-kaigan')
   .description('Migrate contract from Base (blueprint) to Kaigan network')
-  .requiredOption('--blueprint <blueprintId>', 'Blueprint registry ID (e.g. Bisht13/SuccinctZKResidencyInvite@v3)')
+  .requiredOption(
+    '--blueprint <blueprintId>',
+    'Blueprint registry ID (e.g. Bisht13/SuccinctZKResidencyInvite@v3)',
+  )
   .action(async (options) => {
     try {
       const address = await transplantBlueprintToKaigan(options.blueprint);
       console.log('Transplanted contract address:');
       console.log(address);
+      process.exit(0);
     } catch (error) {
       console.error('Error transplanting contract from Base to Kaigan:', error);
       process.exit(1);
@@ -47,7 +57,11 @@ program
 program
   .command('get-verifier-addr-from-bp')
   .description('Extract only the verifier contract address from a blueprint')
-  .requiredOption('--blueprint <blueprintId>', 'Blueprint registry ID (e.g. Bisht13/SuccinctZKResidencyInvite@v3)')
+  .option(
+    '--blueprint <blueprintId>',
+    'Blueprint registry ID (default: yuki-js/mamizu_cash_reg@v4)',
+    'yuki-js/mamizu_cash_reg@v4',
+  )
   .action(async (options) => {
     try {
       const addr = await getVerifierAddressFromBlueprint(options.blueprint);
@@ -61,7 +75,9 @@ program
 
 program
   .command('get-creator-tx-from-addr')
-  .description('If the given address is a contract on Base Sepolia, find and print its creation transaction hash')
+  .description(
+    'If the given address is a contract on Base Sepolia, find and print its creation transaction hash',
+  )
   .requiredOption('--address <address>', 'Address on Base Sepolia (0x...)')
   .action(async (options) => {
     try {
@@ -95,7 +111,9 @@ program
 
 program
   .command('replay-create-on-kaigan')
-  .description('Given a Base Sepolia tx hash, if it is a contract creation (to == null), replay the creation on Kaigan and print the deployed address')
+  .description(
+    'Given a Base Sepolia tx hash, if it is a contract creation (to == null), replay the creation on Kaigan and print the deployed address',
+  )
   .requiredOption('--tx <txHash>', 'Base Sepolia transaction hash (0x...)')
   .action(async (options) => {
     try {
@@ -111,6 +129,5 @@ program
       process.exit(1);
     }
   });
-
 
 program.parseAsync(process.argv);
