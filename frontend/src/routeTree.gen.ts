@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WithdrawRouteImport } from './routes/withdraw'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as GetUntiRouteImport } from './routes/get-unti'
 import { Route as GetMizuhikiRouteImport } from './routes/get-mizuhiki'
 import { Route as DepositRouteImport } from './routes/deposit'
@@ -20,6 +21,11 @@ import { Route as DemoStoreRouteImport } from './routes/demo.store'
 const WithdrawRoute = WithdrawRouteImport.update({
   id: '/withdraw',
   path: '/withdraw',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GetUntiRoute = GetUntiRouteImport.update({
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/deposit': typeof DepositRoute
   '/get-mizuhiki': typeof GetMizuhikiRoute
   '/get-unti': typeof GetUntiRoute
+  '/profile': typeof ProfileRoute
   '/withdraw': typeof WithdrawRoute
   '/demo/store': typeof DemoStoreRoute
 }
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/deposit': typeof DepositRoute
   '/get-mizuhiki': typeof GetMizuhikiRoute
   '/get-unti': typeof GetUntiRoute
+  '/profile': typeof ProfileRoute
   '/withdraw': typeof WithdrawRoute
   '/demo/store': typeof DemoStoreRoute
 }
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/deposit': typeof DepositRoute
   '/get-mizuhiki': typeof GetMizuhikiRoute
   '/get-unti': typeof GetUntiRoute
+  '/profile': typeof ProfileRoute
   '/withdraw': typeof WithdrawRoute
   '/demo/store': typeof DemoStoreRoute
 }
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/deposit'
     | '/get-mizuhiki'
     | '/get-unti'
+    | '/profile'
     | '/withdraw'
     | '/demo/store'
   fileRoutesByTo: FileRoutesByTo
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/deposit'
     | '/get-mizuhiki'
     | '/get-unti'
+    | '/profile'
     | '/withdraw'
     | '/demo/store'
   id:
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/deposit'
     | '/get-mizuhiki'
     | '/get-unti'
+    | '/profile'
     | '/withdraw'
     | '/demo/store'
   fileRoutesById: FileRoutesById
@@ -117,6 +129,7 @@ export interface RootRouteChildren {
   DepositRoute: typeof DepositRoute
   GetMizuhikiRoute: typeof GetMizuhikiRoute
   GetUntiRoute: typeof GetUntiRoute
+  ProfileRoute: typeof ProfileRoute
   WithdrawRoute: typeof WithdrawRoute
   DemoStoreRoute: typeof DemoStoreRoute
 }
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/withdraw'
       fullPath: '/withdraw'
       preLoaderRoute: typeof WithdrawRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/get-unti': {
@@ -181,6 +201,7 @@ const rootRouteChildren: RootRouteChildren = {
   DepositRoute: DepositRoute,
   GetMizuhikiRoute: GetMizuhikiRoute,
   GetUntiRoute: GetUntiRoute,
+  ProfileRoute: ProfileRoute,
   WithdrawRoute: WithdrawRoute,
   DemoStoreRoute: DemoStoreRoute,
 }
