@@ -12,32 +12,31 @@ import {
   Share2,
   Shield,
 } from "lucide-react";
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { toast } from "sonner";
+import { formatEther, parseEther } from "viem";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useMamizuCash } from "../hooks/useMamizuCash";
 import { generateShareEmailUrl } from "../lib/emailUtils";
+import { generateRandomDeposit, initializeCircomlib } from "../lib/zk/deposit";
 
 export const Route = createFileRoute("/deposit")({
   component: DepositScreen,
 });
 
-const DENOMINATIONS = [
-  { value: "0.1", label: "0.1 ETH", usd: "$400" },
-  { value: "1", label: "1 ETH", usd: "$4,000" },
-  { value: "10", label: "10 ETH", usd: "$40,000" },
-  { value: "100", label: "100 ETH", usd: "$400,000" },
-];
+const FIXED_DENOMINATION = "0.001";
 
 type ProcessingState = "idle" | "generating" | "broadcasting" | "confirming" | "complete" | "error";
 
 function DepositScreen() {
-  const [selectedAmount, setSelectedAmount] = useState("1");
   const [processingState, setProcessingState] = useState<ProcessingState>("idle");
   const [progress, setProgress] = useState(0);
+
+  const { deposit, isDepositPending, isDepositSuccess, denomination } = useMamizuCash();
 
   // Generate unique IDs for accessibility
   const privacyFeaturesId = useId();
@@ -46,20 +45,46 @@ function DepositScreen() {
 
   // Link generation states
   const [generatedUrl, setGeneratedUrl] = useState("");
+  const [note, setNote] = useState<{
+    nullifierHex: `0x${string}`;
+    secretHex: `0x${string}`;
+    commitmentHex: `0x${string}`;
+    preimageHex: `0x${string}`;
+  } | null>(null);
   const [showQR, setShowQR] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isGeneratingLink, setIsGeneratingLink] = useState(false);
 
-  // Mock withdrawal URL
-  const MOCK_URL =
-    "https://mamizu.cash/withdraw#eyJub3RlIjoiMHg4NGY3YjVhMjNkNGU2YzE4IiwicG9vbCI6IjB4YWJjZGVmIn0";
+  const encodeNote = (n: {
+    nullifierHex: `0x${string}`;
+    secretHex: `0x${string}`;
+    commitmentHex: `0x${string}`;
+    preimageHex: `0x${string}`;
+  }) => {
+    const payload = {
+      n: n.nullifierHex,
+      s: n.secretHex,
+      c: n.commitmentHex,
+      p: n.preimageHex,
+    };
+    const json = JSON.stringify(payload);
+    const b64 = btoa(unescape(encodeURIComponent(json)))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+    const origin = window.location.origin;
+    return `${origin}/withdraw#${b64}`;
+  };
 
   const generateUrl = () => {
+    if (!note) return;
     setIsGeneratingLink(true);
-    setTimeout(() => {
-      setGeneratedUrl(MOCK_URL);
+    try {
+      const url = encodeNote(note);
+      setGeneratedUrl(url);
+    } finally {
       setIsGeneratingLink(false);
-    }, 1500);
+    }
   };
 
   const copyToClipboard = async () => {
@@ -89,63 +114,57 @@ function DepositScreen() {
   ];
 
   const handleDeposit = async () => {
-    toast.info(`Initiating secure deposit of ${selectedAmount} ETH`);
+    if (denomination === undefined) {
+      toast.error("Could not read contract denomination. Please try again.");
+      return;
+    }
 
-    setProcessingState("generating");
-    setProgress(25);
+    if (parseEther(FIXED_DENOMINATION) !== denomination) {
+      toast.error("Invalid Denomination", {
+        description: `This pool only accepts deposits of ${formatEther(denomination as bigint)} ETH.`,
+      });
+      return;
+    }
+
 
     try {
-      // Simulate commitment generation
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      toast.info("Creating zero-knowledge commitment...");
+      // Initialize circomlib and generate a valid Pedersen-based commitment
+      await initializeCircomlib();
+      const dep = await generateRandomDeposit();
+      // Persist deposit note locally to build a withdrawal link after success
+      setNote({
+        nullifierHex: dep.nullifierHex,
+        secretHex: dep.secretHex,
+        commitmentHex: dep.commitmentHex,
+        preimageHex: dep.preimageHex,
+      });
+      deposit(dep.commitmentHex);
+    } catch (e: any) {
+      toast.error("Commitment generation failed", e?.message ?? String(e));
+    }
+  };
 
-      setProcessingState("broadcasting");
-      setProgress(50);
-
-      // Simulate transaction broadcast
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.info("Broadcasting to Japan Smart Chain Kaigan...");
-
-      setProcessingState("confirming");
-      setProgress(75);
-
-      // Simulate confirmation
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
+  useEffect(() => {
+    if (isDepositPending) {
+      setProcessingState("generating"); // Or a more generic 'processing' state
+      setProgress(50); // Indicate it's in progress
+    } else if (isDepositSuccess) {
       setProcessingState("complete");
       setProgress(100);
-
-      // Show success message
-      toast.success(`Successfully deposited ${selectedAmount} ETH with complete privacy`, {
-        duration: 5000,
-      });
-
-      // Auto-generate link after deposit success
       setTimeout(() => {
         generateUrl();
       }, 1000);
-    } catch (error) {
-      console.error("Deposit failed:", error);
-      setProcessingState("error");
-      setProgress(0);
-
-      toast.error(
-        "An error occurred while processing your deposit. Please check your wallet connection and try again.",
-      );
-
-      // Reset after error display
-      setTimeout(() => {
-        setProcessingState("idle");
-      }, 3000);
+    } else if (processingState !== "idle") {
+      // Handle error case if needed, or reset
+      // setProcessingState("error");
     }
-  };
+  }, [isDepositPending, isDepositSuccess]);
 
   const getProcessingMessage = () => {
     switch (processingState) {
       case "generating":
-        return "Generating commitment and nullifier...";
+        return "Generating commitment and preparing transaction...";
       case "broadcasting":
-        return "Broadcasting transaction to network...";
       case "confirming":
         return "Waiting for blockchain confirmation...";
       case "complete":
@@ -160,13 +179,17 @@ function DepositScreen() {
   const getProgressSteps = () => {
     const steps = [
       { id: "commitment", text: "Generating zero-knowledge commitment" },
-      { id: "nullifier", text: "Creating cryptographic nullifier" },
       { id: "broadcast", text: "Broadcasting to Japan Smart Chain Kaigan" },
       { id: "confirmation", text: "Awaiting network confirmation" },
     ];
 
+    let activeIndex = -1;
+    if (processingState === "generating") activeIndex = 0;
+    if (processingState === "broadcasting" || processingState === "confirming") activeIndex = 1;
+    if (processingState === "complete") activeIndex = 2;
+
     return steps.map((step, index) => {
-      const isActive = index < Math.floor(progress / 25);
+      const isActive = index <= activeIndex;
       return {
         id: step.id,
         step: step.text,
@@ -176,7 +199,8 @@ function DepositScreen() {
   };
 
   const isProcessing = processingState !== "idle" && processingState !== "complete";
-  const isDisabled = isProcessing || processingState === "complete";
+  const matchesPool = denomination !== undefined && parseEther(FIXED_DENOMINATION) === denomination;
+  const isDisabled = isProcessing || processingState === "complete" || !matchesPool;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 py-8">
@@ -315,36 +339,20 @@ function DepositScreen() {
               </div>
             </div>
 
-            {/* Amount Selection */}
+            {/* Fixed Deposit Amount */}
             <div className="space-y-4">
               <h2 id={amountSelectionId} className="font-semibold text-xl">
-                Select Deposit Amount
+                Deposit Amount
               </h2>
-              <div
-                className="grid grid-cols-2 gap-4 md:grid-cols-4"
-                role="radiogroup"
-                aria-labelledby={amountSelectionId}
-              >
-                {DENOMINATIONS.map((denom) => (
-                  <Button
-                    key={denom.value}
-                    variant={selectedAmount === denom.value ? "default" : "outline"}
-                    size="lg"
-                    onClick={() => setSelectedAmount(denom.value)}
-                    disabled={isDisabled}
-                    className={`flex h-auto flex-col space-y-2 px-6 py-4 transition-all ${
-                      selectedAmount === denom.value
-                        ? "scale-105 bg-primary ring-2 ring-primary hover:bg-primary/90"
-                        : "border-secondary text-secondary hover:scale-102 hover:bg-secondary/10 hover:shadow-md"
-                    }`}
-                    role="radio"
-                    aria-checked={selectedAmount === denom.value}
-                    aria-label={`${denom.label}, approximately ${denom.usd}`}
-                  >
-                    <div className="font-bold text-lg">{denom.label}</div>
-                    <div className="text-sm opacity-75">≈ {denom.usd}</div>
-                  </Button>
-                ))}
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-8 py-6">
+                  <div className="space-y-2">
+                    <div className="font-bold text-3xl text-primary">{FIXED_DENOMINATION} ETH</div>
+                    <div className="text-muted-foreground text-sm">
+                      Fixed deposit amount for this pool
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -376,7 +384,7 @@ function DepositScreen() {
                     ? "cursor-not-allowed bg-muted"
                     : "hover:scale-102 hover:shadow-lg"
               }`}
-              aria-label={`Deposit ${selectedAmount} ETH securely`}
+              aria-label={`Deposit ${FIXED_DENOMINATION} ETH securely`}
             >
               {processingState === "complete" ? (
                 <>
@@ -390,7 +398,7 @@ function DepositScreen() {
                 </>
               ) : (
                 <>
-                  Deposit {selectedAmount} ETH
+                  Deposit {FIXED_DENOMINATION} ETH
                   <ArrowRight size={20} className="ml-2" />
                 </>
               )}
