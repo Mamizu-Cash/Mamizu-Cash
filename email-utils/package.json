@@ -1,0 +1,28 @@
+{
+  "name": "email-utils",
+  "version": "0.1.0",
+  "description": "CLI utility for ZK Email proof generation (prove4d)",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "prove4d": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write .",
+    "start": "npm run build && node dist/index.js"
+  },
+  "dependencies": {
+    "@zk-email/sdk": "^2.0.6",
+    "commander": "^11.0.0",
+    "snarkjs": "^0.7.3",
+    "viem": "^2.9.32"
+  },
+  "devDependencies": {
+    "@types/snarkjs": "^0.7.9",
+    "eslint": "^8.50.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
+  }
+}

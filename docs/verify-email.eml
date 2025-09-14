@@ -1,0 +1,177 @@
+Delivered-To: ayukiyhs@gmail.com
+Received: by 2002:a05:7030:2606:b0:6f:9bc1:f792 with SMTP id e6csp657519lab;
+        Sat, 13 Sep 2025 22:25:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGiVFvf1k40t3RvZ8G0bOlsUgf7jQq/Kdn24Vp8YwurfVUJmp3+Krw3NCdkaVQ8eWYFUJZO
+X-Received: by 2002:a05:6a20:3d87:b0:246:f1:becb with SMTP id adf61e73a8af0-2602a0a00dfmr9369681637.21.1757827513728;
+        Sat, 13 Sep 2025 22:25:13 -0700 (PDT)
+ARC-Seal: i=2; a=rsa-sha256; t=1757827513; cv=pass;
+        d=google.com; s=arc-20240605;
+        b=faIARgCuXrsWhnGG+6HTIc/1PIzw/HbHB+P4aupcEY7tczltGZZDlA9ceNFHQcrODQ
+         0R3gD1L9yS1Xixh9FOqOEIrO2sUHxqPXihYOAmB1p2cUto53DlctbsGlL85LqaPGGudH
+         ZbXmmnxZavoMnIhBR2CsCHLdxho6IwsBjsPR4X1hWk3dkJ1rblhZZvQP+dFX7Bq35hVT
+         2vRKkAxxXVB6S/QOTQqrRu9siVmvMx8SNyk0MN8Bpwj8mVVum8ufLUGocJKo869b0j5+
+         OsgVLBVP6Xf4roa8TziDmA+mm8z+vVbR7o2oUKbb5/Ai8Splex5rL1bQ3vgScAppgn5g
+         hS2g==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=mime-version:content-transfer-encoding:message-id:user-agent
+         :subject:to:from:date:dkim-signature;
+        bh=KFHxfaRqf/Tkgm6aSnAeP4Y6vGABUWP2EsQxWzBy64M=;
+        fh=6Ltqvp4Wjo2og7uuic/XwCgGMXAoQN26TMczbmju9rs=;
+        b=MVkS1VfJN076ClQy2d7kSUg/XdgU0zNKlSfCZzoEenut6x8DP4UpcAbmfjC7eC6WMC
+         PMNrKiHA6DNuWGsmCBhiQOjOWxARRR+XheOXJ6RAn0qjoOguBp043EJa9RdZJGUKMQ2l
+         csB/oPpgTwn0XXyBPMEuhRGBijGN1+hFHCILOiJspa+h36NGAXaM4LIylR0dbmXTTdU8
+         tWEXh8l1zyguIrb422DgKO3Tzzu/iol45zSrsMp+exzRmlobxCfGs6LgVoZv1ghFKIFe
+         f6t5u0fUqvUFY1xvW5fours45X6VFurUwG1y3d0HKXqTnSaCw1PWNYbAE5gQ5As88nHa
+         8EBQ==;
+        dara=google.com
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=pass header.i=@aoki.app header.s=selector2 header.b=XMLAYAMy;
+       arc=pass (i=1 spf=pass spfdomain=aoki.app dkim=pass dkdomain=aoki.app dmarc=pass fromdomain=aoki.app);
+       spf=pass (google.com: domain of me@aoki.app designates 2a01:111:f403:2019::729 as permitted sender) smtp.mailfrom=me@aoki.app;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=aoki.app
+Return-Path: <me@aoki.app>
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on20729.outbound.protection.outlook.com. [2a01:111:f403:2019::729])
+        by mx.google.com with ESMTPS id d2e1a72fcca58-77607a48c24si5649073b3a.128.2025.09.13.22.25.13
+        for <ayukiyhs@gmail.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Sep 2025 22:25:13 -0700 (PDT)
+Received-SPF: pass (google.com: domain of me@aoki.app designates 2a01:111:f403:2019::729 as permitted sender) client-ip=2a01:111:f403:2019::729;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@aoki.app header.s=selector2 header.b=XMLAYAMy;
+       arc=pass (i=1 spf=pass spfdomain=aoki.app dkim=pass dkdomain=aoki.app dmarc=pass fromdomain=aoki.app);
+       spf=pass (google.com: domain of me@aoki.app designates 2a01:111:f403:2019::729 as permitted sender) smtp.mailfrom=me@aoki.app;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=aoki.app
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DvBUjR3CCZ9dcfnXv1RzAAVZk35uJO0usCRibPjKaQVDp9AcwX9pxMfss4a9iEpSuzGXT+BcOIruDMQWQ7/nKVHrmIT1IgW05vdM25x7+Jg/q76xyO/y+jyKqsxy3jLhx1n//nxwuWxMfQWXXld/yTOHwJNKarVyzBIOMhL9pxA6Bpw/1KiJwxSxEALmkLs9UgIpu2h2rojdP/8Y8I545O+MxHQykr3np/3GtmcDP4SWYCv91W9X9cigIBwoyM0ss0WvZmxCXuW18p0FzYYlrjtDGyuNia6HK9qCv4xQACM35KC1ffWmrm1dQLDNrhvg096jhA9945W2pUpH7/uNNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KFHxfaRqf/Tkgm6aSnAeP4Y6vGABUWP2EsQxWzBy64M=;
+ b=u9Ct4ZvuoZnBGqKWE9+3CQpwwmmZ+tTiMQ02bFXsRP9ob/f9FX/TOX0RqV724LSnzkqIH6+v4Q/XzC2Tfp7cW4IP7F9lQZ7oG5RFgvRFfwgNMhqV57aD54fdXYmzYS/muFrnCFxqWsNpngF8hHcwJRPyE237FuAis4t/eqMtHo6vT0ms8ykZWQUo4oxaX79Q5szkC6tiyWqyiVUUTRrc4w3MXphsN837oX+f1IOBobjb6lhdKbo488D/aAXy7jd/yrWiYf/tdifTuxGpqRSNQhUpw99qkyunzz+fPN6BQ5wMULmTih4rt+ZSEESEIx6/CeJOaYMPfJDQt5nhAjXR/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aoki.app; dmarc=pass action=none header.from=aoki.app;
+ dkim=pass header.d=aoki.app; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aoki.app; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KFHxfaRqf/Tkgm6aSnAeP4Y6vGABUWP2EsQxWzBy64M=;
+ b=XMLAYAMyJQSBB2DEMvs3ORcI+zdNu0dh9j3TK5wDgxr5HV9+XvilQODohXI/8PCEq4OlUepUjnfqahorllFQ47NbtkaIodU/0Jwy5clVwLZzDHC1nUsN8ABZ3zoAxe0SjhkRFkqYEnd6IksX5rYCIjBG0jvZagdn7wqu1o4rbklEQb3crEs0mt+ILtyB/qI90efvTt+1WDvGMB0zq9BusQIahbPK4tG4CmBIumpocDNLinHXI8etNGt4Viewa3WWiggjQXjwAkbBfyf7flR/fpHpfM3m2oL0LwXw/k1LIkk0W/4CObFuceP+R5w8U+SrqpE3iJ73QQUA0jDQZNMySw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aoki.app;
+Received: from TYYP286MB2899.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2f5::6)
+ by TY4P286MB6654.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:342::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Sun, 14 Sep
+ 2025 05:25:12 +0000
+Received: from TYYP286MB2899.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::76f2:6ed0:3087:310f]) by TYYP286MB2899.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::76f2:6ed0:3087:310f%4]) with mapi id 15.20.9115.020; Sun, 14 Sep 2025
+ 05:25:11 +0000
+Date: Sun, 14 Sep 2025 14:25:10 +0900
+From: =?UTF-8?B?6Z2S5pyo44KG44GG44GN?= <me@aoki.app>
+To: ayukiyhs@gmail.com
+Subject: [Mamizu-Cash]Registration & Business Verification
+User-Agent: Thunderbird for Android
+Message-ID: <F57B90FD-5DD5-48AB-B69D-288D8A6ACAD8@aoki.app>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: TYCP286CA0084.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::14) To TYYP286MB2899.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2f5::6)
+Return-Path: me@aoki.app
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYYP286MB2899:EE_|TY4P286MB6654:EE_
+X-MS-Office365-Filtering-Correlation-Id: 94a73f5f-8be2-43f1-3748-08ddf34f13bb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WTNudzhEaVFsb0xySUQ0V2pWR2p6SkZXN1JSbHRsMU1FZTR4d0NwREkzMC9K?=
+ =?utf-8?B?R2JnRGZQL1JlaVREcTg4SGRaYVJzdWlHQXl2WTE0QUlHb0tPcjArc0dlTkcr?=
+ =?utf-8?B?YmduOVl1S1k1bDRlRnp4UDY0eFUvc0pqbm9qbFZFRHVHc28xZDd1SXVDaFk3?=
+ =?utf-8?B?MlNBLzNNYUdsV0NHc0JrNzRPVGRNNk80ZzVnUjEyQWcrQUJ6ZjBhUzZCWVc5?=
+ =?utf-8?B?TlhPWkR2ZnNrSVd1QUMyaWd6VXlUUDZLejlQRFIrb25COE1RQ0JyYVZYcHpZ?=
+ =?utf-8?B?enFLQ1A1TGI4eENwMTBNdmhGVzJOYzA3dm5TTUFnZHVRS1pVbGl0R0ViU0pQ?=
+ =?utf-8?B?VEgzcnl0eExpVlB4MTZPcGRGQWdTZ1NBMEh3WldSQVl6aUFuK2FwY0VuZjdW?=
+ =?utf-8?B?Sy91YzlMb3g0c1U5RXdnRkIwU2JuL0xwVzFINldRYU5SbmVFSDlNVzNVdnho?=
+ =?utf-8?B?eHRqS3Q5bEsxeWM5ck0wZVo3SEhUOUZPSFRHbXZIdXErdVlKNWI5MTRPclFr?=
+ =?utf-8?B?V0xSNHcvZmVmd1FwVzZldDVxMWVRTUVkQ2djZW54Qkp2SWtvRFdmclVIMjMz?=
+ =?utf-8?B?Z2dFeXp0T1VacjVJcEhxaW5aU3Z4QlFrQWE2cHVOZHhQZ3ZNVS9jK2tBNVEx?=
+ =?utf-8?B?cklPZGU4NVdRMSsvZjAvZUlHbjE1V1AvWW5oQTZpeks4UTlPTEo5ZUdWRXJp?=
+ =?utf-8?B?eFRXY0Zyb3NlSmYxVm1NNDRZWVJrcUU2bEdRbUtvZEJJQitlSUFBejYvQlF0?=
+ =?utf-8?B?U1REeHFvcFdqV3hjcEdNREYwRmZuenJENXIyUHY0RGt4Q3ZNU09iTlRXcUlk?=
+ =?utf-8?B?QW94OUR1V1Bxb1haZTExREN2UEFJSEFISHNjUVZPVDFmTjduY1E0RTBYTkNa?=
+ =?utf-8?B?Kzl5UmlEQkJQSit6QjJpeVJlODQ3Z283aUFMa25LNDI3MG8rWWlCUDVBbG9s?=
+ =?utf-8?B?TVVLOG4vR1J0NHJWN2pMQnBhQXBBZGd3VHh5Q0RvYnhIaUdobjE4SXZ6R3lG?=
+ =?utf-8?B?MVFQQUlRRkxUT3pSWjBJZjFtb1lHNFpJZ1hSWmhNWEovRmQxT3M3MTRkMFNv?=
+ =?utf-8?B?ejZpTVp4Z3IxaTQ3RVVlVUlXcW5USk5DNjYyUWpFbkxPQXBLMFFtb21vSVhu?=
+ =?utf-8?B?L04rWGRNMlIrNFd6L0NnZ2MwTnkxc3ZZRjJsbHdzSzVRNjlVdUEzalNFNytI?=
+ =?utf-8?B?cDczK0dSU1haOHJBYlpNN2J3MS9TanRuMlZCSmFQdVJ5TXVsUTE0a0hZNFg5?=
+ =?utf-8?B?QU5BL1FZY3pZdnRuQzRDVVpDQUU4blVKSTY2aEpSRHBOU0hoeDBqZ2pKWnZ0?=
+ =?utf-8?B?NjlxOUcrc3lnN3FpNWxEbmdXVE04OGZRK0owVWlkNFErTEpVQzNlWkhBaVJa?=
+ =?utf-8?B?cFVmcXJ3UUJZSENVcVN4Z09FOUxLRnpDTE9UUTdwcmNaYVIzV1JsYm9CYitw?=
+ =?utf-8?B?RzRhOWJaTVAvRlduZXZnMFFscGlwYVU3aTZrMkJ1OGdHeHZURi9DNVdqZkxu?=
+ =?utf-8?B?VjR0YjBoMExmdXBsYm00MmVVTmhuTGdhNTlmc0lJdjVNUmtMc0hCQjFkelB4?=
+ =?utf-8?B?Wi9jVGFHeHhxZ1pYZzZXQmtkVHh2b2Ivdk1OcU4yQmFDWEVIa09GWlRBTTcr?=
+ =?utf-8?B?cEVLeEhtQlR3RnNySk13eFkxeGRSYkVzTFN5czFuR2FYemtHNnNKOFRFY2Zq?=
+ =?utf-8?B?R0ZQdWM2dlB2VTVnaU1mVDJGR0hGTXI3Qm9YNTdUenZYQXlhTzdMQWtTN1gy?=
+ =?utf-8?B?UkdMeVVsbWNOOGJJRzVsZUxUVHlZL2pIZGMyNGhpMFZBYzVQc1VweTROTWRT?=
+ =?utf-8?B?ZGx5WW1HdHJ6RXc1NGpXZ0drN3pIQzl4a3BQSDRSbU1mWUpERXFPZzloMDlT?=
+ =?utf-8?B?TFRldVJZSkorZWdjSkpwaDY2d2FIc1RjNG5JQm9kMlRHbkE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYP286MB2899.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L0RHdFFIVnYxVTREcUxMbE8vVGIzTkpVa2Vuc1dsK0xGS0hlSkU3bzVoQnVR?=
+ =?utf-8?B?RUtLWWtRS1N3ZitLU2FQTkw0QmI1RXN2UnhIWjlwQ25CdHBmVHNBSk9FLzZx?=
+ =?utf-8?B?S1E3ZnhmWXd3OXRWeTdiV0lUY2YvVXA1V3dJK2V4L3IrT2t2K2tkS1l4c0lV?=
+ =?utf-8?B?UmhqMGtHQk0rVTJDRm1oV042cHdXRjVvaUpVdWRRd0FnaFN2OGltOHc4S0Jr?=
+ =?utf-8?B?MTVBN3YyL1hRWTcwVmpNV2lkMG16NGlVdTd5dzc1L09sRk0vRE00dC9UbXdI?=
+ =?utf-8?B?ZHdiWm9Oa0l6aXhWZ21jSUlUc3QzS2pHcEdodzdLcG83MGdmTVBFUDhKUzd3?=
+ =?utf-8?B?MXE2cFZDZUFmQkpkem14UVA3RU54OHQrbTZNMFR6OVNsdGlwRXQvOGZGVHJv?=
+ =?utf-8?B?RUw2anM4TzNia0traFN4UXdNSnRNbnd4VzZ6VzV5eVdXMzM4T0tsWE9IeDRs?=
+ =?utf-8?B?ZGVtOW1FSWdFc0pzT0M1YWhpV1ZVaFNndFBaTXJtaVBuQTkrZ1pubEJuY045?=
+ =?utf-8?B?d2hyUjU2T0VEOUQxQ0RubWtLbjUvZGF0Nkp5Zy9lQ3NZaGpxYXFrOEd6dDN2?=
+ =?utf-8?B?ZzZWTjZCSENyeFd4SEhkREV3cXZYTnpvTFNib0lJc3BGbDJoVWlTdkJGNzg2?=
+ =?utf-8?B?Wm9EUUUzdFlDWVJPQjNmZnFJbFo0OHNNMXJycyttVjR0bDVBNlhueHhUTlk1?=
+ =?utf-8?B?TDhmL1JwNHpmcXJORWZKWWpLRmlNN09vcUFwM244cVd1ZXNOTTc3UVhOU1Bq?=
+ =?utf-8?B?YVRIZ21EclI4eFlOWnVXVlh0N2VicVM3TWZBbXIyK3FObE1JSHMwbDJ1M2Jt?=
+ =?utf-8?B?bDdDWG8vZ25DZE5rMy81SmpJd2UvTGtyWU1WT25JQ2k2MGxVSFhnNnRjdldL?=
+ =?utf-8?B?Zk9EUytLaXZXdUJjUFNLeC82RjhJTW15TWd6UlBYamxOaFQ5Y0Y2aTlISDBL?=
+ =?utf-8?B?Mzh0VFBmWW93M1NNY1BWL01tRVpRRXJjSEFDbXNnelB6WThBOWJnYzdPTWdJ?=
+ =?utf-8?B?elR3N1lpTk0waVFnK09BUG9ST2kxaWxETktSYmUxRzcrclRQeWQyUmo1SFJZ?=
+ =?utf-8?B?eXNlcklIbFhuRi9wbHVaTzJvVXhOblFUVk9YbHNhRThjNGNZR2hlV1diZVRS?=
+ =?utf-8?B?MExnRWx0ZWRyY0IzcmJ2aFBxZ001RFFFc1FpL3FEZ1hXdU0ycEpCU2lScTlB?=
+ =?utf-8?B?eDhIQ1c3Z0xQT2hYdTNVaVFjU1pMamI0enJadk9GRC9VTWRXRjdjMTJWL2o1?=
+ =?utf-8?B?eW1IdlNLcnFML1FsVVc0ZlY3ZkNrMk54NVVqTnR3NTFxMmFSci9rc25NV1Zy?=
+ =?utf-8?B?NzZQSi9kM2p4Q2IxZlc0aWZwU0NmOE5BK2xwTDkrV3N4T05uZENKY0IwYjN4?=
+ =?utf-8?B?SG01UkFvSE85bm1RNWhMQThoZXdOTDVGT1RWMTFmcU1iL09iVVYzVTdycHkv?=
+ =?utf-8?B?bUdkeFlmc3F3dEpBeVNsSzJwQTAwWmltTmZTQWFJMGlsOXFKekRtRjBjL0hM?=
+ =?utf-8?B?SlhqdUdwYzlYRkg5a2FMeGVDMFFjR0VkZnV6aTJ3WUdtRXc2QkJLNkFWTVhw?=
+ =?utf-8?B?b0k0ZGlaSlluV2dhbTVKeUNPb2R0UzY0NUY5ZW1EckZzRmNrcTRScGNidVM4?=
+ =?utf-8?B?anpHdnA4MFkreXR2bzhXVStIb2duWHlNTWZKUENUWGQrTDY3bjV3QVpZMDQ3?=
+ =?utf-8?B?RXpaUXlnSTBsVjgxRGFrUmJzaTMvem1Lb0o4RUl5OHZoVEk3WmVCSUJQM094?=
+ =?utf-8?B?NXEvK2k1MGRzTjYrUW81MkhqWGdBTVpVTjRzTDVDMjA3ZHJkVUIvemtPZ2hy?=
+ =?utf-8?B?dVg2blVQdEFaelQzTStrbkwzTmtKSS96Z2tWZHlZVEpWb0pJN1F4ZkZJUHVv?=
+ =?utf-8?B?WExuU3JNeWRXYnJFa2JHRk1nYnMwS2ZiK3ZacTVDY0trUDJRMEpRbzRUUHV1?=
+ =?utf-8?B?RkExTDNVbzR4dk9EMzZmOWtKL2ZrOTZVOE1zZlFDckVZQnh1eWp5bHdMRUdo?=
+ =?utf-8?B?T0tMcUFpdUpRdG1wSjVNYmxWR1NTcjk0OWZHbnJyanFhZUhSSEZwa2VNRE9p?=
+ =?utf-8?B?SHlQTDJCbDhxUEZvYUZUdndZVGFmNVBYSkVoSDBjanA4ZjVhTEhkazlYMnJ6?=
+ =?utf-8?Q?dzV4=3D?=
+X-OriginatorOrg: aoki.app
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94a73f5f-8be2-43f1-3748-08ddf34f13bb
+X-MS-Exchange-CrossTenant-AuthSource: TYYP286MB2899.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2025 05:25:11.6372
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f0d0f135-8377-4727-95fb-037accb346d2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4YM3xkQki6mTkhdKl3gO8M4D15QZlB40MJ1bUiQSpRAiJMGoNSzT4RiwvGtPj4L9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4P286MB6654
+
+I am going to register the Mamizu-Cash and prove our business.
+
+Org: AokiApp Inc.
+Domain: aoki.app
