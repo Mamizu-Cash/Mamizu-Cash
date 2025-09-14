@@ -6,6 +6,7 @@ import {
   RefreshCw,
   RotateCcw,
   Settings,
+  Shield,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
@@ -36,12 +37,14 @@ function CounterPage() {
     reset,
     mizuhikiIncrement,
     untiIncrement,
+    compliantIncrement,
     isIncrementPending,
     isDecrementPending,
     isSetCountPending,
     isResetPending,
     isMizuhikiIncrementPending,
     isUntiIncrementPending,
+    isCompliantIncrementPending,
     isCountLoading,
     refetchCount,
   } = useCounter();
@@ -54,13 +57,19 @@ function CounterPage() {
     }
   };
 
+  // Determine compliant status (either Mizuhiki SBT or UNTI)
+  const isCompliant = hasSBT || hasUNTI;
+  const _isCompliantLoading = isSBTLoading || isUNTILoading;
+
   const isLoading =
     isCountLoading ||
     isIncrementPending ||
     isDecrementPending ||
     isSetCountPending ||
     isResetPending ||
-    isMizuhikiIncrementPending;
+    isMizuhikiIncrementPending ||
+    isUntiIncrementPending ||
+    isCompliantIncrementPending;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 py-8">
@@ -201,6 +210,20 @@ function CounterPage() {
                       : hasUNTI
                         ? "UNTI Increment"
                         : "UNTI Increment (Token Required)"}
+                  </Button>
+
+                  <Button
+                    onClick={compliantIncrement}
+                    disabled={isCompliantIncrementPending || !isCompliant}
+                    className="h-12 bg-primary hover:bg-primary/90 disabled:opacity-50"
+                    title={!isCompliant ? "Requires either Mizuhiki SBT or UNTI Token" : ""}
+                  >
+                    <Shield size={20} className="mr-2" />
+                    {isCompliantIncrementPending
+                      ? "Incrementing..."
+                      : isCompliant
+                        ? "Compliant Increment"
+                        : "Compliant Increment (Auth Required)"}
                   </Button>
 
                   <Button

@@ -15,7 +15,7 @@ export function useBusinessVerifier() {
     address: CONTRACT_ADDRESSES.BUSINESS_VERIFIER,
     abi: BusinessVerifierAbi,
     functionName: "isEligible",
-    args: userAddress ? [userAddress] : undefined,
+    args: userAddress ? [userAddress, "0x"] : undefined,
     query: {
       enabled: !!userAddress,
     },

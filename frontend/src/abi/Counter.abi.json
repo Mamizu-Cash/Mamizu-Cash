@@ -32,6 +32,13 @@
   },
   {
     "type": "function",
+    "name": "compliantIncrement",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "count",
     "inputs": [],
     "outputs": [
