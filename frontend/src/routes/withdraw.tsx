@@ -9,6 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { type CredentialInfo, getCredential } from "../lib/mockCredentials";
 
 export const Route = createFileRoute("/withdraw")({
   component: WithdrawScreen,
@@ -18,7 +19,7 @@ type CredentialStatus = "checking" | "valid" | "invalid" | "none";
 
 function WithdrawScreen() {
   const [credentialStatus, setCredentialStatus] = useState<CredentialStatus>("checking");
-  const [credentialType, setCredentialType] = useState<"mizuhiki" | "unti" | null>(null);
+  const [credential, setCredential] = useState<CredentialInfo | null>(null);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState(false);
 
@@ -29,21 +30,19 @@ function WithdrawScreen() {
     note: "0x84f7b5a23d4e6c18...",
   };
 
-  // Mock credential verification
+  // Check stored credentials
   useEffect(() => {
     const checkCredentials = async () => {
       setCredentialStatus("checking");
 
       // Simulate credential check delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Mock result - 70% chance of having valid credentials
-      const hasValidCredentials = Math.random() > 0.3;
-      const isMizuhiki = Math.random() > 0.5;
+      const storedCredential = getCredential();
 
-      if (hasValidCredentials) {
+      if (storedCredential) {
         setCredentialStatus("valid");
-        setCredentialType(isMizuhiki ? "mizuhiki" : "unti");
+        setCredential(storedCredential);
       } else {
         setCredentialStatus("invalid");
       }
@@ -266,7 +265,7 @@ function WithdrawScreen() {
             </p>
           )}
 
-          {credentialStatus === "valid" && credentialType && (
+          {credentialStatus === "valid" && credential && (
             <div>
               <div
                 style={{
@@ -276,13 +275,15 @@ function WithdrawScreen() {
                   marginBottom: "0.5rem",
                 }}
               >
-                {credentialType === "mizuhiki" ? (
+                {credential.type === "mizuhiki" ? (
                   <User size={16} color="#059669" />
                 ) : (
                   <Building size={16} color="#059669" />
                 )}
                 <span style={{ color: "#166534", fontWeight: "500" }}>
-                  {credentialType === "mizuhiki" ? "Mizuhiki Verified SBT" : "UNTI (Corporate KYB)"}
+                  {credential.type === "mizuhiki"
+                    ? "Mizuhiki Verified SBT"
+                    : "UNTI (Corporate KYB)"}
                 </span>
               </div>
               <p
@@ -290,10 +291,55 @@ function WithdrawScreen() {
                   margin: 0,
                   color: "#166534",
                   fontSize: "0.9rem",
+                  marginBottom: "0.5rem",
                 }}
               >
                 You are authorized to receive this private transfer
               </p>
+              <div
+                style={{
+                  backgroundColor: "white",
+                  padding: "0.75rem",
+                  borderRadius: "6px",
+                  border: "1px solid #bbf7d0",
+                  fontSize: "0.8rem",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "0.25rem",
+                  }}
+                >
+                  <span style={{ color: "#059669" }}>Token ID:</span>
+                  <span style={{ fontFamily: "monospace", color: "#14532d" }}>
+                    {credential.tokenId}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "0.25rem",
+                  }}
+                >
+                  <span style={{ color: "#059669" }}>
+                    {credential.type === "mizuhiki" ? "Name:" : "Company:"}
+                  </span>
+                  <span style={{ color: "#14532d" }}>
+                    {credential.type === "mizuhiki"
+                      ? credential.userInfo?.name
+                      : credential.userInfo?.companyName}
+                  </span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#059669" }}>Issued:</span>
+                  <span style={{ color: "#14532d" }}>
+                    {new Date(credential.issuedAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
             </div>
           )}
 
@@ -317,10 +363,49 @@ function WithdrawScreen() {
                   margin: 0,
                   color: "#991b1b",
                   fontSize: "0.9rem",
+                  marginBottom: "1rem",
                 }}
               >
                 You need either a Mizuhiki Verified SBT or UNTI credential to withdraw these funds.
               </p>
+              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                <a
+                  href="/get-mizuhiki"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    padding: "0.5rem 1rem",
+                    backgroundColor: "#3b82f6",
+                    color: "white",
+                    textDecoration: "none",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                  }}
+                >
+                  <User size={14} />
+                  Get Mizuhiki SBT
+                </a>
+                <a
+                  href="/get-unti"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    padding: "0.5rem 1rem",
+                    backgroundColor: "#8b5cf6",
+                    color: "white",
+                    textDecoration: "none",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                  }}
+                >
+                  <Building size={14} />
+                  Get UNTI
+                </a>
+              </div>
             </div>
           )}
         </div>

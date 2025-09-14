@@ -297,6 +297,230 @@ function App() {
           </div>
         </div>
 
+        {/* Credential Verification Section */}
+        <div
+          style={{
+            backgroundColor: "white",
+            borderRadius: "16px",
+            padding: "2rem",
+            marginBottom: "1rem",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+              color: "#1e293b",
+              marginBottom: "1rem",
+              textAlign: "center",
+            }}
+          >
+            Get Verified to Participate
+          </h2>
+          <p
+            style={{
+              color: "#64748b",
+              marginBottom: "1.5rem",
+              textAlign: "center",
+              maxWidth: "600px",
+              margin: "0 auto 1.5rem auto",
+              lineHeight: "1.6",
+            }}
+          >
+            To use Mamizu Cash, you need either a Mizuhiki SBT (individual) or UNTI credential
+            (corporate). Choose your verification type below.
+          </p>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "1.5rem",
+              marginBottom: "1rem",
+            }}
+          >
+            {/* Individual Verification */}
+            <div
+              style={{
+                padding: "1.5rem",
+                backgroundColor: "#eff6ff",
+                borderRadius: "12px",
+                border: "2px solid #dbeafe",
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "60px",
+                  height: "60px",
+                  backgroundColor: "#3b82f6",
+                  borderRadius: "50%",
+                  marginBottom: "1rem",
+                }}
+              >
+                <span style={{ fontSize: "1.5rem" }}>👤</span>
+              </div>
+              <h3
+                style={{
+                  fontSize: "1.2rem",
+                  fontWeight: "600",
+                  color: "#1e293b",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Individual (Mizuhiki SBT)
+              </h3>
+              <p
+                style={{
+                  color: "#64748b",
+                  fontSize: "0.95rem",
+                  lineHeight: "1.5",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                Personal KYC verification for individual users. Get your Mizuhiki Verified SBT to
+                participate in private transactions.
+              </p>
+              <a
+                href="/get-mizuhiki"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor: "#3b82f6",
+                  color: "white",
+                  textDecoration: "none",
+                  borderRadius: "8px",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  transition: "background-color 0.2s",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "#2563eb";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "#3b82f6";
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.backgroundColor = "#2563eb";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.backgroundColor = "#3b82f6";
+                }}
+              >
+                Get Mizuhiki SBT
+                <span>→</span>
+              </a>
+            </div>
+
+            {/* Corporate Verification */}
+            <div
+              style={{
+                padding: "1.5rem",
+                backgroundColor: "#f3e8ff",
+                borderRadius: "12px",
+                border: "2px solid #d8b4fe",
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "60px",
+                  height: "60px",
+                  backgroundColor: "#8b5cf6",
+                  borderRadius: "50%",
+                  marginBottom: "1rem",
+                }}
+              >
+                <span style={{ fontSize: "1.5rem" }}>🏢</span>
+              </div>
+              <h3
+                style={{
+                  fontSize: "1.2rem",
+                  fontWeight: "600",
+                  color: "#1e293b",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Corporate (UNTI)
+              </h3>
+              <p
+                style={{
+                  color: "#64748b",
+                  fontSize: "0.95rem",
+                  lineHeight: "1.5",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                Business KYB verification through ZK Email DKIM proof. Get your UNTI credential for
+                enterprise transactions.
+              </p>
+              <a
+                href="/get-unti"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor: "#8b5cf6",
+                  color: "white",
+                  textDecoration: "none",
+                  borderRadius: "8px",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  transition: "background-color 0.2s",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "#7c3aed";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "#8b5cf6";
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.backgroundColor = "#7c3aed";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.backgroundColor = "#8b5cf6";
+                }}
+              >
+                Get UNTI Credential
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+
+          <div
+            style={{
+              backgroundColor: "#fef3c7",
+              padding: "1rem",
+              borderRadius: "8px",
+              border: "1px solid #fcd34d",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.9rem",
+                color: "#92400e",
+                lineHeight: "1.5",
+              }}
+            >
+              <strong>Note:</strong> Both sender and receiver must have valid credentials to
+              complete a private transaction. This ensures regulatory compliance and prevents
+              misuse.
+            </p>
+          </div>
+        </div>
+
         {/* Technology Section */}
         <div
           style={{
