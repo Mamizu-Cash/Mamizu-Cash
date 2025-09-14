@@ -40,6 +40,44 @@ else
 fi
 '''
 
+[tasks.deploy-business-verifier]
+description = "Deploy AlwaysAllow and BusinessVerifier contracts"
+alias = "dbv"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Deploying Business Verifier system..."
+forge script script/DeployBusinessVerifier.s.sol \
+  --rpc-url kaigan \
+  --account deployer \
+  --password "password123" \
+  --broadcast
+'''
+
+[tasks.abigen-business-verifier]
+description = "Generate ABIs for BusinessVerifier contracts"
+alias = "abv"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Generating Business Verifier ABIs..."
+forge build --silent
+if [ -f "out/AlwaysAllow.sol/AlwaysAllow.json" ] && [ -f "out/BusinessVerifier.sol/BusinessVerifier.json" ]; then
+  echo "ABIs generated:"
+  echo "  - out/AlwaysAllow.sol/AlwaysAllow.json"
+  echo "  - out/BusinessVerifier.sol/BusinessVerifier.json"
+  # Extract ABI only for frontend
+  jq '.abi' out/AlwaysAllow.sol/AlwaysAllow.json > out/AlwaysAllow.abi.json 2>/dev/null || echo "jq not available for AlwaysAllow"
+  jq '.abi' out/BusinessVerifier.sol/BusinessVerifier.json > out/BusinessVerifier.abi.json 2>/dev/null || echo "jq not available for BusinessVerifier"
+  echo "Extracted ABIs:"
+  echo "  - out/AlwaysAllow.abi.json"
+  echo "  - out/BusinessVerifier.abi.json"
+else
+  echo "Error: Contract JSON files not found"
+  exit 1
+fi
+'''
+
 [tasks.clean]
 description = "Clean build artifacts and cache"
 alias = "cl"
