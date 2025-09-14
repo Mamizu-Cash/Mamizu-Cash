@@ -159,46 +159,6 @@ function AttestorScreen() {
           </p>
         </div>
 
-        {/* UNTI Status Check */}
-        {isConnected && (
-          <div
-            style={{
-              backgroundColor: isEligible ? "#f0fdf4" : "#fefce8",
-              padding: "1rem",
-              borderRadius: "8px",
-              border: `1px solid ${isEligible ? "#bbf7d0" : "#fef08a"}`,
-              marginBottom: "2rem",
-              textAlign: "center",
-            }}
-          >
-            {isEligible ? (
-              <div>
-                <p style={{ margin: "0 0 0.5rem 0", color: "#166534", fontWeight: "500" }}>
-                  ✅ UNTIトークン保有済み
-                </p>
-                <p style={{ margin: "0", color: "#047857", fontSize: "0.875rem" }}>
-                  既に企業認証が完了しています。
-                  <a
-                    href="/profile"
-                    style={{ color: "#047857", textDecoration: "underline", marginLeft: "4px" }}
-                  >
-                    プロフィールページで確認
-                  </a>
-                </p>
-              </div>
-            ) : (
-              <div>
-                <p style={{ margin: "0 0 0.5rem 0", color: "#ca8a04", fontWeight: "500" }}>
-                  ⚠️ UNTI未取得
-                </p>
-                <p style={{ margin: "0", color: "#a16207", fontSize: "0.875rem" }}>
-                  プライベート送金を利用するには企業認証が必要です
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Progress Steps */}
         <div
           style={{
