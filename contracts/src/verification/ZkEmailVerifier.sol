@@ -2,17 +2,17 @@
 pragma solidity ^0.8.20;
 
 import {IEligibilityVerifier} from "./IEligibilityVerifier.sol";
-import {Verifier} from "../Verifier.sol";
+import {IVerifier} from "../IVerifier.sol";
 
 /// @title ZkEmailVerifier
 /// @notice Eligibility verifier using a zk-email SNARK proof.
 contract ZkEmailVerifier is IEligibilityVerifier {
     /// @notice Underlying SNARK verifier contract.
-    Verifier public immutable verifier;
+    IVerifier public immutable verifier;
 
     /// @param verifierAddress Address of the deployed Verifier contract.
     constructor(address verifierAddress) {
-        verifier = Verifier(verifierAddress);
+        verifier = IVerifier(verifierAddress);
     }
 
     /// @inheritdoc IEligibilityVerifier

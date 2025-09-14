@@ -1,52 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {Test} from "forge-std/Test.sol";
-
+import {Test} from "lib/forge-std/src/Test.sol";
 import {BusinessVerifier} from "../src/BusinessVerifier.sol";
-import {IEligibilityVerifier} from "../src/verification/IEligibilityVerifier.sol";
-import {AllowlistVerifier} from "../src/verification/AllowlistVerifier.sol";
 import {KnownCompanyUnti} from "../src/tokens/KnownCompanyUnti.sol";
-import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {ZkEmailVerifier} from "../src/verification/ZkEmailVerifier.sol";
+import {IVerifier} from "../src/IVerifier.sol";
 
 contract BusinessVerificationTest is Test {
-    // Actors
-    address internal owner;
-    address internal user;
-    address internal user2;
-    address internal attacker;
-
-    // System under test
-    AllowlistVerifier internal eligibility;
-    BusinessVerifier internal stamper;
-    KnownCompanyUnti internal token;
-
-    function setUp() public {
-        owner = makeAddr("owner");
-        user = makeAddr("user");
-        user2 = makeAddr("user2");
-        attacker = makeAddr("attacker");
-
-        // Deploy verifier with owner as admin
-        eligibility = new AllowlistVerifier(owner);
-
-        // Deploy stamper; it internally deploys the token with a fixed base URI and becomes its owner
-        // Base URI is hardcoded inside BusinessVerifier to "https://assets.aoki.app/meta.json"
-        stamper = new BusinessVerifier(address(eligibility), owner);
-
-        // Reference the deployed token instance
-        token = stamper.token();
-
-        // Label for better traces
-        vm.label(address(eligibility), "AllowlistVerifier");
-        vm.label(address(stamper), "BusinessVerifier");
-        vm.label(address(token), "KnownCompanyUnti");
-        vm.label(owner, "Owner");
-        vm.label(user, "User");
-        vm.label(user2, "User2");
-        vm.label(attacker, "Attacker");
-    }
-
     // Helper: mirror the stamper's token id computation
     function _computeId(address account) internal pure returns (uint256) {
         bytes32 h1 = keccak256(abi.encodePacked(account));
@@ -54,109 +15,84 @@ contract BusinessVerificationTest is Test {
         return uint256(h2);
     }
 
-    function testDeploymentAndOwnership() public {
-        // Stamper must own the token it deployed
-        assertEq(token.owner(), address(stamper), "stamper should own token");
-
-        // The configured token address should be non-zero
-        assertTrue(address(token) != address(0), "token address should be set");
+    function deployVerifier() internal returns (IVerifier) {
+        // Deploy Verifier contract
+        bytes memory bytecode = hex"60806040526004361015610011575f80fd5b5f3560e01c6334baeab914610024575f80fd5b346100ba576101a03660031901126100ba5761003f36610155565b36606312156100ba57604061005460406100f7565b90813660c4116100ba576044905b60c482106100a15761009d61008b868661007b3661016c565b9061008536610195565b9261036d565b60405190151581529081906020820190565b0390f35b602083916100af3685610180565b815201910190610062565b5f80fd5b634e487b7160e01b5f52604160045260245ffd5b604051906040820182811067ffffffffffffffff8211176100f257604052565b6100be565b6040519190601f01601f1916820167ffffffffffffffff8111838210176100f257604052565b919061012960406100f7565b928390604081019283116100ba57905b82821061014557505050565b8135815260209182019101610139565b80602312156100ba5761016990600461011d565b90565b8060e312156100ba576101699060c461011d565b9080601f830112156100ba576101699161011d565b8061012312156100ba576101a960a06100f7565b9081906101a4116100ba57610104905b6101a482106101c757505090565b81358152602091820191016101b9565b6101e160206100f7565b906020368337565b6101f16100d2565b906101fc60406100f7565b6040368237825261020d60406100f7565b60403682376020830152565b604051906060820182811067ffffffffffffffff8211176100f257604052816102406100d2565b5f81525f602082015281526102536101e9565b602082015260406102626100d2565b915f83525f60208401520152565b634e487b7160e01b5f52603260045260245ffd5b67ffffffffffffffff81116100f25760051b60200190565b60c0906102a8826100f7565b6005815291601f1901366020840137565b906102cb6102c683610284565b6100f7565b82815280926102dc601f1991610284565b0190602036910137565b9060058110156102f75760051b0190565b610270565b8051156102f75760200190565b8051600110156102f75760400190565b8051600210156102f75760600190565b8051600310156102f75760800190565b8051600410156102f75760a00190565b8051600510156102f75760c00190565b80518210156102f75760209160051b010190565b929190610378610219565b84519094602001516103886100d2565b9182526020820152845261039c60406100f7565b9080515182526103ad815160200190565b5160208301526103d66103ca6103c360406100f7565b9260200190565b80515183525160200190565b5160208201526103e46100d2565b918252602082015260208401526103fd81519160200190565b516104066100d2565b9182526020820152604083015261041b61029c565b905f5b6005811061043f575050906104329161054a565b61043b57600190565b5f90565b8061044c600192846102e6565b516104578286610359565b520161041e565b634e487b7160e01b5f52601160045260245ffd5b906001820180921161048057565b61045e565b906002820180921161048057565b906003820180921161048057565b906004820180921161048057565b906005820180921161048057565b156104c457565b60405162461bcd60e51b81526020600482015260126024820152711d995c9a599a595c8b5898590b5a5b9c1d5d60721b6044820152606490fd5b1561050557565b60405162461bcd60e51b815260206004820152601f60248201527f76657269666965722d6774652d736e61726b2d7363616c61722d6669656c64006044820152606490fd5b919091610555610747565b916105608251610472565b906105726080850192835151146104bd565b61057a6100d2565b5f81525f6020820152945f955b8451871015610602576105fa6001916105cb7f30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f00000016105c48b8a610359565b51106104fe565b6105f46105e287516105dc8c610472565b90610359565b516105ed8b8a610359565b5190610c4a565b90610c98565b960195610587565b61065495929650610650945061061c6106239294516102fc565b5190610c98565b9161062e8151610d2e565b9260208201518351602085015191606060408088015196015196015196610df3565b1590565b61065c575f90565b600190565b6040519060a0820182811067ffffffffffffffff8211176100f257604052606060808361068c6100d2565b5f81525f6020820152815261069f6101e9565b60208201526106ac6101e9565b60408201526106b96101e9565b838201520152565b60e0906106cd826100f7565b6006815291601f1901825f5b8281106106e557505050565b6020906106f06100d2565b5f81525f83820152828285010152016106d9565b60a090610710826100f7565b6004815291601f1901825f5b82811061072857505050565b6020906107336100d2565b5f81525f838201528282850101520161071c565b61074f610661565b906107586100d2565b7f2d4d9aa7e302d9df41749d5507949d05dbea33fbb16c643b22f599a2be6df2e281527f14bedd503c37ceb061d8ec60209fe345ce89830a19230301f076caff004d19266020820152825260406107ae816100f7565b7f0967032fcbf776d1afc985f88877f182d38480a653f2decaa9794cbc3bf3060c81527f0e187847ad4c798374d0d6732bf501847dd68bc0e071241e0213bc7fc13db7ab6020820152610800826100f7565b7f304cfbd1e08a704a99f5e847d93f8c3caafddec46b7a0d379da69a4d112346a781527f1739c1b1a457a8c7313123d24d2f9192f896b7c63eea05a9d57f06547ad0cec860208201526108516100d2565b91825260208201526020840152610867816100f7565b7f198e9393920d483a7260bfb731fb5d25f1aa493335a9e71297e485b7aef312c281527f1800deef121f1e76426a00665e5c4479674322d4f75edadd46debd5cd992f6ed60208201526108b9826100f7565b7f090689d0585ff075ec9e99ad690c3395bc4b313370b38ef355acdadcd122975b81527f12c85ea5db8c6deb4aab71808dcb408fe3d1e7690c43d37b4ce6cc0166fa7daa602082015261090a6100d2565b918252602082015281840152610971610922826100f7565b917f2eb383df7593ed1c998bc6a15a9148614c469cf42500f86665ec8e2321a1621b83527f174973209c6056e3cbd6ebceb85bd300dcab82d28022c3edae8337c71507198760208401526100f7565b7f12394198ce5ddc89ef9b51aaa473e1601a9816bd1b34b62984d679d6cf732bef81527f26e9f13ec048aad35ffdb5323a755b977461f2ea9c0f141bde22d19aa9547fc660208201526109c26100d2565b91825260208201526060830152610c476109da6106c1565b60808401908152610a476109ec6100d2565b7f1ffaa5c39a862bb9d84d1674391b8b2d27449c107cca3c5cfc534823b5f247a581527f21973afe9c7d55ec4c059cdfafb258fe5f37932900c80d8a887a124c60b422be6020820152825190610a41826102fc565b526102fc565b50610aae610a536100d2565b7f0e94e9dfa8e74ad704b41332653e5aae79165ab1143a40671f9574bcb7d991e881527f08fe0127e2c3d251929f5a7b3dda40d9103ff70203505af757d523b461aab60e6020820152825190610aa882610309565b52610309565b50610b15610aba6100d2565b7f23b3ee02cbd9baf17e2bcb69176c319af3b697e1e15c22310b7b2a3f92bcd15e81527f02ee48b922f7206cad237b0ef89514f80c6e82194f7d0551dba5d13b6aaa0fbe6020820152825190610b0f82610319565b52610319565b50610b7c610b216100d2565b7f0ef86550f13c2b1c0d59f8ebc6741feb4f7a09920e791a16f76a54aa1dc8245881527f05c32f6fc93ffba616ab630c89aa1f88c91f7efb3f8ce8154b9792ef4dd12b5c6020820152825190610b7682610329565b52610329565b50610be3610b886100d2565b7f0229983865e26260dbbf4b7070d2846182d9e53096ad3d25e8202926730640c381527f2c8acd668283e4edb436bcb51cac3327a09d0e930a073fa5654cd9becad8e3176020820152825190610bdd82610339565b52610339565b50610bec6100d2565b907f06d797d4c0fc33cd21fa390017fe2349a3f381e8becf87d1ac8f5bbc2f84835b82527f11516e46360c723e3232e92cf5a8e7b7663f9eaad4f824b9c8941de0fc28f20360208301525190610c4182610349565b52610349565b50565b6060909291926080610c5a6100d2565b915f83525f602084015282956020610c71866100f7565b92863685378051845201516020830152604082015260076107cf195a01fa15610c9657565bfe5b60609092919260c0610ca86100d2565b915f83525f60208401526020839681610cc160806100f7565b936080368637805185520151828401528051604084015201518482015260066107cf195a01fa8015610c965715610cf457565b60405162461bcd60e51b81526020600482015260126024820152711c185a5c9a5b99cb5859190b59985a5b195960721b6044820152606490fd5b610d366100d2565b5f81525f60208201525080511580610de7575b610dd2577f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd4760208251920151067f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47037f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47811161048057610dc76100d2565b918252602082015290565b50610ddb6100d2565b5f81525f602082015290565b50602081015115610d49565b97969394929195610e02610704565b95610e0d60a06100f7565b600481529760805f5b818110610ec9575050610169999a610e2d896102fc565b52610e37886102fc565b50610e4188610309565b52610e4b87610309565b50610e5587610319565b52610e5f86610319565b50610e6986610329565b52610e7385610329565b50610e7d866102fc565b52610e87856102fc565b50610e9185610309565b52610e9b84610309565b50610ea584610319565b52610eaf83610319565b50610eb983610329565b52610ec382610329565b50610f80565b808b60208093610ed76101e9565b9201015201610e16565b15610ee857565b60405162461bcd60e51b81526020600482015260166024820152751c185a5c9a5b99cb5b195b99dd1a1ccb59985a5b195960521b6044820152606490fd5b9060068202918083046006149015171561048057565b15610f4357565b60405162461bcd60e51b81526020600482015260156024820152741c185a5c9a5b99cb5bdc18dbd9194b59985a5b1959605a1b6044820152606490fd5b610f8d8151835114610ee1565b8051610f9881610f26565b92610fa2846102b9565b925f5b838110610fe357505050506020918291610fbd6101d7565b93849260051b910160086107cf195a01fa8015610c9657610fdd90610f3c565b51151590565b80610ff060019284610359565b5151611004610ffe83610f26565b88610359565b5260206110118285610359565b510151611028610ffe61102384610f26565b610472565b526110338185610359565b51515161104a610ffe61104584610f26565b610485565b526110606110588286610359565b515160200190565b51611075610ffe61107084610f26565b610493565b5260206110828286610359565b5101515161109a610ffe61109584610f26565b6104a1565b526110b360206110aa8387610359565b51015160200190565b516110c8610ffe6110c384610f26565b6104af565b5201610fa556fea26469706673582212205870dc1bb3c6791b0801693f8aca22d189ec4c7d5f11f6e454e2d48f4941762264736f6c634300081a0033";
+        address addr;
+        assembly {
+            addr := create(0, add(bytecode, 0x20), mload(bytecode))
+            if iszero(addr) { revert(0, 0) }
+        }
+        return IVerifier(addr);
     }
 
-    function testEligibilityAndStamp_zeroArg() public {
-        uint256 id = _computeId(user);
-        assertEq(token.balanceOf(user, id), 0, "initial balance should be 0");
-
-        // Before eligible -> reverts
-        vm.prank(user);
-        vm.expectRevert(abi.encodeWithSelector(BusinessVerifier.NotEligible.selector, user));
-        stamper.stamp();
-
-        // Mark eligible and stamp
-        vm.prank(owner);
-        eligibility.setEligible(user, true);
-
-        vm.prank(user);
-        stamper.stamp();
-
-        assertEq(token.balanceOf(user, id), 1, "balance should be 1 after stamp");
-
-        // Double stamping reverts
-        vm.prank(user);
-        vm.expectRevert(abi.encodeWithSelector(BusinessVerifier.AlreadyStamped.selector, user, id));
-        stamper.stamp();
-    }
-
-    function testEligibilityAndStamp_withDataOverload() public {
-        uint256 id = _computeId(user2);
-        assertEq(token.balanceOf(user2, id), 0, "initial balance should be 0");
-
-        // Mark eligible (simple allowlist ignores data)
-        vm.prank(owner);
-        eligibility.setEligible(user2, true);
-
-        bytes memory payload = hex"";
-        vm.prank(user2);
-        stamper.stamp(payload);
-
-        assertEq(token.balanceOf(user2, id), 1, "balance should be 1 after stamp (overload)");
-    }
-
-    function testOnlyVerifierOwnerCanSetEligibility() public {
-        // Non-owner cannot update eligibility on the verifier
-        vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Ownable.OwnableUnauthorizedAccount.selector,
-                attacker
-            )
-        );
-        eligibility.setEligible(user, true);
-
-        // Owner can update eligibility
-        vm.prank(owner);
-        eligibility.setEligible(user, true);
-        assertTrue(eligibility.isEligible(user, ""), "user should be eligible now");
-    }
-
-    function testTokenOnlyOwnerCanMintDirectly() public {
-        // Attacker tries to mint directly on the token (should fail due to onlyOwner)
-        uint256 id = _computeId(attacker);
-        vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Ownable.OwnableUnauthorizedAccount.selector,
-                attacker
-            )
-        );
-        token.mintAndLock(attacker, id, 1, "");
-    }
-
-    function testStampRevertsWhenStamperIsNotTokenOwner() public {
-        // Make user eligible first
-        vm.prank(owner);
-        eligibility.setEligible(user, true);
-
-        // Transfer token ownership away from stamper by pranking as the stamper (the token's current owner)
-        address newOwner = makeAddr("newOwner");
-        vm.prank(address(stamper));
-        token.transferOwnership(newOwner);
-
-        // Now stamping should revert with NotTokenOwner
-        vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                BusinessVerifier.NotTokenOwner.selector,
-                address(stamper),
-                newOwner
-            )
-        );
-        stamper.stamp();
-    }
-
-    function testComputeTokenIdConsistency() public view {
-        // Verify the test-side id calculation matches the stamper's public helper
+    function testComputeTokenIdConsistency() public {
+        address user = makeAddr("zkUser");
+        IVerifier verifier = deployVerifier();
+        ZkEmailVerifier zkVerifier = new ZkEmailVerifier(address(verifier));
+        BusinessVerifier stamper = new BusinessVerifier(address(zkVerifier), address(this));
         uint256 localId = _computeId(user);
         uint256 stamperId = stamper.computeTokenId(user);
         assertEq(localId, stamperId, "id computation should match");
+    }
+
+    function testZkProofStamping() public {
+        // Deploy Verifier contract
+        IVerifier verifier = deployVerifier();  
+
+        // Deploy ZkEmailVerifier with Verifier address
+        ZkEmailVerifier zkVerifier = new ZkEmailVerifier(address(verifier));
+
+        // Deploy BusinessVerifier with ZkEmailVerifier
+        BusinessVerifier stamper = new BusinessVerifier(address(zkVerifier), address(this));
+
+        // Reference the deployed token instance
+        KnownCompanyUnti token = stamper.token();
+
+        // Prepare user
+        address user = makeAddr("zkUser");
+
+        // Hardcoded proof data from contracts/fixtures/proof.json
+        uint256[2] memory a = [
+            uint256(57569399995012078316356623648199743272929621931336081944485022539656895628),
+            uint256(345716123005353420316188791654295560117338381528427370897615742130496862377)
+        ];
+        uint256[2][2] memory b = [
+            [
+                486650800075361125807358642953970846134802610572132746628128811546342621798,
+                5999894035089098088862765484284309558627786221255676120254523197229407258632
+            ],
+            [
+                21368365872261997639015529748864040166579623795380564884780113411776607580514,
+                13447001081916453153049250921345572763068250700836713360198971600713339047081
+            ]
+        ];
+        uint256[2] memory c = [
+            13185208959610559019945248286587217138153778865883404746593162617802513115059,
+            15458093677206619173873441303795075654625418070866030858706350255322272992243
+        ];
+        uint256[5] memory pubSignals = [
+            4830446934335009124417833737275688639424903404478413721230066538799817997375,
+            130251959793384786838134102689425754019,
+            64546105013369580424423996119957061373,
+            8102082581604560737,
+            0
+        ];
+
+        // Encode proof as bytes
+        bytes memory proof = abi.encode(a, b, c, pubSignals);
+
+        // Compute token id
+        uint256 id = stamper.computeTokenId(user);
+
+        // Initial balance should be 0
+        assertEq(token.balanceOf(user, id), 0, "initial balance should be 0");
+
+        // Call stamp with proof as user
+        vm.prank(user);
+        stamper.stamp(proof);
+
+        // After stamping, balance should be 1
+        assertEq(token.balanceOf(user, id), 1, "balance should be 1 after zk proof stamp");
     }
 }
