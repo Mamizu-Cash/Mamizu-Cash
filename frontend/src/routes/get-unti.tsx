@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Building, CheckCircle, Mail, Shield } from "lucide-react";
+import { CheckCircle, FileUp, Key, Mail, Shield } from "lucide-react";
 import { useState } from "react";
 import {
   type CredentialInfo,
@@ -12,28 +12,41 @@ export const Route = createFileRoute("/get-unti")({
   component: GetUntiScreen,
 });
 
-type Step = "input" | "email" | "processing" | "success";
+type Step = "email" | "upload" | "proof" | "verify";
 
 function GetUntiScreen() {
-  const [currentStep, setCurrentStep] = useState<Step>("input");
-  const [formData, setFormData] = useState({
-    companyName: "",
-    email: "",
-    domain: "",
-  });
+  const [currentStep, setCurrentStep] = useState<Step>("email");
   const [_isProcessing, setIsProcessing] = useState(false);
   const [credential, setCredential] = useState<CredentialInfo | null>(null);
+  const [emlFile, setEmlFile] = useState<File | null>(null);
+  const [zkProof, setZkProof] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.companyName.trim() || !formData.email.trim()) return;
-
-    setCurrentStep("email");
+  const handleEmailSent = () => {
+    setCurrentStep("upload");
   };
 
-  const handleEmailVerification = async () => {
+  const handleEmlUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file?.name.endsWith(".eml")) {
+      setEmlFile(file);
+    }
+  };
+
+  const handleProofGeneration = async () => {
     setIsProcessing(true);
-    setCurrentStep("processing");
+    setCurrentStep("proof");
+
+    await simulateProcessingDelay(2000);
+
+    // Mock ZK proof generation
+    const mockProof = generateMockHash();
+    setZkProof(mockProof);
+    setIsProcessing(false);
+    setCurrentStep("verify");
+  };
+
+  const handleVerification = async () => {
+    setIsProcessing(true);
 
     await simulateProcessingDelay(3000);
 
@@ -43,22 +56,21 @@ function GetUntiScreen() {
       transactionHash: generateMockHash(),
       tokenId: generateMockTokenId(),
       userInfo: {
-        companyName: formData.companyName,
-        email: formData.email,
+        companyName: "Mock Company", // 固定値
+        email: "mock@company.com", // 固定値
       },
     };
 
     setCredential(newCredential);
-    setCredential(newCredential);
     setIsProcessing(false);
-    setCurrentStep("success");
+    // setCurrentStep("success"); を削除 - verify画面内で完了状態を表示
   };
 
   const steps = [
-    { key: "input", label: "企業情報", icon: Building },
-    { key: "email", label: "DKIM認証", icon: Mail },
-    { key: "processing", label: "処理中", icon: Shield },
-    { key: "success", label: "UNTI発行", icon: CheckCircle },
+    { key: "email", label: "メール送信", icon: Mail },
+    { key: "upload", label: "EMLアップロード", icon: FileUp },
+    { key: "proof", label: "ZK Proof生成", icon: Key },
+    { key: "verify", label: "検証&発行", icon: CheckCircle },
   ];
 
   const getCurrentStepIndex = () => {
@@ -188,179 +200,6 @@ function GetUntiScreen() {
           })}
         </div>
 
-        {/* Input Step */}
-        {currentStep === "input" && (
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: "2rem" }}>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  color: "#1e293b",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                会社名 *
-              </label>
-              <input
-                type="text"
-                value={formData.companyName}
-                onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                placeholder="株式会社サンプル"
-                required
-                style={{
-                  width: "100%",
-                  padding: "0.75rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#8b5cf6";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: "2rem" }}>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  color: "#1e293b",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                企業ドメインメール *
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => {
-                  setFormData({ ...formData, email: e.target.value });
-                  if (e.target.value.includes("@")) {
-                    const domain = e.target.value.split("@")[1];
-                    setFormData((prev) => ({ ...prev, email: e.target.value, domain }));
-                  }
-                }}
-                placeholder="admin@company.com"
-                required
-                style={{
-                  width: "100%",
-                  padding: "0.75rem 1rem",
-                  border: "2px solid #e2e8f0",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  outline: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#8b5cf6";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "#e2e8f0";
-                }}
-              />
-            </div>
-
-            {formData.domain && (
-              <div
-                style={{
-                  backgroundColor: "#f3e8ff",
-                  padding: "1rem",
-                  borderRadius: "8px",
-                  marginBottom: "2rem",
-                  border: "1px solid #d8b4fe",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <Shield size={16} color="#8b5cf6" />
-                  <span style={{ fontSize: "0.9rem", fontWeight: "500", color: "#6b21a8" }}>
-                    検出されたドメイン: {formData.domain}
-                  </span>
-                </div>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: "0.85rem",
-                    color: "#6b21a8",
-                    lineHeight: "1.4",
-                  }}
-                >
-                  DKIM署名の検証でこのドメインの所有権を確認します。
-                </p>
-              </div>
-            )}
-
-            <div
-              style={{
-                backgroundColor: "#eff6ff",
-                padding: "1rem",
-                borderRadius: "8px",
-                marginBottom: "2rem",
-                border: "1px solid #dbeafe",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                <Mail size={16} color="#3b82f6" />
-                <span style={{ fontSize: "0.9rem", fontWeight: "500", color: "#1e40af" }}>
-                  モックデモ - 実際のDKIM認証は不要
-                </span>
-              </div>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: "0.85rem",
-                  color: "#1e40af",
-                  lineHeight: "1.4",
-                }}
-              >
-                このデモでは実際のDKIM署名の検証は行いません。次のステップで自動的にUNTIが発行されます。
-              </p>
-            </div>
-
-            <button
-              type="submit"
-              disabled={!formData.companyName.trim() || !formData.email.trim()}
-              style={{
-                width: "100%",
-                padding: "1rem 2rem",
-                backgroundColor:
-                  !formData.companyName.trim() || !formData.email.trim() ? "#94a3b8" : "#8b5cf6",
-                color: "white",
-                border: "none",
-                borderRadius: "12px",
-                fontSize: "1.1rem",
-                fontWeight: "600",
-                cursor:
-                  !formData.companyName.trim() || !formData.email.trim()
-                    ? "not-allowed"
-                    : "pointer",
-              }}
-            >
-              DKIM認証を開始
-            </button>
-          </form>
-        )}
-
         {/* Email Verification Step */}
         {currentStep === "email" && (
           <div>
@@ -399,50 +238,695 @@ function GetUntiScreen() {
               </ol>
             </div>
 
-            <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+            {/* Email Sending Section */}
+            <div
+              style={{
+                backgroundColor: "#eff6ff",
+                padding: "1.5rem",
+                borderRadius: "12px",
+                marginBottom: "2rem",
+                border: "1px solid #dbeafe",
+              }}
+            >
+              <h3
+                style={{
+                  margin: "0 0 1rem 0",
+                  color: "#1e40af",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                }}
+              >
+                1. 企業メールで認証メールを送信
+              </h3>
+              <p
+                style={{
+                  margin: "0 0 1.5rem 0",
+                  color: "#1e40af",
+                  fontSize: "0.9rem",
+                  lineHeight: "1.6",
+                }}
+              >
+                以下のボタンをクリックして、企業ドメインのメールアドレスから認証メールを送信してください。
+              </p>
+
+              <a
+                href="mailto:verify@mamizu.cash?subject=Mamizu Cash UNTI認証申請&body=Mamizu Cash UNTI認証を申請します。%0A%0A※このメールを企業ドメインから送信してください。%0A%0A----%0AMamizu Cash UNTI認証システム"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                  width: "100%",
+                  padding: "1rem 2rem",
+                  backgroundColor: "#3b82f6",
+                  color: "white",
+                  textDecoration: "none",
+                  borderRadius: "8px",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  transition: "background-color 0.2s",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "#2563eb";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "#3b82f6";
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.backgroundColor = "#2563eb";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.backgroundColor = "#3b82f6";
+                }}
+              >
+                <Mail size={20} />
+                企業メールで認証メールを送信
+              </a>
+            </div>
+
+            {/* Verification Section */}
+            <div
+              style={{
+                backgroundColor: "#fef3c7",
+                padding: "1.5rem",
+                borderRadius: "12px",
+                marginBottom: "2rem",
+                border: "1px solid #fcd34d",
+              }}
+            >
+              <h3
+                style={{
+                  margin: "0 0 1rem 0",
+                  color: "#92400e",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                }}
+              >
+                2. 認証の確認
+              </h3>
+              <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    backgroundColor: "white",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "6px",
+                    border: "1px solid #fcd34d",
+                  }}
+                >
+                  <Mail size={16} color="#d97706" />
+                  <span style={{ color: "#92400e", fontSize: "0.9rem" }}>
+                    企業メールからの認証待機中
+                  </span>
+                </div>
+              </div>
+              <p
+                style={{
+                  margin: "0 0 1.5rem 0",
+                  color: "#92400e",
+                  fontSize: "0.9rem",
+                  lineHeight: "1.6",
+                  textAlign: "center",
+                }}
+              >
+                メール送信後、下のボタンで認証を確認してください。
+              </p>
+
+              <button
+                onClick={handleEmailSent}
+                style={{
+                  width: "100%",
+                  padding: "1rem 2rem",
+                  backgroundColor: "#8b5cf6",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                <Mail size={20} />
+                メール送信完了（次へ）
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* EML Upload Step */}
+        {currentStep === "upload" && (
+          <div>
+            <div
+              style={{
+                backgroundColor: "#f0f9ff",
+                padding: "2rem",
+                borderRadius: "12px",
+                marginBottom: "2rem",
+                border: "1px solid #0ea5e9",
+                textAlign: "center",
+              }}
+            >
               <div
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: "0.5rem",
-                  backgroundColor: "#fef3c7",
-                  padding: "0.75rem 1.5rem",
-                  borderRadius: "8px",
-                  border: "1px solid #fcd34d",
+                  justifyContent: "center",
+                  width: "60px",
+                  height: "60px",
+                  backgroundColor: "#0ea5e9",
+                  borderRadius: "50%",
+                  marginBottom: "1rem",
                 }}
               >
-                <Mail size={20} color="#d97706" />
-                <span style={{ color: "#92400e", fontWeight: "500" }}>
-                  {formData.email} からの認証待機中
-                </span>
+                <FileUp size={30} color="white" />
               </div>
-            </div>
+              <h3
+                style={{
+                  margin: "0 0 1rem 0",
+                  color: "#0c4a6e",
+                  fontSize: "1.2rem",
+                  fontWeight: "600",
+                }}
+              >
+                EMLファイルをアップロード
+              </h3>
+              <p
+                style={{
+                  margin: "0 0 1.5rem 0",
+                  color: "#0c4a6e",
+                  fontSize: "0.9rem",
+                  lineHeight: "1.6",
+                }}
+              >
+                送信したメールのEMLファイルをダウンロードして、こちらにアップロードしてください。
+                <br />
+                EMLファイルからDKIM署名を抽出してゼロ知識証明を生成します。
+              </p>
 
-            <button
-              onClick={handleEmailVerification}
-              style={{
-                width: "100%",
-                padding: "1rem 2rem",
-                backgroundColor: "#8b5cf6",
-                color: "white",
-                border: "none",
-                borderRadius: "12px",
-                fontSize: "1.1rem",
-                fontWeight: "600",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-              }}
-            >
-              <Shield size={20} />
-              認証を実行（モック）
-            </button>
+              <div
+                style={{
+                  border: "2px dashed #0ea5e9",
+                  borderRadius: "8px",
+                  padding: "2rem",
+                  marginBottom: "1rem",
+                  backgroundColor: "white",
+                }}
+              >
+                <input
+                  type="file"
+                  accept=".eml"
+                  onChange={handleEmlUpload}
+                  style={{
+                    width: "100%",
+                    padding: "0.5rem",
+                    fontSize: "1rem",
+                    border: "none",
+                    outline: "none",
+                    cursor: "pointer",
+                  }}
+                />
+                {emlFile && (
+                  <div
+                    style={{
+                      marginTop: "1rem",
+                      padding: "0.75rem",
+                      backgroundColor: "#dcfce7",
+                      borderRadius: "6px",
+                      border: "1px solid #16a34a",
+                    }}
+                  >
+                    <span style={{ color: "#166534", fontSize: "0.9rem" }}>
+                      ✓ {emlFile.name} ({(emlFile.size / 1024).toFixed(1)}KB)
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <button
+                onClick={handleProofGeneration}
+                disabled={!emlFile}
+                style={{
+                  width: "100%",
+                  padding: "1rem 2rem",
+                  backgroundColor: !emlFile ? "#94a3b8" : "#0ea5e9",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  cursor: !emlFile ? "not-allowed" : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                <Key size={20} />
+                ZK Proof生成開始
+              </button>
+            </div>
           </div>
         )}
 
-        {/* Processing Step */}
+        {/* ZK Proof Generation Step */}
+        {currentStep === "proof" && (
+          <div style={{ textAlign: "center" }}>
+            <div
+              style={{
+                width: "60px",
+                height: "60px",
+                border: "4px solid #e2e8f0",
+                borderTop: "4px solid #f59e0b",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite",
+                margin: "2rem auto",
+              }}
+            />
+            <h2
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                color: "#1e293b",
+                marginBottom: "1rem",
+              }}
+            >
+              ZK Proof生成中...
+            </h2>
+            <p
+              style={{
+                color: "#64748b",
+                fontSize: "1rem",
+                marginBottom: "2rem",
+              }}
+            >
+              EMLファイルからDKIM署名を抽出してゼロ知識証明を生成しています
+            </p>
+
+            <div
+              style={{
+                backgroundColor: "#fffbeb",
+                padding: "1rem",
+                borderRadius: "8px",
+                border: "1px solid #fed7aa",
+                textAlign: "left",
+              }}
+            >
+              <p
+                style={{
+                  margin: "0 0 0.5rem 0",
+                  fontSize: "0.9rem",
+                  color: "#92400e",
+                  fontWeight: "500",
+                }}
+              >
+                処理中...
+              </p>
+              <div
+                style={{
+                  fontSize: "0.8rem",
+                  color: "#a16207",
+                  lineHeight: "1.4",
+                }}
+              >
+                • EMLファイルを解析中
+                <br />• DKIM署名を抽出中
+                <br />• RSA署名を検証中
+                <br />• ゼロ知識証明を生成中
+              </div>
+            </div>
+
+            {zkProof && (
+              <div
+                style={{
+                  marginTop: "1.5rem",
+                  padding: "1rem",
+                  backgroundColor: "#f0fdf4",
+                  borderRadius: "8px",
+                  border: "1px solid #bbf7d0",
+                }}
+              >
+                <h3
+                  style={{
+                    margin: "0 0 0.5rem 0",
+                    color: "#14532d",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                  }}
+                >
+                  ✓ ZK Proof生成完了
+                </h3>
+                <div
+                  style={{
+                    backgroundColor: "white",
+                    padding: "0.75rem",
+                    borderRadius: "6px",
+                    border: "1px solid #bbf7d0",
+                    fontFamily: "monospace",
+                    fontSize: "0.8rem",
+                    color: "#059669",
+                    wordBreak: "break-all",
+                  }}
+                >
+                  {zkProof.slice(0, 32)}...{zkProof.slice(-32)}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Verification & Issuance Step */}
+        {currentStep === "verify" && (
+          <div>
+            {!credential ? (
+              // Pre-verification state
+              <div
+                style={{
+                  backgroundColor: "#fefce8",
+                  padding: "2rem",
+                  borderRadius: "12px",
+                  marginBottom: "2rem",
+                  border: "1px solid #facc15",
+                  textAlign: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "60px",
+                    height: "60px",
+                    backgroundColor: "#facc15",
+                    borderRadius: "50%",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <Shield size={30} color="#1e293b" />
+                </div>
+                <h3
+                  style={{
+                    margin: "0 0 1rem 0",
+                    color: "#1e293b",
+                    fontSize: "1.2rem",
+                    fontWeight: "600",
+                  }}
+                >
+                  {_isProcessing ? "検証中..." : "オンチェーン検証&UNTI発行"}
+                </h3>
+
+                {zkProof && (
+                  <div
+                    style={{
+                      backgroundColor: "white",
+                      padding: "1rem",
+                      borderRadius: "8px",
+                      marginBottom: "1.5rem",
+                      border: "1px solid #facc15",
+                    }}
+                  >
+                    <div style={{ marginBottom: "0.5rem" }}>
+                      <span style={{ fontSize: "0.9rem", color: "#ca8a04", fontWeight: "500" }}>
+                        生成されたZK Proof:
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "monospace",
+                        fontSize: "0.75rem",
+                        color: "#059669",
+                        wordBreak: "break-all",
+                        backgroundColor: "#f8fafc",
+                        padding: "0.5rem",
+                        borderRadius: "4px",
+                      }}
+                    >
+                      {zkProof}
+                    </div>
+                  </div>
+                )}
+
+                <p
+                  style={{
+                    margin: "0 0 1.5rem 0",
+                    color: "#ca8a04",
+                    fontSize: "0.9rem",
+                    lineHeight: "1.6",
+                  }}
+                >
+                  {_isProcessing
+                    ? "スマートコントラクトで検証中です。検証成功後、UNTIトークンが自動発行されます。"
+                    : "スマートコントラクトにProofを送信して、DKIM署名の正当性を検証します。検証が成功すると、UNTIトークンが発行されます。"}
+                </p>
+
+                {_isProcessing && (
+                  <div
+                    style={{
+                      backgroundColor: "#fffbeb",
+                      padding: "1rem",
+                      borderRadius: "8px",
+                      border: "1px solid #fed7aa",
+                      textAlign: "left",
+                      marginBottom: "1.5rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#a16207",
+                        lineHeight: "1.4",
+                      }}
+                    >
+                      • ZK Proofを送信中
+                      <br />• スマートコントラクトで検証中
+                      <br />• DKIM署名の正当性を確認中
+                      <br />• UNTIトークンを発行中
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onClick={handleVerification}
+                  disabled={_isProcessing}
+                  style={{
+                    width: "100%",
+                    padding: "1rem 2rem",
+                    backgroundColor: _isProcessing ? "#94a3b8" : "#facc15",
+                    color: "#1e293b",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    cursor: _isProcessing ? "not-allowed" : "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  {_isProcessing ? (
+                    <>
+                      <div
+                        style={{
+                          width: "16px",
+                          height: "16px",
+                          border: "2px solid #1e293b",
+                          borderTop: "2px solid transparent",
+                          borderRadius: "50%",
+                          animation: "spin 1s linear infinite",
+                        }}
+                      />
+                      検証&発行中...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle size={20} />
+                      検証してUNTI発行
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : (
+              // Post-verification success state
+              <div style={{ textAlign: "center" }}>
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100px",
+                    height: "100px",
+                    backgroundColor: "#10b981",
+                    borderRadius: "50%",
+                    marginBottom: "2rem",
+                  }}
+                >
+                  <CheckCircle size={60} color="white" />
+                </div>
+
+                <h2
+                  style={{
+                    fontSize: "2rem",
+                    fontWeight: "bold",
+                    color: "#1e293b",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  UNTI発行完了！
+                </h2>
+
+                <p
+                  style={{
+                    color: "#64748b",
+                    fontSize: "1.1rem",
+                    lineHeight: "1.6",
+                    marginBottom: "2rem",
+                  }}
+                >
+                  企業向けUNTI (ERC-6268) が正常に発行されました
+                </p>
+
+                <div
+                  style={{
+                    backgroundColor: "#f0fdf4",
+                    padding: "1.5rem",
+                    borderRadius: "12px",
+                    marginBottom: "2rem",
+                    border: "1px solid #bbf7d0",
+                    textAlign: "left",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
+                    <span style={{ color: "#166534", fontWeight: "500" }}>UNTIトークンID:</span>
+                    <span style={{ fontFamily: "monospace", color: "#14532d" }}>
+                      {credential.tokenId}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
+                    <span style={{ color: "#166534", fontWeight: "500" }}>企業名:</span>
+                    <span style={{ color: "#14532d" }}>{credential.userInfo?.companyName}</span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
+                    <span style={{ color: "#166534", fontWeight: "500" }}>トランザクション:</span>
+                    <span
+                      style={{ fontFamily: "monospace", fontSize: "0.875rem", color: "#059669" }}
+                    >
+                      {credential.transactionHash?.slice(0, 10)}...
+                      {credential.transactionHash?.slice(-8)}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span style={{ color: "#166534", fontWeight: "500" }}>発行日時:</span>
+                    <span style={{ color: "#14532d" }}>
+                      {new Date(credential.issuedAt).toLocaleString("ja-JP")}
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    backgroundColor: "#eff6ff",
+                    padding: "1rem",
+                    borderRadius: "8px",
+                    marginBottom: "2rem",
+                    border: "1px solid #dbeafe",
+                  }}
+                >
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "0.9rem",
+                      color: "#1e40af",
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    <strong>おめでとうございます！</strong> 企業としてMamizu
+                    Cashのプライベート送金機能を利用できます。
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "1rem",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                  }}
+                >
+                  <a
+                    href="/withdraw"
+                    style={{
+                      padding: "1rem 2rem",
+                      backgroundColor: "#8b5cf6",
+                      color: "white",
+                      textDecoration: "none",
+                      borderRadius: "12px",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    送金を受け取る
+                  </a>
+                  <a
+                    href="/"
+                    style={{
+                      padding: "1rem 2rem",
+                      backgroundColor: "white",
+                      color: "#8b5cf6",
+                      textDecoration: "none",
+                      borderRadius: "12px",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      border: "2px solid #8b5cf6",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    ホームに戻る
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Processing Step - Legacy (keeping for backwards compatibility) */}
         {currentStep === "processing" && (
           <div style={{ textAlign: "center" }}>
             <div
