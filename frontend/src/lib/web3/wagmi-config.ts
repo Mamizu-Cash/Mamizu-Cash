@@ -43,7 +43,7 @@ const wagmiAdapter = new WagmiAdapter({
 export const wagmiConfig = wagmiAdapter.wagmiConfig;
 
 // AppKit（接続モーダル等）を起動
-createAppKit({
+export const appKit = createAppKit({
   adapters: [wagmiAdapter],
   projectId,
   networks,
