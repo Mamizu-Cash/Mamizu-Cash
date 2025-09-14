@@ -21,6 +21,17 @@ export const CONSTANTS = {
     tx: "https://etherscan.io/tx/",
   },
   tosUrl: "https://example.com/terms",
+  EMAIL_CONFIG: {
+    FROM: "me@aoki.app",
+    TO: "ayukiyhs@gmail.com",
+    ORGANIZATION: "AokiApp Inc.",
+    DOMAIN: "aoki.app",
+    SUBJECT: "[Mamizu-Cash]Registration & Business Verification",
+    BODY_TEMPLATE: `I am going to register the Mamizu-Cash and prove our business.
+
+Org: AokiApp Inc.
+Domain: aoki.app`,
+  },
   certs: {
     ca: "-----BEGIN CERTIFICATE-----\nMIIC...\n-----END CERTIFICATE-----",
     intermediate: "-----BEGIN CERTIFICATE-----\nMIIC...\n-----END CERTIFICATE-----",

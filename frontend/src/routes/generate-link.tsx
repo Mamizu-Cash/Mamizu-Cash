@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Check, Copy, FileText, Link2, Mail, QrCode, Share2 } from "lucide-react";
 import { useState } from "react";
+import { generateShareEmailUrl } from "../lib/emailUtils";
 
 export const Route = createFileRoute("/generate-link")({
   component: GenerateLinkScreen,
@@ -34,7 +35,8 @@ function GenerateLinkScreen() {
     {
       icon: Mail,
       label: "Email",
-      action: () => window.open(`mailto:?body=${encodeURIComponent(generatedUrl)}`),
+      action: () =>
+        window.open(generateShareEmailUrl(generatedUrl, "[Mamizu-Cash] Withdrawal Link")),
     },
     {
       icon: FileText,
