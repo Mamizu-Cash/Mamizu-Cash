@@ -42,6 +42,12 @@ const config: HardhatUserConfig = {
       url: configVariable("SEPOLIA_RPC_URL"),
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
+    kaigan: {
+      type: "http",
+      chainType: "l1",
+      url: "https://rpc.kaigan.jsc.dev/rpc?token=QjxBt0CfU0eNzOHSJEvZA1FIzEK8hd2sJsosgP7TU0Q",
+      accounts: [configVariable("KAIGAN_PRIVATE_KEY")],
+    },
   },
 };
 
