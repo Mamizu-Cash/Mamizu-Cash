@@ -1,0 +1,296 @@
+/* =================================================================
+ * StatusIndicator Component - design-26-production-ready継承版
+ * 
+ * [概要]
+ * design-26-production-ready.htmlの変態的品質レベルを完全継承。
+ * Avatar等で使用されるステータス表示を独立コンポーネント化。
+ * オンライン/署名中/完了等のステータスを視覚的に表現。
+ * 
+ * [統一仕様]
+ * - design-26のプレミアム品質シャドウ技術を適用
+ * - パルス・グロー・アニメーション効果
+ * - セマンティックカラーシステム対応
+ * ================================================================= */
+
+/* =================================================================
+ * CSS VARIABLES - design-26から完全継承（統一性確保）
+ * ================================================================= */
+.statusIndicator {
+  /* CSS変数をローカルで定義（グローバル変数との統一性確保） */
+  --bitcoin-primary: #f7931a;  /* ビットコインメイン - オレンジ */
+  --bitcoin-secondary: #ff9500; /* ビットコインセカンダリ - 明るいオレンジ */
+  --transition-smooth: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); /* スムーズトランジション */
+
+  /* =================================================================
+   * BASE INDICATOR STYLES
+   * ================================================================= */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid white;
+  transition: var(--transition-smooth);
+  
+  /* design-26品質のシャドウ */
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* =================================================================
+ * SIZE VARIANTS
+ * ================================================================= */
+.small {
+  width: 12px;
+  height: 12px;
+  border-width: 1.5px;
+}
+
+.medium {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.large {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+.extraLarge {
+  width: 24px;
+  height: 24px;
+  border-width: 2px;
+}
+
+/* =================================================================
+ * STATUS VARIANTS - セマンティックカラーシステム
+ * ================================================================= */
+.online {
+  background: #10b981;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(16, 185, 129, 0.2);
+}
+
+.busy {
+  background: #f59e0b;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(245, 158, 11, 0.2);
+}
+
+.away {
+  background: #f59e0b;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(245, 158, 11, 0.2);
+}
+
+.offline {
+  background: #6b7280;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(107, 114, 128, 0.2);
+}
+
+.signing {
+  background: linear-gradient(45deg, var(--bitcoin-primary), var(--bitcoin-secondary));
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(247, 147, 26, 0.2);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.completed {
+  background: #10b981;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(16, 185, 129, 0.2);
+}
+
+.error {
+  background: #dc2626;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(220, 38, 38, 0.2);
+}
+
+.warning {
+  background: #f59e0b;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(245, 158, 11, 0.2);
+}
+
+.info {
+  background: #3b82f6;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(59, 130, 246, 0.2);
+}
+
+/* =================================================================
+ * ANIMATION VARIANTS
+ * ================================================================= */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.pulsing {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0.3;
+  }
+}
+
+.blinking {
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.1),
+      0 4px 8px rgba(0, 0, 0, 0.08),
+      0 0 0 0 currentColor;
+  }
+  50% {
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.1),
+      0 4px 8px rgba(0, 0, 0, 0.08),
+      0 0 0 4px rgba(255, 255, 255, 0.3);
+  }
+}
+
+.glowing {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* =================================================================
+ * POSITION VARIANTS - 配置位置（他要素との相対位置用）
+ * ================================================================= */
+.absolute {
+  position: absolute;
+}
+
+.topRight {
+  top: -2px;
+  right: -2px;
+}
+
+.topLeft {
+  top: -2px;
+  left: -2px;
+}
+
+.bottomRight {
+  bottom: -2px;
+  right: -2px;
+}
+
+.bottomLeft {
+  bottom: -2px;
+  left: -2px;
+}
+
+/* =================================================================
+ * CONTENT INDICATOR - アイコンやテキスト表示
+ * ================================================================= */
+.withContent {
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.withContent.small {
+  font-size: 0.6rem;
+}
+
+.withContent.large {
+  font-size: 0.8rem;
+}
+
+.withContent.extraLarge {
+  font-size: 0.9rem;
+}
+
+/* =================================================================
+ * INTERACTIVE STATES
+ * ================================================================= */
+.interactive {
+  cursor: pointer;
+}
+
+.interactive:hover {
+  transform: scale(1.1);
+  box-shadow: 
+    0 3px 6px rgba(0, 0, 0, 0.15),
+    0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.interactive:active {
+  transform: scale(0.95);
+}
+
+/* =================================================================
+ * RESPONSIVE OPTIMIZATIONS - モバイル最適化
+ * ================================================================= */
+@media (max-width: 480px) {
+  .extraLarge {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .large {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .withContent.extraLarge {
+    font-size: 0.8rem;
+  }
+  
+  .withContent.large {
+    font-size: 0.7rem;
+  }
+}
+
+/* =================================================================
+ * ACCESSIBILITY & PERFORMANCE - design-26から継承
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .statusIndicator {
+    animation: none !important;
+  }
+  
+  .pulsing,
+  .blinking,
+  .glowing,
+  .signing {
+    animation: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .statusIndicator {
+    border-width: 3px;
+  }
+}

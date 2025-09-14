@@ -1,0 +1,129 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "useConsistentArrayType": {
+          "level": "error",
+          "options": {
+            "syntax": "shorthand"
+          }
+        },
+        "useImportType": "error",
+        "useExportType": "error",
+        "noParameterAssign": "warn",
+        "noInferrableTypes": "warn",
+        "useNodejsImportProtocol": "error",
+        "useNumberNamespace": "error",
+        "useTemplate": "error",
+        "noUnusedTemplateLiteral": "error",
+        "noUselessElse": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noImplicitAnyLet": "error",
+        "noArrayIndexKey": "warn"
+      },
+      "complexity": {
+        "noBannedTypes": "error",
+        "noUselessTypeConstraint": "error",
+        "noUselessConstructor": "warn",
+        "noUselessCatch": "warn",
+        "noStaticOnlyClass": "error",
+        "noForEach": "warn",
+        "useOptionalChain": "error",
+        "noUselessTernary": "error"
+      },
+      "correctness": {
+        "noUnusedVariables": {
+          "level": "warn",
+          "options": {
+            "ignoreRestSiblings": true
+          }
+        },
+        "noUnusedImports": "warn",
+        "useExhaustiveDependencies": "off",
+        "noNestedComponentDefinitions": "off",
+        "noInvalidUseBeforeDeclaration": "off"
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "error",
+          "options": {
+            "attributes": ["className", "class"],
+            "functions": ["cn", "clsx", "cva", "tw"]
+          }
+        }
+      },
+      "a11y": {
+        "useAriaPropsForRole": "off",
+        "useValidAriaProps": "error",
+        "useValidAriaValues": "error",
+        "useButtonType": "off",
+        "noStaticElementInteractions": "off",
+        "useKeyWithClickEvents": "off",
+        "noLabelWithoutControl": "off",
+        "useAriaPropsSupportedByRole": "off",
+        "useFocusableInteractive": "off",
+        "useSemanticElements": "off",
+        "useValidAnchor": "off"
+      },
+      "performance": {
+        "noAccumulatingSpread": "warn",
+        "noDelete": "off"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "all",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSpacing": true,
+      "bracketSameLine": false,
+      "quoteStyle": "double"
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "trailingCommas": "none"
+    }
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "src/**/*.{js,jsx,ts,tsx,json}",
+      "scripts/**/*.{js,ts,mjs,mts,json}",
+      "__tests__/**/*.{js,jsx,ts,tsx,json}",
+      "*.{js,jsx,ts,tsx,json}",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/.turbo",
+      "!**/coverage",
+      "!**/*.min.js",
+      "!**/*.min.css",
+      "!**/bun.lock",
+      "!**/.git",
+      "!**/*.d.ts",
+      "!**/*.d.ts.map",
+      "!**/*.d.mts",
+      "!**/move",
+      "!**/.next",
+      "!**/.next-dev",
+      "!src/graphql/generated.ts"
+    ]
+  }
+}

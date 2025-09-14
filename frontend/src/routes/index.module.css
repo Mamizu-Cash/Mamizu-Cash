@@ -1,0 +1,434 @@
+.container {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  padding: var(--spacing-8);
+}
+
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Hero Section */
+.hero {
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-3xl);
+  padding: var(--spacing-16) var(--spacing-8);
+  margin-bottom: var(--spacing-12);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  animation: slideUp var(--transition-slow) ease-out;
+}
+
+.logoContainer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-secondary-500) 100%);
+  border-radius: 50%;
+  margin-bottom: var(--spacing-8);
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-base);
+}
+
+.logoContainer:hover {
+  transform: scale(1.05);
+}
+
+.logo {
+  height: 60px;
+  width: 60px;
+  filter: brightness(0) invert(1);
+}
+
+.title {
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-4);
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-secondary-600) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: var(--line-height-tight);
+}
+
+.subtitle {
+  font-size: var(--font-size-2xl);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-8);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: var(--line-height-relaxed);
+}
+
+.description {
+  font-size: var(--font-size-lg);
+  color: var(--text-tertiary);
+  margin-bottom: var(--spacing-12);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Features Grid */
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-8);
+  margin-bottom: var(--spacing-12);
+}
+
+.featureCard {
+  padding: var(--spacing-6);
+  border-radius: var(--radius-xl);
+  border: 1px solid;
+  transition: all var(--transition-base);
+  text-align: center;
+}
+
+.featureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.featureCardPrivacy {
+  background-color: var(--color-primary-50);
+  border-color: var(--color-primary-200);
+}
+
+.featureCardCompliance {
+  background-color: var(--color-success-50);
+  border-color: var(--color-success-200);
+}
+
+.featureCardIntegration {
+  background-color: var(--color-warning-50);
+  border-color: var(--color-warning-200);
+}
+
+.featureIcon {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-2);
+  display: block;
+}
+
+.featureTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+.featureDescription {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+/* CTA Buttons */
+.ctaContainer {
+  display: flex;
+  gap: var(--spacing-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ctaPrimary {
+  padding: var(--spacing-4) var(--spacing-8);
+  background-color: var(--color-primary-600);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-base);
+}
+
+.ctaPrimary:hover {
+  background-color: var(--color-primary-700);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  text-decoration: none;
+  color: white;
+}
+
+.ctaSecondary {
+  padding: var(--spacing-4) var(--spacing-8);
+  background-color: var(--bg-tertiary);
+  color: var(--color-primary-600);
+  text-decoration: none;
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  border: 2px solid var(--color-primary-600);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-base);
+}
+
+.ctaSecondary:hover {
+  background-color: var(--color-primary-600);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  text-decoration: none;
+}
+
+/* Credentials Section */
+.credentialsSection {
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-2xl);
+  padding: var(--spacing-8);
+  margin-bottom: var(--spacing-4);
+  box-shadow: var(--shadow-md);
+  animation: slideUp var(--transition-slow) ease-out 0.2s both;
+}
+
+.credentialsTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-4);
+  text-align: center;
+}
+
+.credentialsDescription {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-6);
+  text-align: center;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: var(--line-height-relaxed);
+}
+
+.credentialsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
+}
+
+.credentialCard {
+  padding: var(--spacing-6);
+  border-radius: var(--radius-xl);
+  border: 2px solid;
+  text-align: center;
+  transition: all var(--transition-base);
+}
+
+.credentialCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.credentialCardIndividual {
+  background-color: var(--color-primary-50);
+  border-color: var(--color-primary-300);
+}
+
+.credentialCardCorporate {
+  background-color: var(--color-secondary-50);
+  border-color: var(--color-secondary-300);
+}
+
+.credentialIconContainer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-bottom: var(--spacing-4);
+}
+
+.credentialIconIndividual {
+  background-color: var(--color-primary-600);
+}
+
+.credentialIconCorporate {
+  background-color: var(--color-secondary-600);
+}
+
+.credentialIcon {
+  font-size: 1.5rem;
+}
+
+.credentialTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+.credentialDescription {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-6);
+}
+
+.credentialButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.credentialButton:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+  color: white;
+}
+
+.credentialButtonIndividual {
+  background-color: var(--color-primary-600);
+}
+
+.credentialButtonIndividual:hover {
+  background-color: var(--color-primary-700);
+}
+
+.credentialButtonCorporate {
+  background-color: var(--color-secondary-600);
+}
+
+.credentialButtonCorporate:hover {
+  background-color: var(--color-secondary-700);
+}
+
+/* Notice */
+.notice {
+  background-color: var(--color-warning-100);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-warning-300);
+  text-align: center;
+}
+
+.noticeText {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-warning-800);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Technology Section */
+.technologySection {
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-2xl);
+  padding: var(--spacing-8);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  animation: slideUp var(--transition-slow) ease-out 0.4s both;
+}
+
+.technologyTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-4);
+}
+
+.technologyDescription {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-6);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: var(--line-height-relaxed);
+}
+
+.technologyBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-6);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.technologyBadgeText {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-4);
+  }
+
+  .hero {
+    padding: var(--spacing-8) var(--spacing-4);
+  }
+
+  .title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-xl);
+  }
+
+  .ctaContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ctaPrimary,
+  .ctaSecondary {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+
+  .credentialsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .logoContainer {
+    width: 80px;
+    height: 80px;
+  }
+
+  .logo {
+    height: 40px;
+    width: 40px;
+  }
+
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-lg);
+  }
+}

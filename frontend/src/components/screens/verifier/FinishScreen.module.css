@@ -1,0 +1,586 @@
+/* =================================================================
+ * FinishScreen - 検証者用記念品・証明書画面
+ * 
+ * [概要]
+ * 証人証明書の表示とダウンロード、記念品の表示
+ * プロジェクタ用スクリーンのデザインを踏襲し、モバイル最適化
+ * 
+ * [設計方針]
+ * - ProjectorScreen.module.cssの品質を継承
+ * - 記念品としての特別感演出
+ * - 証明書の信頼性表現
+ * - 感謝の気持ちを込めた温かいデザイン
+ * ================================================================= */
+
+/* =================================================================
+ * CSS VARIABLES - ProjectorScreenから完全継承
+ * ================================================================= */
+/* Shared styles moved to CommonScreenStyles.module.css */
+
+/* =================================================================
+ * MAIN CONTAINER - ProjectorScreenから継承
+ * ================================================================= */
+/* .container moved to CommonScreenStyles.module.css */
+
+/* .mainContainer moved to CommonScreenStyles.module.css */
+
+/* FinishScreen specific styles - コンテンツ固有スタイル */
+/* .panel設定はCommonScreenStylesから継承 - 個別設定不要 */
+
+/* =================================================================
+ * HEADER SECTION - Celebration & Thanks
+ * ================================================================= */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.celebrationIcons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.celebrationIcon {
+  font-size: 2rem;
+  animation: celebrationFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.8));
+}
+
+.celebrationIcon:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.celebrationIcon:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.celebrationIcon:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes celebrationFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  33% {
+    transform: translateY(-8px);
+  }
+  66% {
+    transform: translateY(4px);
+  }
+}
+
+.title {
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.subtitle {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  line-height: 1.7;
+  max-width: 400px;
+}
+
+/* =================================================================
+ * MAIN CONTENT
+ * ================================================================= */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sectionTitle {
+  margin: 0 0 1rem 0;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+/* =================================================================
+ * CERTIFICATE SECTION
+ * ================================================================= */
+.certificateSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.certificateCard {
+  padding: 2rem;
+  border-radius: 24px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+  border: 2px solid var(--premium-border);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 8px 16px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(116, 192, 252, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.certificateCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--bitcoin-primary),
+    transparent
+  );
+  z-index: 1;
+}
+
+.certificateHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--premium-border);
+}
+
+.certificateContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.certificateItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.witnessIdBadge {
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.txidContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--premium-border);
+}
+
+.txidText {
+  flex: 1;
+  word-break: break-all;
+  font-size: 0.75rem;
+}
+
+.copyButton {
+  flex-shrink: 0;
+  padding: 0.5rem;
+  min-width: auto;
+  width: auto;
+  font-size: 0.7rem;
+}
+
+.qrSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--premium-border);
+}
+
+.qrCode {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.downloadButton {
+  position: relative;
+  overflow: hidden;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  animation: downloadGlow 2s ease-in-out infinite;
+}
+
+@keyframes downloadGlow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.3),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+      0 3px 6px rgba(0, 0, 0, 0.15),
+      0 6px 12px rgba(247, 147, 26, 0.2);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.4),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+      0 6px 12px rgba(0, 0, 0, 0.2),
+      0 12px 24px rgba(247, 147, 26, 0.4);
+  }
+}
+
+/* =================================================================
+ * MESSAGE SECTION
+ * ================================================================= */
+.messageSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 20px;
+  background: rgba(230, 73, 128, 0.05);
+  border: 1px solid rgba(230, 73, 128, 0.2);
+}
+
+.messageSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.messageOption {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--premium-border);
+  background: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  text-align: left;
+}
+
+.messageOption:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateX(4px);
+}
+
+.messageOptionActive {
+  background: linear-gradient(
+    135deg,
+    var(--bride-primary),
+    var(--bride-secondary)
+  );
+  border-color: var(--bride-primary);
+  transform: translateX(8px);
+}
+
+.selectedMessage {
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid var(--bride-primary);
+  position: relative;
+}
+
+.selectedMessage::before {
+  content: '"';
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  font-size: 3rem;
+  color: var(--bride-primary);
+  opacity: 0.3;
+  font-family: serif;
+}
+
+.messageText {
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+/* =================================================================
+ * SHARE SECTION
+ * ================================================================= */
+.shareSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 20px;
+  background: rgba(116, 192, 252, 0.05);
+  border: 1px solid var(--premium-border);
+}
+
+.shareButtons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.shareButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  padding: 0.75rem 0.5rem;
+}
+
+/* =================================================================
+ * MEMORY SECTION
+ * ================================================================= */
+.memorySection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.saveButton {
+  position: relative;
+  overflow: hidden;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  animation: saveGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes saveGlow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.3),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+      0 3px 6px rgba(0, 0, 0, 0.15),
+      0 6px 12px rgba(230, 73, 128, 0.2);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.4),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+      0 6px 12px rgba(0, 0, 0, 0.2),
+      0 12px 24px rgba(230, 73, 128, 0.4);
+  }
+}
+
+.saveNote {
+  max-width: 280px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* =================================================================
+ * FOOTER
+ * ================================================================= */
+.footer {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--premium-border);
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+/* =================================================================
+ * RESPONSIVE DESIGN - モバイル最適化
+ * ================================================================= */
+@media (max-width: 480px) {
+  .container {
+    padding: 0;
+  }
+
+  .mainContainer {
+    padding: 0.5rem;
+    align-items: flex-start;
+    overflow-y: auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .panel {
+    padding: 1.5rem;
+    border-radius: 24px;
+    margin: 0;
+    max-height: none;
+  }
+
+  .celebrationIcons {
+    gap: 0.75rem;
+  }
+
+  .celebrationIcon {
+    font-size: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.375rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .certificateCard {
+    padding: 1.5rem;
+  }
+
+  .txidContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .txidText {
+    text-align: center;
+    font-size: 0.7rem;
+  }
+
+  .copyButton {
+    align-self: center;
+  }
+
+  .qrCode {
+    width: 100px;
+    height: 100px;
+  }
+
+  .shareButtons {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .shareButton {
+    padding: 0.75rem 1rem;
+  }
+
+  .messageSection,
+  .shareSection {
+    padding: 1rem;
+  }
+
+  .mainContent {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .mainContainer {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .panel {
+    padding: 1.5rem;
+    max-height: none;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+
+  .celebrationIcon {
+    font-size: 1.5rem;
+  }
+
+  .mainContent {
+    gap: 1.5rem;
+  }
+
+  .certificateCard {
+    padding: 1.5rem;
+  }
+}
+
+/* タブレット縦向き対応 */
+@media (min-width: 481px) and (max-width: 768px) {
+  .panel {
+    max-width: 580px;
+    padding: 2.5rem;
+  }
+
+  .shareButtons {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .txidContainer {
+    flex-direction: row;
+  }
+}
+
+/* =================================================================
+ * ACCESSIBILITY & PERFORMANCE
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .celebrationIcon,
+  .downloadButton,
+  .saveButton {
+    animation: none !important;
+  }
+
+  .messageOption,
+  .panel {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .panel {
+    background: rgba(255, 255, 255, 0.98);
+    border: 2px solid var(--text-primary);
+  }
+
+  .title,
+  .sectionTitle,
+  .messageText {
+    text-shadow: none;
+  }
+
+  .certificateCard {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid var(--text-secondary);
+  }
+
+  .messageSection,
+  .shareSection {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--text-secondary);
+  }
+
+  .messageOption {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid var(--text-secondary);
+  }
+
+  .selectedMessage {
+    background: rgba(255, 255, 255, 0.98);
+    border: 3px solid var(--text-primary);
+  }
+}
+
+/* Focus visible for keyboard navigation */
+.downloadButton:focus-visible,
+.shareButton:focus-visible,
+.saveButton:focus-visible,
+.messageOption:focus-visible,
+.copyButton:focus-visible {
+  outline: 3px solid var(--bitcoin-primary);
+  outline-offset: 2px;
+}

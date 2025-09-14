@@ -1,0 +1,357 @@
+/* =================================================================
+ * Carousel Component - Pure Transparent Container with Flex Layout
+ * 
+ * [概要]
+ * design-26-production-ready.htmlの品質レベルを継承した
+ * カルーセルコンポーネント。完全に透明なコンテナ。
+ * 
+ * [設計思想]
+ * - Carousel自体は完全に透明（背景・ボーダー・シャドウなし）
+ * - Panelコンポーネントとの組み合わせは使用者が決定
+ * - Flexboxレイアウトによる正確な位置制御
+ * - 自動再生機能（5秒間隔、ユーザー操作後10秒停止）
+ * ================================================================= */
+
+/* =================================================================
+ * CSS VARIABLES - design-26から継承（統一性確保）
+ * ================================================================= */
+.carousel {
+  /* CSS変数をローカルで定義（グローバル変数との統一性確保） */
+  --groom-primary: #74c0fc;    /* 新郎メインカラー - ブルー系 */
+  --bitcoin-primary: #f7931a;  /* ビットコインメイン - オレンジ */
+  --text-primary: #374151;     /* 主要テキスト - 高コントラスト */
+  --text-secondary: #6b7280;   /* 補助テキスト - 中コントラスト */
+  --premium-border: rgba(116, 192, 252, 0.25);  /* 境界線色 */
+  --transition-smooth: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* =================================================================
+   * TRANSPARENT CONTAINER - 完全透明コンテナ設計
+   * ================================================================= */
+  /* 透明設計：背景・ボーダー・シャドウなし */
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  
+  /* Flexboxレイアウト - 親要素の領域いっぱいに拡張 */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  
+  /* サイズ制御 - 親要素に依存 */
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  position: relative;
+}
+
+/* =================================================================
+ * CAROUSEL CONTENT - カルーセルコンテンツ領域（Flexbox）
+ * ================================================================= */
+.carouselContent {
+  /* Flexboxで中央配置 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* 最小高さ確保 - より大きめに */
+  min-height: 120px;
+  
+  /* フレックス拡張 */
+  flex: 1;
+  width: 100%;
+  
+  /* 相対位置でスライド管理 */
+  position: relative;
+  
+  /* オーバーフロー制御 */
+  overflow: hidden;
+}
+
+/* =================================================================
+ * SLIDE MANAGEMENT - スライド管理システム（Flexbox）
+ * ================================================================= */
+.carouselSlide {
+  /* 初期状態：非表示 */
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.5s ease;
+  
+  /* 絶対位置でオーバーレイ */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  
+  /* Flexboxで中央配置 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* パディング追加 */
+  padding: 1rem;
+  box-sizing: border-box;
+  
+  /* 非アクティブスライドは非表示 */
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.carouselSlide.active {
+  opacity: 1;
+  transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* =================================================================
+ * TEMPLATE SLIDE - 構造化スライドコンテンツ（Flexbox）
+ * ================================================================= */
+.templateSlide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+/* =================================================================
+ * SLIDE CONTENT ELEMENTS - スライド内容要素
+ * ================================================================= */
+.carouselIcon {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2rem;
+}
+
+.carouselTitle {
+  margin-bottom: 0.5rem;
+}
+
+.carouselDescription {
+  line-height: 1.4;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* =================================================================
+ * NAVIGATION CONTROLS - ナビゲーション制御（Flexbox）
+ * ================================================================= */
+.carouselControls {
+  /* 水平配置でアロー・インジケーター・アローを配置 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  
+  /* 最小高さ確保 */
+  min-height: 32px;
+}
+
+/* =================================================================
+ * ARROWS - 矢印ナビゲーション
+ * ================================================================= */
+.carouselArrow {
+  /* IconButtonのサイズをオーバーライド */
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 1.2rem !important;
+  flex-shrink: 0;
+}
+
+/* =================================================================
+ * INDICATORS - インジケーター（ドット）
+ * ================================================================= */
+.carouselIndicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.carouselDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--premium-border);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.carouselDot:hover {
+  background: rgba(116, 192, 252, 0.4);
+  transform: scale(1.1);
+}
+
+.carouselDot.active {
+  background: var(--groom-primary);
+  transform: scale(1.2);
+}
+
+.carouselDot:focus {
+  outline: 2px solid var(--groom-primary);
+  outline-offset: 2px;
+}
+
+/* =================================================================
+ * VARIANT STYLES REMOVED - Content styling handled by Text component
+ * ================================================================= */
+
+/* =================================================================
+ * SIZE VARIANTS - サイズバリエーション
+ * ================================================================= */
+.small .carouselContent {
+  min-height: 100px;
+}
+
+.small .carouselSlide {
+  min-height: 100px;
+}
+
+.small .carouselIcon {
+  font-size: 1.5rem;
+}
+
+.small .carouselDescription {
+  max-width: 200px;
+  font-size: 0.8rem;
+}
+
+.small .carouselControls {
+  gap: 0.75rem;
+}
+
+.small .carouselArrow {
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 1rem !important;
+}
+
+.small .carouselDot {
+  width: 6px;
+  height: 6px;
+}
+
+.medium .carouselContent {
+  min-height: 120px;
+}
+
+.medium .carouselSlide {
+  min-height: 120px;
+}
+
+.large .carouselContent {
+  min-height: 160px;
+}
+
+.large .carouselSlide {
+  min-height: 160px;
+}
+
+.large .carouselIcon {
+  font-size: 2.2rem;
+}
+
+.large .carouselDescription {
+  max-width: 320px;
+}
+
+.large .carouselControls {
+  gap: 1.25rem;
+}
+
+.large .carouselArrow {
+  width: 36px !important;
+  height: 36px !important;
+  font-size: 1.4rem !important;
+}
+
+.large .carouselDot {
+  width: 10px;
+  height: 10px;
+}
+
+/* =================================================================
+ * RESPONSIVE OPTIMIZATIONS - モバイル最適化
+ * ================================================================= */
+@media (max-width: 480px) {
+  .carouselDescription {
+    max-width: 240px;
+    font-size: 0.8rem;
+  }
+  
+  .carouselIcon {
+    font-size: 1.6rem;
+  }
+  
+  .carouselControls {
+    gap: 0.75rem;
+  }
+  
+  .carouselArrow {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 1rem !important;
+  }
+  
+  .carouselDot {
+    width: 7px;
+    height: 7px;
+  }
+}
+
+@media (max-height: 700px) {
+  .carouselContent {
+    min-height: 100px;
+  }
+  
+  .carouselSlide {
+    min-height: 100px;
+  }
+  
+  .carouselIcon {
+    margin-bottom: 0.3rem;
+  }
+}
+
+/* =================================================================
+ * ACCESSIBILITY & PERFORMANCE - アクセシビリティとパフォーマンス
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .carouselSlide,
+  .carouselDot,
+  .carouselArrow {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* フォーカス管理 */
+.carouselSlide:focus-within {
+  outline: 2px solid var(--groom-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* =================================================================
+ * LOADING STATE - ローディング状態
+ * ================================================================= */
+.carousel:empty::before {
+  content: "Loading...";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}

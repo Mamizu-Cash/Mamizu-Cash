@@ -1,0 +1,63 @@
+.copyButton {
+  padding: 0.2rem 0.4rem;
+  background: rgba(116, 192, 252, 0.1);
+  border: 1px solid rgba(116, 192, 252, 0.2);
+  border-radius: 6px;
+  color: var(--groom-primary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  margin-left: 0.5rem;
+  font-family: 'IBM Plex Sans JP', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.copyButton:hover {
+  background: rgba(116, 192, 252, 0.2);
+}
+
+.copyButton:focus {
+  outline: 2px solid var(--bitcoin-primary);
+  outline-offset: 2px;
+}
+
+.copied {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.copied:hover {
+  background: rgba(16, 185, 129, 0.3);
+}
+
+/* Success animation */
+.success {
+  animation: success-bounce 0.5s ease;
+}
+
+@keyframes success-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Ripple effect for copy action */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(116, 192, 252, 0.4);
+  transform: scale(0);
+  animation: copy-ripple 0.4s linear;
+  pointer-events: none;
+}
+
+@keyframes copy-ripple {
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
+}

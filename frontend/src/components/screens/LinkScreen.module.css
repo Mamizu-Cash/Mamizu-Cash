@@ -1,0 +1,302 @@
+.linkScreenContainer {
+  max-width: 400px;
+  margin: 2rem auto;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 1s ease,
+    filter 1s ease;
+}
+
+.linkScreenTitle {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.linkScreenDescription {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  color: #555;
+  text-align: center;
+}
+
+.linkScreenMain {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 100%;
+}
+
+.linkScreenAnchor {
+  text-decoration: none;
+  width: 100%;
+}
+
+.linkScreenButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.linkScreenIcon {
+  font-size: 1.5rem;
+  width: 2.5rem;
+  text-align: center;
+}
+
+.linkScreenFooter {
+  margin-top: 2.5rem;
+  font-size: 0.9rem;
+  color: #888;
+  text-align: center;
+}
+
+.evmButton {
+  background: linear-gradient(90deg, #627eea 0%, #29b6af 100%);
+  color: #fff !important;
+  border: none;
+}
+
+.bitcoinButton {
+  background: linear-gradient(90deg, #f7931a 0%, #ff9500 100%);
+  color: #fff !important;
+  border: none;
+}
+
+.monacoinButton {
+  background: linear-gradient(90deg, #bfa76a 0%, #e6d3a3 100%);
+  color: #4d3c1c !important;
+  border: none;
+}
+
+/* Litecoin: cool silver/blue gradient inspired by LTC branding */
+.litecoinButton {
+  background: linear-gradient(90deg, #345d9d 0%, #a6b1c2 100%);
+  color: #ffffff !important;
+  border: none;
+}
+
+.paypayButton {
+  background: linear-gradient(90deg, #ff0033 0%, #ff99aa 100%);
+  color: #fff !important;
+  border: none;
+}
+
+.evmHighlight {
+  color: #29b6af;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.evmLargeButton {
+  font-size: 1.25rem;
+  padding: 1.5rem 1rem;
+  box-shadow: 0 4px 16px rgba(41, 182, 175, 0.12);
+  border-width: 2px;
+}
+
+.evmNote {
+  margin: 1rem 0 1.5rem 0;
+  font-size: 1.05rem;
+  color: #494b4b;
+  text-align: center;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.evmButton:hover {
+  background: linear-gradient(90deg, #29b6af 0%, #627eea 100%);
+  filter: brightness(1.08);
+}
+
+.bitcoinButton:hover {
+  background: linear-gradient(90deg, #ff9500 0%, #f7931a 100%);
+  filter: brightness(1.08);
+}
+
+.monacoinButton:hover {
+  background: linear-gradient(90deg, #e6d3a3 0%, #bfa76a 100%);
+  filter: brightness(1.08);
+}
+
+.litecoinButton:hover {
+  background: linear-gradient(90deg, #a6b1c2 0%, #345d9d 100%);
+  filter: brightness(1.08);
+}
+
+.paypayButton:hover {
+  background: linear-gradient(90deg, #ff99aa 0%, #ff0033 100%);
+  filter: brightness(1.08);
+}
+
+.solanaButton {
+  background: linear-gradient(90deg, #00ffa3 0%, #dc1fff 100%);
+  color: #fff !important;
+  border: none;
+}
+.solanaButton:hover {
+  background: linear-gradient(90deg, #dc1fff 0%, #00ffa3 100%);
+  filter: brightness(1.08);
+}
+
+/* XRPL: blue tones reminiscent of Ripple/XRP ecosystem (neutral, not logo) */
+.xrpButton {
+  background: linear-gradient(90deg, #0a78d6 0%, #00a3e0 100%);
+  color: #ffffff !important;
+  border: none;
+}
+.xrpButton:hover {
+  background: linear-gradient(90deg, #00a3e0 0%, #0a78d6 100%);
+  filter: brightness(1.08);
+}
+
+.otherButton {
+  background: linear-gradient(90deg, #bdbdbd 0%, #e0e0e0 100%);
+  color: #333 !important;
+  border: none;
+}
+.otherButton:hover {
+  background: linear-gradient(90deg, #e0e0e0 0%, #bdbdbd 100%);
+  filter: brightness(1.08);
+}
+
+.tokenList {
+  font-size: 0.85em;
+  font-weight: 400;
+}
+
+/* Modal Styles */
+.modal {
+  background: none;
+  border: none;
+}
+
+.modal::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modalContent {
+  background: white;
+  border-radius: 1rem;
+  max-width: 450px;
+  width: 90%;
+  margin: 10vh auto;
+  padding: 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modalHeader {
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modalBody {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.qrCodeSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sectionLabel {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.qrCodeContainer {
+  width: 360px;
+  height: 360px;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  padding: 0;
+  overflow: hidden;
+  background: white;
+}
+
+.urlSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.urlContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.urlInput {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.copyButton {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.modalFooter {
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid #f0f0f0;
+}
+
+.closeButton {
+  min-width: 120px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .modalContent {
+    margin: 5vh auto;
+    width: 95%;
+    max-width: none;
+  }
+
+  .qrCodeContainer {
+    width: 150px;
+    height: 150px;
+  }
+
+  .urlContainer {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .urlInput {
+    width: 100%;
+  }
+
+  .copyButton {
+    width: 100%;
+  }
+}

@@ -1,0 +1,211 @@
+/* === MOVED FROM routes/projector.module.css === */
+/* Shared styles moved to CommonScreenStyles.module.css */
+
+/* .container moved to CommonScreenStyles.module.css */
+
+/* .mainContainer moved to CommonScreenStyles.module.css */
+
+/* ProjectorScreen specific styles - コンテンツ固有スタイル */
+.panel {
+  max-width: 1200px !important;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  flex-direction: row;
+}
+
+.brandGroup {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.brandLogo {
+  height: 5rem;
+  width: auto;
+  filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.8));
+}
+
+.brandText {
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: var(--text-primary);
+  letter-spacing: 4px;
+}
+
+.mainContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+.person {
+  text-align: center;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.personLabel {
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.personStatus {
+  font-size: 1.9rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  font-family: 'IBM Plex Sans JP', sans-serif;
+}
+
+.brideLabel {
+  color: var(--bride-primary);
+}
+
+.groomLabel {
+  color: var(--groom-primary);
+}
+
+.statusCompleted {
+  color: #10b981;
+}
+
+.statusInProgress {
+  color: var(--groom-primary);
+}
+
+.qrSection {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.qrTitle {
+  font-size: 2.6rem;
+  font-weight: 300;
+  color: var(--text-primary);
+  letter-spacing: 0.6rem;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.qrMessage {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  text-align: center;
+  width: 100%;
+  max-width: 380px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.qrCode {
+  width: 420px;
+  height: 420px;
+}
+
+.qrInstruction {
+  font-size: 1.1rem;
+  color: var(--bitcoin-primary);
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 30em;
+}
+
+.bottomLabel {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  width: 100%;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  .panel {
+    padding: 2rem;
+  }
+  .mainContent {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .qrCode {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+.witnessInfo {
+  color: #10b981;
+  font-weight: 500;
+}
+
+.networkStatus {
+  color: var(--groom-primary);
+  font-weight: 500;
+}
+
+.reactionArea {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+}
+
+.reactionPop {
+  position: absolute;
+  bottom: 0;
+  transform: translateY(0) scale(1);
+  color: #222;
+  font-size: 2.2rem;
+  font-weight: bold;
+  border-radius: 2rem;
+  padding: 0.5em 1.5em;
+  opacity: 1;
+  animation: shootUp 6s cubic-bezier(0.04, 0.51, 0.43, 1);
+  will-change: transform, opacity;
+}
+
+@keyframes shootUp {
+  0% {
+    transform: translateY(0) scale(0.7);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50vh) scale(1.8);
+    opacity: 0;
+  }
+}

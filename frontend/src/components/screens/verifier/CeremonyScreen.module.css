@@ -1,0 +1,450 @@
+/* =================================================================
+ * CeremonyScreen - 検証者用儀式進行画面
+ * 
+ * [概要]
+ * リアルタイムで署名状況を共有し、インタラクティブな参加機能を提供
+ * プロジェクタ用スクリーンのデザインを踏襲し、モバイル最適化
+ * 
+ * [設計方針]
+ * - ProjectorScreen.module.cssの品質を継承
+ * - リアルタイム更新への対応
+ * - 感動的な儀式体験の演出
+ * - インタラクティブ要素の強化
+ * ================================================================= */
+
+/* =================================================================
+ * CSS VARIABLES - ProjectorScreenから完全継承
+ * ================================================================= */
+/* Shared styles moved to CommonScreenStyles.module.css */
+
+/* =================================================================
+ * MAIN CONTAINER - ProjectorScreenから継承
+ * ================================================================= */
+/* .container moved to CommonScreenStyles.module.css */
+
+/* .mainContainer moved to CommonScreenStyles.module.css */
+
+/* CeremonyScreen specific styles - コンテンツ固有スタイル */
+.panel {
+  /* 基本設定はCommonScreenStylesから継承 */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* =================================================================
+ * HEADER SECTION
+ * ================================================================= */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.title {
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.statusBadge {
+  padding: 0.75rem 1.5rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+/* =================================================================
+ * MAIN CONTENT - Couple Status Display
+ * ================================================================= */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.coupleStatus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.personStatus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.personLabel {
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.statusIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 40px;
+  justify-content: center;
+}
+
+/* =================================================================
+ * HEART ANIMATION SECTION
+ * ================================================================= */
+.heartSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.heart {
+  font-size: 2rem;
+  transition: var(--transition-smooth);
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.8));
+}
+
+.heartPulse {
+  animation: heartPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes heartPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.8));
+  }
+  50% {
+    transform: scale(1.2);
+    filter: drop-shadow(0 4px 8px rgba(230, 73, 128, 0.4));
+  }
+}
+
+/* =================================================================
+ * RECORDING SECTION
+ * ================================================================= */
+.recordingSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 1rem;
+  border-radius: 20px;
+  background: rgba(247, 147, 26, 0.05);
+  border: 1px solid rgba(247, 147, 26, 0.2);
+}
+
+.recordingText {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  animation: textGlow 2s ease-in-out infinite;
+}
+
+@keyframes textGlow {
+  0%,
+  100% {
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    text-shadow: 0 2px 8px rgba(247, 147, 26, 0.3);
+  }
+}
+
+/* =================================================================
+ * CELEBRATION SECTION
+ * ================================================================= */
+.celebrationSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 1rem;
+  border-radius: 20px;
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.celebrationIcon {
+  font-size: 3rem;
+  animation: celebrationBounce 1s ease-in-out infinite;
+}
+
+@keyframes celebrationBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.celebrationText {
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.celebrationSubText {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+/* =================================================================
+ * INTERACTION SECTION - Reactions
+ * ================================================================= */
+.interactionSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 20px;
+  background: rgba(116, 192, 252, 0.05);
+  border: 1px solid var(--premium-border);
+}
+
+.interactionTitle {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.reactionButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.reactionButton {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--premium-border);
+  border-radius: 16px;
+  padding: 0.75rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.reactionButton:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reactionButton:active {
+  transform: translateY(0);
+}
+
+.reactionButtonActive {
+  background: linear-gradient(
+    135deg,
+    var(--bitcoin-primary),
+    var(--bitcoin-secondary)
+  );
+  color: white;
+  transform: scale(1.1);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 4px 8px rgba(247, 147, 26, 0.3);
+}
+
+/* =================================================================
+ * CELEBRATION BUTTON SECTION
+ * ================================================================= */
+.celebrationButtonSection {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.celebrationButton {
+  position: relative;
+  overflow: hidden;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  animation: celebrationButtonGlow 2s ease-in-out infinite;
+}
+
+@keyframes celebrationButtonGlow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.3),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+      0 3px 6px rgba(0, 0, 0, 0.15),
+      0 6px 12px rgba(247, 147, 26, 0.2);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.4),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+      0 6px 12px rgba(0, 0, 0, 0.2),
+      0 12px 24px rgba(247, 147, 26, 0.4);
+  }
+}
+
+/* =================================================================
+ * EDUCATION SECTION - Technology Carousel
+ * ================================================================= */
+
+.techCarousel {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--premium-border);
+  padding: 1rem;
+}
+
+.carouselSlide {
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.slideIcon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* =================================================================
+ * FOOTER
+ * ================================================================= */
+.footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--premium-border);
+  display: flex;
+  justify-content: center;
+}
+
+/* =================================================================
+ * RESPONSIVE DESIGN - モバイル最適化
+ * ================================================================= */
+@media (max-width: 480px) {
+  .panel {
+    width: 100%;
+  }
+  .title {
+    font-size: 1.375rem;
+  }
+
+  .statusBadge {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .coupleStatus {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .personStatus {
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .heartSection {
+    order: -1;
+  }
+
+  .heart {
+    font-size: 1.5rem;
+  }
+
+  .reactionButtons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    justify-items: center;
+  }
+
+  .reactionButton {
+    padding: 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  .recordingSection,
+  .celebrationSection,
+  .interactionSection {
+    padding: 1rem;
+  }
+
+  .celebrationIcon {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .mainContainer {
+    overflow-y: auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* =================================================================
+ * ACCESSIBILITY & PERFORMANCE
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .heart,
+  .heartPulse,
+  .recordingText,
+  .celebrationIcon,
+  .celebrationButton,
+  .reactionButton {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .panel {
+    background: rgba(255, 255, 255, 0.98);
+    border: 2px solid var(--text-primary);
+  }
+
+  .title,
+  .personLabel,
+  .interactionTitle {
+    text-shadow: none;
+  }
+
+  .recordingSection,
+  .celebrationSection,
+  .interactionSection {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--text-secondary);
+  }
+
+  .reactionButton {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid var(--text-secondary);
+  }
+}
+
+/* Focus visible for keyboard navigation */
+.reactionButton:focus-visible,
+.celebrationButton:focus-visible {
+  outline: 3px solid var(--bitcoin-primary);
+  outline-offset: 2px;
+}

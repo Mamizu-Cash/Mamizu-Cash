@@ -1,0 +1,327 @@
+/* DocumentScreen specific styles */
+
+.container {
+  /* Inherits from CommonScreenStyles */
+}
+
+.mainContainer {
+  /* Inherits from CommonScreenStyles */
+}
+
+/* DocumentScreen specific styles - コンテンツ固有スタイル */
+/* .panel設定はCommonScreenStylesから継承 - 個別設定不要 */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.brandGroup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brandLogo {
+  height: 3.5rem;
+  width: auto;
+  filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.8));
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.roleBadge {
+  font-size: 0.9rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Loading Section */
+.loadingSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.loadingNote {
+  font-style: italic;
+}
+
+.sectionTitle {
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.fullViewButton {
+  align-self: center;
+  min-width: 200px;
+  height: 44px;
+  border-radius: 14px;
+}
+
+/* Hash Section */
+.hashSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.hashDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  font-family: monospace;
+}
+
+.hashLabel {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.hashValue {
+  word-break: break-all;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--text-primary);
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 6px;
+}
+
+.hashNote {
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+/* Confirmation Section */
+.confirmationSection {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.confirmationBox {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px solid var(--premium-border);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.confirmationCheckbox {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Action Section */
+.actionSection {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+.confirmButton {
+  min-width: 320px;
+  height: 60px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 20px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transition: var(--transition-smooth);
+}
+
+.confirmButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .panel {
+    padding: 2rem;
+    border-radius: 24px;
+  }
+
+  .header {
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .brandLogo {
+    height: 3rem;
+  }
+
+  .title {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+  }
+
+  .documentHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .pageControls {
+    align-self: center;
+  }
+
+  .documentContent {
+    padding: 2rem;
+  }
+
+  .documentTitle {
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+  }
+
+  .documentText {
+    font-size: 1rem;
+  }
+
+  .confirmationBox {
+    padding: 1rem;
+  }
+
+  .confirmButton {
+    min-width: 280px;
+    height: 55px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 1.5rem;
+    border-radius: 20px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .pageButton {
+    min-width: 70px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .documentContent {
+    padding: 1.5rem;
+  }
+
+  .documentTitle {
+    font-size: 1.4rem;
+  }
+
+  .hashValue {
+    font-size: 0.75rem;
+  }
+
+  .confirmationBox {
+    padding: 1rem 0.5rem;
+  }
+
+  .confirmButton {
+    min-width: 240px;
+    height: 50px;
+  }
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .panel {
+    background: rgba(255, 255, 255, 0.98);
+    border: 2px solid var(--text-primary);
+  }
+
+  .documentPanel {
+    background: rgba(255, 255, 255, 1);
+    border: 2px solid var(--text-secondary);
+  }
+
+  .hashDisplay {
+    background: rgba(240, 240, 240, 1);
+    border: 1px solid var(--text-secondary);
+  }
+
+  .confirmationBox {
+    background: rgba(255, 255, 255, 1);
+    border: 2px solid var(--text-primary);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .confirmButton {
+    transition-duration: 0.01ms !important;
+  }
+}

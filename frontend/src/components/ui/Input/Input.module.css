@@ -1,0 +1,234 @@
+/* =================================================================
+ * Input Component - design-26-production-ready継承版
+ * 
+ * [概要]
+ * design-26-production-ready.htmlの変態的品質レベルを完全継承。
+ * QRコード品質技術を入力フィールドに適用。
+ * 汎用的で再利用可能なインプットコンポーネント。
+ * 
+ * [統一仕様]
+ * - design-26のQRコード品質シャドウ技術を適用
+ * - プレミアムガラスモーフィズム効果
+ * - 複数レイヤーシャドウによる立体感
+ * - フォーカス時の高品質グロー効果
+ * ================================================================= */
+
+/* =================================================================
+ * CSS VARIABLES - design-26から完全継承（統一性確保）
+ * ================================================================= */
+.input {
+  /* CSS変数をローカルで定義（グローバル変数との統一性確保） */
+  --premium-white: #ffffff;  /* 純白 - 入力背景 */
+  --premium-border: rgba(116, 192, 252, 0.25);  /* 境界線色 - 控えめな区切り */
+  --premium-highlight: rgba(255, 255, 255, 0.15); /* ハイライト色 - エンボス効果 */
+  --text-primary: #374151;     /* 主要テキスト - 高コントラスト */
+  --text-secondary: #6b7280;   /* 補助テキスト - 中コントラスト */
+  --text-tertiary: #9ca3af;    /* 三次テキスト - 低コントラスト */
+  --groom-primary: #74c0fc;    /* 新郎メインカラー - ブルー系 */
+  --bitcoin-primary: #f7931a;  /* ビットコインメイン - オレンジ */
+  --bride-primary: #e64980;    /* 新婦メインカラー - ピンク系 */
+  --transition-smooth: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); /* スムーズトランジション */
+  
+  /* =================================================================
+   * BASE INPUT STYLES - design-26のQRコード品質を適用
+   * ================================================================= */
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: var(--premium-white); /* design-26より */
+  border: 1px solid var(--premium-border); /* design-26より */
+  border-radius: 16px;
+  font-size: 1rem;
+  font-family: 'IBM Plex Sans JP', sans-serif;
+  color: var(--text-primary);
+  transition: var(--transition-smooth); /* design-26より */
+  
+  /* design-26のQRコード品質を応用したシャドウ */
+  box-shadow: 
+    /* 内側ハイライト */ inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    /* 内側シャドウ */ inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    /* 表面ハイライト */ 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.input::placeholder {
+  color: var(--text-tertiary);
+  transition: var(--transition-smooth);
+}
+
+/* =================================================================
+ * FOCUS STATES - design-26技術応用
+ * ================================================================= */
+.input:focus {
+  outline: none;
+  border-color: var(--groom-primary); /* デフォルトはブルー系 */
+  /* フォーカス時のグロー効果 - design-26技術応用 */
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5),
+    0 0 0 3px rgba(116, 192, 252, 0.1); /* ブルー系グロー */
+}
+
+.input:focus::placeholder {
+  color: var(--text-secondary);
+}
+
+/* =================================================================
+ * VARIANT STYLES
+ * ================================================================= */
+.primary {
+  /* デフォルトスタイル（ブルー系） */
+}
+
+.primary:focus {
+  border-color: var(--groom-primary);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5),
+    0 0 0 3px rgba(116, 192, 252, 0.1);
+}
+
+.secondary {
+  /* ビットコイン系オレンジ */
+}
+
+.secondary:focus {
+  border-color: var(--bitcoin-primary);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5),
+    0 0 0 3px rgba(247, 147, 26, 0.1);
+}
+
+.accent {
+  /* 新婦系ピンク */
+}
+
+.accent:focus {
+  border-color: var(--bride-primary);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5),
+    0 0 0 3px rgba(230, 73, 128, 0.1);
+}
+
+/* =================================================================
+ * SIZE VARIANTS
+ * ================================================================= */
+.small {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 12px;
+}
+
+.medium {
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 16px;
+}
+
+.large {
+  padding: 1.25rem 1.75rem;
+  font-size: 1.125rem;
+  border-radius: 20px;
+}
+
+/* =================================================================
+ * STATE VARIANTS
+ * ================================================================= */
+.error {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.error:focus {
+  border-color: #dc2626;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5),
+    0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.success {
+  border-color: #10b981;
+}
+
+.success:focus {
+  border-color: #10b981;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5),
+    0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f9fafb;
+}
+
+.disabled:focus {
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+/* =================================================================
+ * FULL WIDTH VARIANT
+ * ================================================================= */
+.fullWidth {
+  width: 100%;
+}
+
+/* =================================================================
+ * RESPONSIVE OPTIMIZATIONS - モバイル最適化
+ * ================================================================= */
+@media (max-width: 480px) {
+  .input {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .small {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8rem;
+  }
+  
+  .large {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+/* =================================================================
+ * ACCESSIBILITY & PERFORMANCE - design-26から継承
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .input {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =================================================================
+ * BROWSER COMPATIBILITY - ブラウザ対応状況
+ * 
+ * [対応ブラウザ]
+ * - Chrome 80+: 完全対応
+ * - Firefox 75+: 完全対応
+ * - Safari 13+: 完全対応
+ * - Edge 80+: 完全対応
+ * ================================================================= */
+
+/* WebKit autofill styles */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-primary);
+  -webkit-box-shadow: 0 0 0px 1000px var(--premium-white) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}

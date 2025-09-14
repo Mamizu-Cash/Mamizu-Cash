@@ -1,0 +1,299 @@
+/* =================================================================
+ * Checkbox Component - design-26-production-ready継承版
+ * 
+ * [概要]
+ * design-26-production-ready.htmlの変態的品質レベルを完全継承。
+ * カスタムチェックボックスコンポーネントでネイティブHTML要素を置き換え。
+ * 汎用的で再利用可能なチェックボックスコンポーネント。
+ * 
+ * [統一仕様]
+ * - design-26のQRコード品質シャドウ技術を適用
+ * - プレミアムガラスモーフィズム効果
+ * - 複数レイヤーシャドウによる立体感
+ * - チェック時のアニメーション効果
+ * ================================================================= */
+
+/* =================================================================
+ * CSS VARIABLES - design-26から完全継承（統一性確保）
+ * ================================================================= */
+.container {
+  /* CSS変数をローカルで定義（グローバル変数との統一性確保） */
+  --premium-white: #ffffff;  /* 純白 - チェックボックス背景 */
+  --premium-border: rgba(116, 192, 252, 0.25);  /* 境界線色 - 控えめな区切り */
+  --premium-highlight: rgba(255, 255, 255, 0.15); /* ハイライト色 - エンボス効果 */
+  --text-primary: #374151;     /* 主要テキスト - 高コントラスト */
+  --text-secondary: #6b7280;   /* 補助テキスト - 中コントラスト */
+  --groom-primary: #74c0fc;    /* 新郎メインカラー - ブルー系 */
+  --bitcoin-primary: #f7931a;  /* ビットコインメイン - オレンジ */
+  --bride-primary: #e64980;    /* 新婦メインカラー - ピンク系 */
+  --transition-smooth: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); /* スムーズトランジション */
+
+  /* =================================================================
+   * CONTAINER LAYOUT
+   * ================================================================= */
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  position: relative;
+  font-family: 'IBM Plex Sans JP', sans-serif;
+}
+
+/* =================================================================
+ * HIDDEN NATIVE INPUT
+ * ================================================================= */
+.hiddenInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* =================================================================
+ * CUSTOM CHECKBOX - design-26のQRコード品質を適用
+ * ================================================================= */
+.checkbox {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background: var(--premium-white);
+  border: 1px solid var(--premium-border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+  position: relative;
+  margin-top: 0.125rem; /* テキストとの視覚的整列 */
+  
+  /* design-26のQRコード品質を応用したシャドウ */
+  box-shadow: 
+    /* 内側ハイライト */ inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    /* 内側シャドウ */ inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    /* 表面ハイライト */ 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+/* チェックマーク */
+.checkmark {
+  opacity: 0;
+  transform: scale(0) rotate(-45deg);
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  width: 12px;
+  height: 12px;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* =================================================================
+ * CHECKED STATE
+ * ================================================================= */
+.checked .checkbox {
+  background: linear-gradient(135deg, var(--groom-primary), var(--groom-secondary, #4dabf7));
+  border-color: var(--groom-primary);
+  
+  /* チェック済み時のプレミアムシャドウ */
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(116, 192, 252, 0.2),
+    0 4px 8px rgba(116, 192, 252, 0.1);
+}
+
+.checked .checkmark {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* =================================================================
+ * VARIANT STYLES
+ * ================================================================= */
+.primary .checked .checkbox {
+  background: linear-gradient(135deg, var(--groom-primary), #4dabf7);
+  border-color: var(--groom-primary);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(116, 192, 252, 0.2),
+    0 4px 8px rgba(116, 192, 252, 0.1);
+}
+
+.secondary .checked .checkbox {
+  background: linear-gradient(135deg, var(--bitcoin-primary), #ff9500);
+  border-color: var(--bitcoin-primary);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(247, 147, 26, 0.2),
+    0 4px 8px rgba(247, 147, 26, 0.1);
+}
+
+.accent .checked .checkbox {
+  background: linear-gradient(135deg, var(--bride-primary), #ff6b9d);
+  border-color: var(--bride-primary);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(230, 73, 128, 0.2),
+    0 4px 8px rgba(230, 73, 128, 0.1);
+}
+
+/* =================================================================
+ * FOCUS STATE
+ * ================================================================= */
+.container:focus-within .checkbox {
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5),
+    0 0 0 3px rgba(116, 192, 252, 0.1);
+}
+
+.secondary:focus-within .checkbox {
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5),
+    0 0 0 3px rgba(247, 147, 26, 0.1);
+}
+
+.accent:focus-within .checkbox {
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5),
+    0 0 0 3px rgba(230, 73, 128, 0.1);
+}
+
+/* =================================================================
+ * HOVER STATE
+ * ================================================================= */
+.container:hover .checkbox {
+  transform: translateY(-1px);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* =================================================================
+ * DISABLED STATE
+ * ================================================================= */
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.disabled .checkbox {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.disabled:hover .checkbox {
+  transform: none;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+/* =================================================================
+ * LABEL TEXT
+ * ================================================================= */
+.label {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  user-select: none;
+  transition: var(--transition-smooth);
+}
+
+.disabled .label {
+  color: var(--text-secondary);
+}
+
+/* Required indicator */
+.required {
+  color: #dc2626;
+  margin-left: 0.25rem;
+}
+
+/* =================================================================
+ * SIZE VARIANTS
+ * ================================================================= */
+.small .checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+.small .checkmark {
+  width: 10px;
+  height: 10px;
+  font-size: 8px;
+}
+
+.small .label {
+  font-size: 0.8rem;
+}
+
+.medium .checkbox {
+  width: 20px;
+  height: 20px;
+}
+
+.medium .checkmark {
+  width: 12px;
+  height: 12px;
+  font-size: 10px;
+}
+
+.medium .label {
+  font-size: 0.9rem;
+}
+
+.large .checkbox {
+  width: 24px;
+  height: 24px;
+}
+
+.large .checkmark {
+  width: 14px;
+  height: 14px;
+  font-size: 12px;
+}
+
+.large .label {
+  font-size: 1rem;
+}
+
+/* =================================================================
+ * RESPONSIVE OPTIMIZATIONS - モバイル最適化
+ * ================================================================= */
+@media (max-width: 480px) {
+  .container {
+    gap: 0.6rem;
+  }
+  
+  .label {
+    font-size: 0.85rem;
+  }
+}
+
+/* =================================================================
+ * ACCESSIBILITY & PERFORMANCE - design-26から継承
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .checkbox,
+  .checkmark {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .checkbox {
+    border-width: 2px;
+  }
+}
