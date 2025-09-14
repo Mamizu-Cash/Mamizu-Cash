@@ -10,7 +10,10 @@
       "mcp__context7__get-library-docs",
       "Bash(fd:*)",
       "Bash(rip:*)",
-      "Bash(cast wallet import:*)"
+      "Bash(cast wallet import:*)",
+      "Bash(bun add:*)",
+      "Bash(mise abigen-counter:*)",
+      "Bash(mise abigen-business-verifier:*)"
     ],
     "deny": [],
     "ask": []

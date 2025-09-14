@@ -31,9 +31,11 @@ echo "Generating Counter ABI..."
 forge build --silent
 if [ -f "out/Counter.sol/Counter.json" ]; then
   echo "ABI generated at: out/Counter.sol/Counter.json"
-  # オプション: フロントエンド用にABIだけ抽出
-  jq '.abi' out/Counter.sol/Counter.json > out/Counter.abi.json 2>/dev/null || echo "jq not available, skipping ABI extraction"
-  echo "Extracted ABI at: out/Counter.abi.json"
+  # Create frontend ABI directory if it doesn't exist
+  mkdir -p ../frontend/src/abi
+  # Extract ABI for frontend
+  jq '.abi' out/Counter.sol/Counter.json > ../frontend/src/abi/Counter.abi.json 2>/dev/null || echo "jq not available, skipping ABI extraction"
+  echo "Extracted ABI at: ../frontend/src/abi/Counter.abi.json"
 else
   echo "Error: Counter.json not found"
   exit 1
@@ -67,14 +69,16 @@ if [ -f "out/AlwaysAllow.sol/AlwaysAllow.json" ] && [ -f "out/BusinessVerifier.s
   echo "  - out/AlwaysAllow.sol/AlwaysAllow.json"
   echo "  - out/BusinessVerifier.sol/BusinessVerifier.json"
   echo "  - out/KnownCompanyUnti.sol/KnownCompanyUnti.json"
+  # Create frontend ABI directory if it doesn't exist
+  mkdir -p ../frontend/src/abi
   # Extract ABI only for frontend
-  jq '.abi' out/AlwaysAllow.sol/AlwaysAllow.json > out/AlwaysAllow.abi.json 2>/dev/null || echo "jq not available for AlwaysAllow"
-  jq '.abi' out/BusinessVerifier.sol/BusinessVerifier.json > out/BusinessVerifier.abi.json 2>/dev/null || echo "jq not available for BusinessVerifier"
-  jq '.abi' out/KnownCompanyUnti.sol/KnownCompanyUnti.json > out/KnownCompanyUnti.abi.json 2>/dev/null || echo "jq not available for KnownCompanyUnti"
+  jq '.abi' out/AlwaysAllow.sol/AlwaysAllow.json > ../frontend/src/abi/AlwaysAllow.abi.json 2>/dev/null || echo "jq not available for AlwaysAllow"
+  jq '.abi' out/BusinessVerifier.sol/BusinessVerifier.json > ../frontend/src/abi/BusinessVerifier.abi.json 2>/dev/null || echo "jq not available for BusinessVerifier"
+  jq '.abi' out/KnownCompanyUnti.sol/KnownCompanyUnti.json > ../frontend/src/abi/KnownCompanyUnti.abi.json 2>/dev/null || echo "jq not available for KnownCompanyUnti"
   echo "Extracted ABIs:"
-  echo "  - out/AlwaysAllow.abi.json"
-  echo "  - out/BusinessVerifier.abi.json"
-  echo "  - out/KnownCompanyUnti.abi.json"
+  echo "  - ../frontend/src/abi/AlwaysAllow.abi.json"
+  echo "  - ../frontend/src/abi/BusinessVerifier.abi.json"
+  echo "  - ../frontend/src/abi/KnownCompanyUnti.abi.json"
 else
   echo "Error: Contract JSON files not found"
   exit 1
