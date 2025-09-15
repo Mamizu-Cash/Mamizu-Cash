@@ -10,6 +10,10 @@ let pedersenHasher: any;
 let mimcSponge: any;
 let initialized = false;
 
+// Tornado-compliant constants
+const FIELD_SIZE = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
+const ZERO_VALUE = 21663839004416932945382355908790599225266501822907911457504978515578255421292n; // keccak256("tornado") % FIELD_SIZE
+
 /** Initialize circomlib modules */
 export async function initializeCircomlib() {
   if (!initialized) {
@@ -62,7 +66,7 @@ export const rbigint = (nbytes: number): bigint => {
 };
 
 
-/** Compute MiMC sponge hash for Merkle tree (matches Circom implementation) */
+/** Compute MiMC sponge hash for Merkle tree (Tornado-compliant with ZERO_VALUE) */
 const mimcSpongeHash = (left: string, right: string): string => {
   if (!mimcSponge) {
     throw new Error('Circomlib not initialized. Call initializeCircomlib() first.');
@@ -158,7 +162,7 @@ export function generateMerkleProof(depositEventsJsonPath: string, leafIndex: nu
   const leaves = depositEventsJson.commitments.map((commitment: string) => BigInt(commitment).toString());
   const tree = new MerkleTree(10, leaves, {
     hashFunction: mimcSpongeHash,
-    zeroElement: '0'  // Explicitly set zero element
+    zeroElement: ZERO_VALUE.toString()  // Tornado-compliant zero element
   });
   const { pathElements, pathIndices } = tree.path(leafIndex);
 

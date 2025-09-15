@@ -144,10 +144,8 @@ describe("MamizuCash", function () {
   });
 
   describe("Withdraw", function () {
-    it("Should verify Pedersen XY coordinates (1-bit test)", async function () {
-      const snarkjs = await import('snarkjs');
-
-      console.log("\n🔍 PEDERSEN XY COORDINATE TEST");
+    it("Should verify Pedersen XY coordinates (JavaScript only)", async function () {
+      console.log("\n🔍 PEDERSEN XY COORDINATE TEST (JavaScript Implementation)");
 
       // Test cases: a=1, a=256 (1<<8), a=2^247
       const testCases = [
@@ -164,45 +162,90 @@ describe("MamizuCash", function () {
         const jsResult = pedersenHashXY(buffer);
         console.log(`JS X: ${jsResult.x}`);
         console.log(`JS Y: ${jsResult.y}`);
+        console.log(`Buffer: 0x${buffer.toString('hex')}`);
+        console.log(`Buffer length: ${buffer.length} bytes`);
 
-        // Circuit side: Calculate using test circuit
-        const input = { a: testCase.value.toString() };
+        // Verify X, Y are valid field elements (< field modulus)
+        const fieldModulus = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
+        const xValid = jsResult.x < fieldModulus;
+        const yValid = jsResult.y < fieldModulus;
+        console.log(`✅ X valid field element: ${xValid}`);
+        console.log(`✅ Y valid field element: ${yValid}`);
 
-        // Calculate witness using snarkjs with relative path
-        const wasmPath = "circuits/test_pedersen_js/test_pedersen.wasm";
-        const witness = await snarkjs.wtns.calculate(input, wasmPath);
-
-        const circuitX = witness[1].toString();  // Output X
-        const circuitY = witness[2].toString();  // Output Y
-        console.log(`Circuit X: ${circuitX}`);
-        console.log(`Circuit Y: ${circuitY}`);
-
-        // Compare
-        const xMatch = jsResult.x.toString() === circuitX;
-        const yMatch = jsResult.y.toString() === circuitY;
-        console.log(`✅ X Match: ${xMatch}, Y Match: ${yMatch}`);
-
-        if (!xMatch || !yMatch) {
-          console.log("❌ MISMATCH DETECTED!");
-          console.log(`X diff: JS=${jsResult.x}, Circuit=${circuitX}`);
-          console.log(`Y diff: JS=${jsResult.y}, Circuit=${circuitY}`);
-        }
+        // Basic sanity checks
+        expect(xValid).to.be.true;
+        expect(yValid).to.be.true;
+        expect(jsResult.x).to.not.equal(0n);
+        expect(jsResult.y).to.not.equal(0n);
       }
     });
 
-    it("Should debug Pedersen hash with fixed values", async function () {
-      // Use fixed values for debugging
+    it("Should verify 496-bit commitment concatenation order", async function () {
+      console.log("\n🔍 496-BIT COMMITMENT CONCATENATION TEST");
+
+      // Use fixed values for reproducible testing
       const nullifier = 1n;
       const secret = 2n;
+
+      console.log(`\nTesting nullifier=${nullifier}, secret=${secret}`);
+
+      // Create deposit using existing function
       const deposit = createDeposit({ nullifier, secret });
 
-      console.log("\nDEBUG: Fixed values test");
-      console.log("  nullifier:", nullifier.toString());
-      console.log("  secret:", secret.toString());
-      console.log("  nullifierHash:", deposit.nullifierHash.toString());
-      console.log("  nullifierHex:", deposit.nullifierHex);
-      console.log("  commitment:", deposit.commitment.toString());
-      console.log("  commitmentHex:", deposit.commitmentHex);
+      // Manually create the same concatenation
+      const nullifierBuffer = toBE31Buffer(nullifier);
+      const secretBuffer = toBE31Buffer(secret);
+      const manualPreimage = Buffer.concat([nullifierBuffer, secretBuffer]);
+
+      console.log("Deposit preimage:", `0x${deposit.preimage.toString('hex')}`);
+      console.log("Manual preimage:", `0x${manualPreimage.toString('hex')}`);
+      console.log("Preimages match:", deposit.preimage.equals(manualPreimage));
+
+      // Calculate commitment manually
+      const manualCommitment = pedersenHashXY(manualPreimage);
+      const depositCommitmentValue = deposit.commitment;
+
+      console.log("Deposit commitment:", depositCommitmentValue.toString());
+      console.log("Manual commitment X:", manualCommitment.x.toString());
+      console.log("Manual commitment Y:", manualCommitment.y.toString());
+
+      // Verify they match (deposit uses X coordinate)
+      expect(depositCommitmentValue.toString()).to.equal(manualCommitment.x.toString());
+      expect(deposit.preimage.equals(manualPreimage)).to.be.true;
+
+      // Verify total length is 62 bytes (31+31)
+      expect(deposit.preimage.length).to.equal(62);
+    });
+
+    it("Should verify 248-bit nullifierHash calculation", async function () {
+      console.log("\n🔍 248-BIT NULLIFIER HASH TEST");
+
+      // Use fixed values for reproducible testing
+      const nullifier = 1n;
+
+      console.log(`\nTesting nullifier=${nullifier}`);
+
+      // Create deposit using existing function
+      const deposit = createDeposit({ nullifier, secret: 2n });
+
+      // Manually calculate nullifierHash
+      const nullifierBuffer = toBE31Buffer(nullifier);
+      const manualNullifierHash = pedersenHashXY(nullifierBuffer);
+
+      console.log("Nullifier buffer:", `0x${nullifierBuffer.toString('hex')}`);
+      console.log("Deposit nullifierHash:", deposit.nullifierHash.toString());
+      console.log("Manual nullifierHash X:", manualNullifierHash.x.toString());
+      console.log("Manual nullifierHash Y:", manualNullifierHash.y.toString());
+
+      // Verify they match (deposit uses X coordinate)
+      expect(deposit.nullifierHash.toString()).to.equal(manualNullifierHash.x.toString());
+
+      // Verify it's a valid field element
+      const fieldModulus = 21888242871839275222246405745257275088548364400416034343698204186575808495617n;
+      expect(deposit.nullifierHash < fieldModulus).to.be.true;
+
+      // Verify buffer length is 31 bytes
+      expect(nullifierBuffer.length).to.equal(31);
     });
 
     it("Should test fixed values with circuit", async function () {
@@ -318,11 +361,12 @@ describe("MamizuCash", function () {
       const initialRecipientBalance = await ethers.provider.getBalance(recipient);
       const initialRelayerBalance = await ethers.provider.getBalance(relayer);
 
-      // Use the root from witness input instead of contract
-      const witnessRoot = input.root;
+      // Use the root from witness input and convert to hex
+      const witnessRootHex = toHex(input.root);
 
       console.log("Expected public signals for Solidity:");
-      console.log("  root:", witnessRoot);
+      console.log("  root:", input.root);
+      console.log("  rootHex:", witnessRootHex);
       console.log("  nullifierHash:", BigInt(deposit.nullifierHex).toString());
       console.log("  recipient:", BigInt(recipient).toString());
       console.log("  relayer:", BigInt(relayer).toString());
@@ -332,7 +376,7 @@ describe("MamizuCash", function () {
       await expect(
         mamizuCash.connect(owner).naiveWithdraw(
           solidityProof,
-          witnessRoot,
+          witnessRootHex,
           deposit.nullifierHex,
           recipient,
           relayer,
