@@ -1,10 +1,9 @@
 import type { HardhatUserConfig } from "hardhat/config";
-
-import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
+import "@nomicfoundation/hardhat-ethers";
+import "@nomicfoundation/hardhat-toolbox-mocha-ethers";
 import { configVariable } from "hardhat/config";
 
 const config: HardhatUserConfig = {
-  plugins: [hardhatToolboxMochaEthersPlugin],
   paths: {
     sources: "./contracts",
     tests: "./test",

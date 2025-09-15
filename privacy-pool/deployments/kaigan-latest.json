@@ -1,0 +1,14 @@
+{
+  "network": "kaigan",
+  "chainId": 5278000,
+  "deployedAt": "2025-09-15T01:58:31.678Z",
+  "contracts": {
+    "hasher": "0xb3fBf25E6C86805F780e543167EAf9CfC417049C",
+    "verifier": "0x115a62FB5C8e2256C626d1e83Da619d7032187a9",
+    "mamizuCash": "0x8D85b87FD65BD0b1A78B30A180158f4FEB118fBe"
+  },
+  "parameters": {
+    "denomination": "0.001 ETH",
+    "merkleTreeHeight": 10
+  }
+}
