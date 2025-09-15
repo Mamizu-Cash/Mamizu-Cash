@@ -57,6 +57,7 @@
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
+    "@types/snarkjs": "^0.7.9",
     "@vitejs/plugin-react": "^5.0.2",
     "eslint-plugin-storybook": "^9.1.5",
     "jsdom": "^27.0.0",

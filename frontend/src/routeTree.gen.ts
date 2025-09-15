@@ -8,190 +8,190 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as AttestorRouteImport } from "./routes/attestor";
-import { Route as CounterRouteImport } from "./routes/counter";
-import { Route as DepositRouteImport } from "./routes/deposit";
-import { Route as GetMizuhikiRouteImport } from "./routes/get-mizuhiki";
-import { Route as GetUntiRouteImport } from "./routes/get-unti";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as ProfileRouteImport } from "./routes/profile";
-import { Route as WithdrawRouteImport } from "./routes/withdraw";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as WithdrawRouteImport } from './routes/withdraw'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as GetUntiRouteImport } from './routes/get-unti'
+import { Route as GetMizuhikiRouteImport } from './routes/get-mizuhiki'
+import { Route as DepositRouteImport } from './routes/deposit'
+import { Route as CounterRouteImport } from './routes/counter'
+import { Route as AttestorRouteImport } from './routes/attestor'
+import { Route as IndexRouteImport } from './routes/index'
 
 const WithdrawRoute = WithdrawRouteImport.update({
-  id: "/withdraw",
-  path: "/withdraw",
+  id: '/withdraw',
+  path: '/withdraw',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
-  id: "/profile",
-  path: "/profile",
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const GetUntiRoute = GetUntiRouteImport.update({
-  id: "/get-unti",
-  path: "/get-unti",
+  id: '/get-unti',
+  path: '/get-unti',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const GetMizuhikiRoute = GetMizuhikiRouteImport.update({
-  id: "/get-mizuhiki",
-  path: "/get-mizuhiki",
+  id: '/get-mizuhiki',
+  path: '/get-mizuhiki',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const DepositRoute = DepositRouteImport.update({
-  id: "/deposit",
-  path: "/deposit",
+  id: '/deposit',
+  path: '/deposit',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const CounterRoute = CounterRouteImport.update({
-  id: "/counter",
-  path: "/counter",
+  id: '/counter',
+  path: '/counter',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AttestorRoute = AttestorRouteImport.update({
-  id: "/attestor",
-  path: "/attestor",
+  id: '/attestor',
+  path: '/attestor',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/attestor": typeof AttestorRoute;
-  "/counter": typeof CounterRoute;
-  "/deposit": typeof DepositRoute;
-  "/get-mizuhiki": typeof GetMizuhikiRoute;
-  "/get-unti": typeof GetUntiRoute;
-  "/profile": typeof ProfileRoute;
-  "/withdraw": typeof WithdrawRoute;
+  '/': typeof IndexRoute
+  '/attestor': typeof AttestorRoute
+  '/counter': typeof CounterRoute
+  '/deposit': typeof DepositRoute
+  '/get-mizuhiki': typeof GetMizuhikiRoute
+  '/get-unti': typeof GetUntiRoute
+  '/profile': typeof ProfileRoute
+  '/withdraw': typeof WithdrawRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/attestor": typeof AttestorRoute;
-  "/counter": typeof CounterRoute;
-  "/deposit": typeof DepositRoute;
-  "/get-mizuhiki": typeof GetMizuhikiRoute;
-  "/get-unti": typeof GetUntiRoute;
-  "/profile": typeof ProfileRoute;
-  "/withdraw": typeof WithdrawRoute;
+  '/': typeof IndexRoute
+  '/attestor': typeof AttestorRoute
+  '/counter': typeof CounterRoute
+  '/deposit': typeof DepositRoute
+  '/get-mizuhiki': typeof GetMizuhikiRoute
+  '/get-unti': typeof GetUntiRoute
+  '/profile': typeof ProfileRoute
+  '/withdraw': typeof WithdrawRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/attestor": typeof AttestorRoute;
-  "/counter": typeof CounterRoute;
-  "/deposit": typeof DepositRoute;
-  "/get-mizuhiki": typeof GetMizuhikiRoute;
-  "/get-unti": typeof GetUntiRoute;
-  "/profile": typeof ProfileRoute;
-  "/withdraw": typeof WithdrawRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/attestor': typeof AttestorRoute
+  '/counter': typeof CounterRoute
+  '/deposit': typeof DepositRoute
+  '/get-mizuhiki': typeof GetMizuhikiRoute
+  '/get-unti': typeof GetUntiRoute
+  '/profile': typeof ProfileRoute
+  '/withdraw': typeof WithdrawRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/attestor"
-    | "/counter"
-    | "/deposit"
-    | "/get-mizuhiki"
-    | "/get-unti"
-    | "/profile"
-    | "/withdraw";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/'
+    | '/attestor'
+    | '/counter'
+    | '/deposit'
+    | '/get-mizuhiki'
+    | '/get-unti'
+    | '/profile'
+    | '/withdraw'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/attestor"
-    | "/counter"
-    | "/deposit"
-    | "/get-mizuhiki"
-    | "/get-unti"
-    | "/profile"
-    | "/withdraw";
+    | '/'
+    | '/attestor'
+    | '/counter'
+    | '/deposit'
+    | '/get-mizuhiki'
+    | '/get-unti'
+    | '/profile'
+    | '/withdraw'
   id:
-    | "__root__"
-    | "/"
-    | "/attestor"
-    | "/counter"
-    | "/deposit"
-    | "/get-mizuhiki"
-    | "/get-unti"
-    | "/profile"
-    | "/withdraw";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/attestor'
+    | '/counter'
+    | '/deposit'
+    | '/get-mizuhiki'
+    | '/get-unti'
+    | '/profile'
+    | '/withdraw'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AttestorRoute: typeof AttestorRoute;
-  CounterRoute: typeof CounterRoute;
-  DepositRoute: typeof DepositRoute;
-  GetMizuhikiRoute: typeof GetMizuhikiRoute;
-  GetUntiRoute: typeof GetUntiRoute;
-  ProfileRoute: typeof ProfileRoute;
-  WithdrawRoute: typeof WithdrawRoute;
+  IndexRoute: typeof IndexRoute
+  AttestorRoute: typeof AttestorRoute
+  CounterRoute: typeof CounterRoute
+  DepositRoute: typeof DepositRoute
+  GetMizuhikiRoute: typeof GetMizuhikiRoute
+  GetUntiRoute: typeof GetUntiRoute
+  ProfileRoute: typeof ProfileRoute
+  WithdrawRoute: typeof WithdrawRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/withdraw": {
-      id: "/withdraw";
-      path: "/withdraw";
-      fullPath: "/withdraw";
-      preLoaderRoute: typeof WithdrawRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/profile": {
-      id: "/profile";
-      path: "/profile";
-      fullPath: "/profile";
-      preLoaderRoute: typeof ProfileRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/get-unti": {
-      id: "/get-unti";
-      path: "/get-unti";
-      fullPath: "/get-unti";
-      preLoaderRoute: typeof GetUntiRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/get-mizuhiki": {
-      id: "/get-mizuhiki";
-      path: "/get-mizuhiki";
-      fullPath: "/get-mizuhiki";
-      preLoaderRoute: typeof GetMizuhikiRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/deposit": {
-      id: "/deposit";
-      path: "/deposit";
-      fullPath: "/deposit";
-      preLoaderRoute: typeof DepositRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/counter": {
-      id: "/counter";
-      path: "/counter";
-      fullPath: "/counter";
-      preLoaderRoute: typeof CounterRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/attestor": {
-      id: "/attestor";
-      path: "/attestor";
-      fullPath: "/attestor";
-      preLoaderRoute: typeof AttestorRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/withdraw': {
+      id: '/withdraw'
+      path: '/withdraw'
+      fullPath: '/withdraw'
+      preLoaderRoute: typeof WithdrawRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/get-unti': {
+      id: '/get-unti'
+      path: '/get-unti'
+      fullPath: '/get-unti'
+      preLoaderRoute: typeof GetUntiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/get-mizuhiki': {
+      id: '/get-mizuhiki'
+      path: '/get-mizuhiki'
+      fullPath: '/get-mizuhiki'
+      preLoaderRoute: typeof GetMizuhikiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deposit': {
+      id: '/deposit'
+      path: '/deposit'
+      fullPath: '/deposit'
+      preLoaderRoute: typeof DepositRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/counter': {
+      id: '/counter'
+      path: '/counter'
+      fullPath: '/counter'
+      preLoaderRoute: typeof CounterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/attestor': {
+      id: '/attestor'
+      path: '/attestor'
+      fullPath: '/attestor'
+      preLoaderRoute: typeof AttestorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,7 +204,7 @@ const rootRouteChildren: RootRouteChildren = {
   GetUntiRoute: GetUntiRoute,
   ProfileRoute: ProfileRoute,
   WithdrawRoute: WithdrawRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
