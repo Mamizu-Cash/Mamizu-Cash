@@ -1,12 +1,12 @@
 // MiMC implementation for browser using circomlibjs
-import * as circomlib from "circomlibjs";
+import { buildMimcSponge } from "circomlibjs";
 
 let mimcSponge: any | null = null;
 let initialized = false;
 
 export async function initializeMiMC() {
   if (initialized) return;
-  mimcSponge = await circomlib.buildMiMCSponge();
+  mimcSponge = await buildMimcSponge();
   initialized = true;
 }
 
@@ -24,8 +24,9 @@ export async function hashPairwiseWithMiMCSponge(left: bigint, right: bigint): P
   }
 
   // Use MiMC sponge to hash the pair
-  const result = mimcSponge.F.toObject(mimcSponge.hash(left, right, 0));
-  return typeof result === "bigint" ? result : BigInt(result.toString());
+  const result = mimcSponge.hash(left, right, 0);
+  const xL = mimcSponge.F.toObject(result.xL);
+  return typeof xL === "bigint" ? xL : BigInt(xL.toString());
 }
 
 /**
@@ -41,6 +42,7 @@ export async function hashMultipleWithMiMCSponge(elements: bigint[]): Promise<bi
   }
 
   // Hash multiple elements
-  const result = mimcSponge.F.toObject(mimcSponge.multiHash(elements, 0));
-  return typeof result === "bigint" ? result : BigInt(result.toString());
+  const result = mimcSponge.multiHash(elements, 0);
+  const output = mimcSponge.F.toObject(result);
+  return typeof output === "bigint" ? output : BigInt(output.toString());
 }

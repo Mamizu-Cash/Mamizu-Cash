@@ -122,13 +122,17 @@ export async function generateWithdrawProof(
       throw new Error("Failed to generate Merkle proof");
     }
 
+    // Convert addresses to BigInt properly (remove 0x prefix if present)
+    const recipientAddr = recipient.startsWith("0x") ? recipient.slice(2) : recipient;
+    const relayerAddr = relayer.startsWith("0x") ? relayer.slice(2) : relayer;
+
     // Prepare circuit inputs
     const input: WithdrawInput = {
       // Public inputs
       root: merkleProof.root,
       nullifierHash,
-      recipient: BigInt(recipient),
-      relayer: BigInt(relayer),
+      recipient: BigInt(`0x${recipientAddr}`),
+      relayer: BigInt(`0x${relayerAddr}`),
       fee,
 
       // Private inputs
