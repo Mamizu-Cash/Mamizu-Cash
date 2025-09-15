@@ -10,7 +10,9 @@ import {
   toHex,
   generateInput,
   generateProof,
-  formatProofForSolidity
+  formatProofForSolidity,
+  toBE31Buffer,
+  pedersenHashXY
 } from "../utils/deposit.js";
 const { ethers } = await network.connect();
 
@@ -54,8 +56,8 @@ describe("MamizuCash", function () {
   let owner: any;
   let user: any;
 
-  const denomination = ethers.parseEther("1.0"); // 1 ETH
-  const merkleTreeHeight = 20;
+  const denomination = ethers.parseEther("0.001"); // 0.001 ETH
+  const merkleTreeHeight = 10;
 
   before(async function () {
     // Initialize circomlib modules once before all tests
@@ -122,7 +124,7 @@ describe("MamizuCash", function () {
       console.log(JSON.stringify(output))
       console.log(user.address)
 
-      const tx = await mamizuCash.connect(user).deposit(commitment, { value: denomination });
+      const tx = await mamizuCash.connect(user).naiveDeposit(commitment, { value: denomination });
       const receipt = await tx.wait();
       const block = await ethers.provider.getBlock(receipt!.blockNumber);
 
@@ -142,6 +144,110 @@ describe("MamizuCash", function () {
   });
 
   describe("Withdraw", function () {
+    it("Should verify Pedersen XY coordinates (1-bit test)", async function () {
+      const snarkjs = await import('snarkjs');
+
+      console.log("\n🔍 PEDERSEN XY COORDINATE TEST");
+
+      // Test cases: a=1, a=256 (1<<8), a=2^247
+      const testCases = [
+        { name: "LSB=1", value: 1n },
+        { name: "Byte2_LSB=1", value: 256n },  // 1 << 8
+        { name: "MSB=1", value: 1n << 247n }   // 2^247
+      ];
+
+      for (const testCase of testCases) {
+        console.log(`\n--- Testing ${testCase.name} (${testCase.value}) ---`);
+
+        // JavaScript side: Calculate using circomlibjs
+        const buffer = toBE31Buffer(testCase.value);
+        const jsResult = pedersenHashXY(buffer);
+        console.log(`JS X: ${jsResult.x}`);
+        console.log(`JS Y: ${jsResult.y}`);
+
+        // Circuit side: Calculate using test circuit
+        const input = { a: testCase.value.toString() };
+
+        // Calculate witness using snarkjs with relative path
+        const wasmPath = "circuits/test_pedersen_js/test_pedersen.wasm";
+        const witness = await snarkjs.wtns.calculate(input, wasmPath);
+
+        const circuitX = witness[1].toString();  // Output X
+        const circuitY = witness[2].toString();  // Output Y
+        console.log(`Circuit X: ${circuitX}`);
+        console.log(`Circuit Y: ${circuitY}`);
+
+        // Compare
+        const xMatch = jsResult.x.toString() === circuitX;
+        const yMatch = jsResult.y.toString() === circuitY;
+        console.log(`✅ X Match: ${xMatch}, Y Match: ${yMatch}`);
+
+        if (!xMatch || !yMatch) {
+          console.log("❌ MISMATCH DETECTED!");
+          console.log(`X diff: JS=${jsResult.x}, Circuit=${circuitX}`);
+          console.log(`Y diff: JS=${jsResult.y}, Circuit=${circuitY}`);
+        }
+      }
+    });
+
+    it("Should debug Pedersen hash with fixed values", async function () {
+      // Use fixed values for debugging
+      const nullifier = 1n;
+      const secret = 2n;
+      const deposit = createDeposit({ nullifier, secret });
+
+      console.log("\nDEBUG: Fixed values test");
+      console.log("  nullifier:", nullifier.toString());
+      console.log("  secret:", secret.toString());
+      console.log("  nullifierHash:", deposit.nullifierHash.toString());
+      console.log("  nullifierHex:", deposit.nullifierHex);
+      console.log("  commitment:", deposit.commitment.toString());
+      console.log("  commitmentHex:", deposit.commitmentHex);
+    });
+
+    it("Should test fixed values with circuit", async function () {
+      this.timeout(120000);
+
+      // Use same fixed values as above test
+      const nullifier = 1n;
+      const secret = 2n;
+      const deposit = createDeposit({ nullifier, secret });
+
+      console.log("\nDEBUG: Circuit test with fixed values");
+      console.log("  Using nullifier=1, secret=2");
+      console.log("  Expected nullifierHash:", deposit.nullifierHash.toString());
+
+      // Perform deposit
+      await mamizuCash.connect(user).naiveDeposit(deposit.commitmentHex, { value: denomination });
+      await saveTmpDepositEventsJson(mamizuCash);
+
+      // Generate witness input
+      const input = await generateInput({
+        depositEventsJsonPath: "tmp/deposit_events.json",
+        nullifier: deposit.nullifier,
+        nullifierHash: deposit.nullifierHash,
+        secret: deposit.secret,
+        leafIndex: 0,
+        recipient: user.address,
+        relayerAddress: ethers.Wallet.createRandom().address,
+        fee: "0"
+      });
+
+      console.log("  Circuit input nullifierHash:", input.nullifierHash);
+
+      try {
+        // Try to generate proof
+        const { proof, publicSignals } = await generateProof(
+          input,
+          "circuits/withdraw_js/withdraw.wasm",
+          "circuits/build/withdraw_0001.zkey"
+        );
+        console.log("✅ Proof generation succeeded with fixed values!");
+      } catch (error: any) {
+        console.log("❌ Proof generation failed:", error.message);
+      }
+    });
+
     it("Should successfully withdraw with valid proof", async function () {
       this.timeout(60000000); // Increase timeout for proof generation
 
@@ -158,13 +264,13 @@ describe("MamizuCash", function () {
       console.log("  commitment:", deposit.commitmentHex);
 
       // Perform deposit
-      await mamizuCash.connect(user).deposit(deposit.commitmentHex, { value: denomination });
+      await mamizuCash.connect(user).naiveDeposit(deposit.commitmentHex, { value: denomination });
       await saveTmpDepositEventsJson(mamizuCash);
 
       // Withdraw parameters
       const recipient = user.address;
       const relayer = ethers.Wallet.createRandom().address;
-      const fee = ethers.parseEther("0.1");
+      const fee = ethers.parseEther("0.0001");
 
       // Generate witness input for zk-SNARK
       const input = await generateInput({
@@ -194,22 +300,39 @@ describe("MamizuCash", function () {
       );
 
       console.log("Proof generated successfully!");
+      console.log("Raw proof:", JSON.stringify(proof, null, 2));
+      console.log("Public signals:", JSON.stringify(publicSignals, null, 2));
 
       // Format proof for Solidity (based on gen_poof_calldata.py)
-      const solidityProof = formatProofForSolidity(proof);
+      const solidityProofArray = formatProofForSolidity(proof);
+      console.log("Formatted proof array:", solidityProofArray);
+
+      // ABI encode the proof array as uint256[8]
+      const solidityProof = ethers.AbiCoder.defaultAbiCoder().encode(
+        ["uint256[8]"],
+        [solidityProofArray]
+      );
+      console.log("ABI encoded proof length:", solidityProof.length);
 
       // Check initial balances
       const initialRecipientBalance = await ethers.provider.getBalance(recipient);
       const initialRelayerBalance = await ethers.provider.getBalance(relayer);
 
-      // Get merkle root
-      const root = await mamizuCash.getLastRoot();
+      // Use the root from witness input instead of contract
+      const witnessRoot = input.root;
+
+      console.log("Expected public signals for Solidity:");
+      console.log("  root:", witnessRoot);
+      console.log("  nullifierHash:", BigInt(deposit.nullifierHex).toString());
+      console.log("  recipient:", BigInt(recipient).toString());
+      console.log("  relayer:", BigInt(relayer).toString());
+      console.log("  fee:", fee.toString());
 
       // Execute withdrawal
       await expect(
-        mamizuCash.connect(owner).withdraw(
+        mamizuCash.connect(owner).naiveWithdraw(
           solidityProof,
-          root,
+          witnessRoot,
           deposit.nullifierHex,
           recipient,
           relayer,

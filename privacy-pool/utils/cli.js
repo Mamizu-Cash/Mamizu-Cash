@@ -8,7 +8,7 @@ const { utils } = require('ffjavascript')
 const merkleTree = require('fixed-merkle-tree')
 const program = require('commander')
 
-const MERKLE_TREE_HEIGHT = 20;
+const MERKLE_TREE_HEIGHT = 10;
 
 let babyJub;
 let pedersenHasher;
