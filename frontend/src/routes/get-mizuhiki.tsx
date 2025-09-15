@@ -1,12 +1,18 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ExternalLink, User } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { createFileRoute } from '@tanstack/react-router'
+import { ExternalLink, User } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 
-export const Route = createFileRoute("/get-mizuhiki")({
+export const Route = createFileRoute('/get-mizuhiki')({
   component: GetMizuhikiScreen,
-});
+})
 
 function GetMizuhikiScreen() {
   return (
@@ -34,9 +40,14 @@ function GetMizuhikiScreen() {
                 <ExternalLink size={30} className="text-white" />
               </div>
               <div className="space-y-2">
-                <AlertTitle className="text-2xl text-primary">外部サービス</AlertTitle>
+                <AlertTitle className="text-2xl text-primary">
+                  外部サービス
+                </AlertTitle>
                 <AlertDescription className="font-medium text-primary text-xl">
                   Japan Smart ChainのMizuhiki Attestorが発行します。
+                  <br />
+                  SBTは外部アプリ(Mizuhiki
+                  ID)で、あらかじめ取得する必要があります。
                 </AlertDescription>
               </div>
             </div>
@@ -55,5 +66,5 @@ function GetMizuhikiScreen() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
