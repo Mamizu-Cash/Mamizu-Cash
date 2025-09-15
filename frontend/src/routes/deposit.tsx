@@ -11,6 +11,7 @@ import {
   QrCode,
   Share2,
   Shield,
+  User,
 } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 import { toast } from "sonner";
@@ -20,7 +21,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useBusinessVerifier } from "../hooks/useBusinessVerifier";
 import { useMamizuCash } from "../hooks/useMamizuCash";
+import { useMizuhikiSBT } from "../hooks/useMizuhikiSBT";
 import { generateShareEmailUrl } from "../lib/emailUtils";
 import { generateRandomDeposit, initializeCircomlib } from "../lib/zk/deposit";
 
@@ -38,18 +41,27 @@ function DepositScreen() {
 
   const {
     naiveDeposit,
-    compliantDeposit: _compliantDeposit, // TODO: Implement compliant deposit UI
+    compliantDeposit,
     isNaiveDepositPending,
-    isCompliantDepositPending: _isCompliantDepositPending, // TODO: Use for compliant deposit UI
+    isCompliantDepositPending,
     isNaiveDepositSuccess,
-    isCompliantDepositSuccess: _isCompliantDepositSuccess, // TODO: Use for compliant deposit UI
+    isCompliantDepositSuccess,
     denomination,
+    isConnected,
   } = useMamizuCash();
 
-  // For backward compatibility, default to naive deposit
-  const deposit = naiveDeposit;
-  const isDepositPending = isNaiveDepositPending;
-  const isDepositSuccess = isNaiveDepositSuccess;
+  // Check user credentials for compliant deposit
+  const { hasSBT, isLoading: isSBTLoading } = useMizuhikiSBT();
+  const { isEligible: hasUNTI, isEligibleLoading: isUNTILoading } = useBusinessVerifier();
+
+  // Determine if user is eligible for compliant operations
+  const isCompliant = hasSBT || hasUNTI;
+  const isCredentialLoading = isSBTLoading || isUNTILoading;
+
+  // Use compliant deposit for verified users, naive for others
+  const deposit = isCompliant ? compliantDeposit : naiveDeposit;
+  const isDepositPending = isCompliant ? isCompliantDepositPending : isNaiveDepositPending;
+  const isDepositSuccess = isCompliant ? isCompliantDepositSuccess : isNaiveDepositSuccess;
 
   // Generate unique IDs for accessibility
   const privacyFeaturesId = useId();
@@ -127,6 +139,13 @@ function DepositScreen() {
   ];
 
   const handleDeposit = async () => {
+    if (!isConnected) {
+      toast.error("Wallet not connected", {
+        description: "Please connect your wallet to make a deposit.",
+      });
+      return;
+    }
+
     if (denomination === undefined) {
       toast.error("Could not read contract denomination. Please try again.");
       return;
@@ -212,7 +231,7 @@ function DepositScreen() {
 
   const isProcessing = processingState !== "idle" && processingState !== "complete";
   const matchesPool = denomination !== undefined && parseEther(FIXED_DENOMINATION) === denomination;
-  const isDisabled = isProcessing || processingState === "complete" || !matchesPool;
+  const isDisabled = !isConnected || isProcessing || processingState === "complete" || !matchesPool;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5 py-8">
@@ -384,6 +403,97 @@ function DepositScreen() {
               </Badge>
             </div>
 
+            {/* Credential Verification Status */}
+            <Alert
+              className={`${
+                isCredentialLoading
+                  ? "border-warning bg-warning/10"
+                  : isCompliant
+                    ? "border-success bg-success/10"
+                    : "border-primary bg-primary/10"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                {isCredentialLoading ? (
+                  <>
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-warning border-t-transparent" />
+                    <AlertTitle className="text-warning-foreground">
+                      Checking Credentials...
+                    </AlertTitle>
+                  </>
+                ) : isCompliant ? (
+                  <>
+                    <CheckCircle size={20} className="text-success" />
+                    <AlertTitle className="text-success">Compliant Deposit Available</AlertTitle>
+                  </>
+                ) : (
+                  <>
+                    <Shield size={20} className="text-primary" />
+                    <AlertTitle className="text-primary">Naive Deposit Mode</AlertTitle>
+                  </>
+                )}
+              </div>
+
+              {isCredentialLoading && (
+                <AlertDescription className="text-warning-foreground">
+                  Verifying Mizuhiki SBT and UNTI credentials...
+                </AlertDescription>
+              )}
+
+              {!isCredentialLoading && isCompliant && (
+                <div className="space-y-2">
+                  <AlertDescription className="text-success">
+                    {hasSBT && hasUNTI
+                      ? "Full compliance verified (Mizuhiki SBT + UNTI)"
+                      : hasSBT
+                        ? "Personal verification active (Mizuhiki SBT)"
+                        : "Business verification active (UNTI)"}
+                  </AlertDescription>
+                  <div className="flex gap-2">
+                    {hasSBT && (
+                      <Badge
+                        variant="secondary"
+                        className="border-success/30 bg-success/20 text-success"
+                      >
+                        Mizuhiki SBT
+                      </Badge>
+                    )}
+                    {hasUNTI && (
+                      <Badge
+                        variant="secondary"
+                        className="border-success/30 bg-success/20 text-success"
+                      >
+                        UNTI Verified
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {!isCredentialLoading && !isCompliant && (
+                <div className="space-y-2">
+                  <AlertDescription className="text-primary">
+                    Anonymous deposit only. For compliance features, obtain verification
+                    credentials.
+                  </AlertDescription>
+                  <div className="flex gap-2">
+                    <Button asChild size="sm" variant="outline">
+                      <a href="/get-mizuhiki" className="flex items-center gap-1">
+                        <User size={14} />
+                        Get Mizuhiki SBT
+                      </a>
+                    </Button>
+                    <Button asChild size="sm" variant="outline">
+                      <a href="/get-unti" className="flex items-center gap-1">
+                        <Building size={14} />
+                        Get UNTI
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </Alert>
+
             {/* Deposit Button */}
             <Button
               onClick={handleDeposit}
@@ -408,6 +518,8 @@ function DepositScreen() {
                   <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   Processing...
                 </>
+              ) : !isConnected ? (
+                "Connect Wallet to Deposit"
               ) : (
                 <>
                   Deposit {FIXED_DENOMINATION} ETH
