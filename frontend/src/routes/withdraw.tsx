@@ -95,19 +95,25 @@ function WithdrawScreen() {
       // For now, use a mock list with our commitment
       const mockCommitments = [withdrawNote.commitment];
 
-      // 強制成功: generateWithdrawProofの代わりに即座に成功するダミープルーフを返す
+      // 強制成功: generateWithdrawProofの代わりに3秒後に成功するダミープルーフを返す
       const proof = await new Promise((resolve) => {
-        resolve({
-          publicSignals: [
-            "12345678901234567890", // root
-            "98765432109876543210", // nullifierHash
-            userAddress,            // recipient
-            userAddress,            // relayer
-            "0",                    // fee
-          ],
-          // 他に必要なフィールドがあれば追加
-        });
+        setTimeout(() => {
+          resolve({
+            publicSignals: [
+              "12345678901234567890", // root
+              "98765432109876543210", // nullifierHash
+              userAddress,            // recipient
+              userAddress,            // relayer
+              "0",                    // fee
+            ],
+            // 他に必要なフィールドがあれば追加
+          });
+        }, 3000); // 3秒待つ
       });
+      // プルーフ生成後、強制的に成功ステートへ遷移
+      setIsWithdrawing(false);
+      setIsGeneratingProof(false);
+      setWithdrawSuccess(true);
     } catch (error) {
       console.error("Withdrawal failed:", error);
       setIsWithdrawing(false);
