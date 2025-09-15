@@ -58,6 +58,7 @@ export const appKit = createAppKit({
     url: 'http://mamizu-cash.pages.dev',
     icons: ['http://mamizu-cash.pages.dev/logo.png'],
   },
+  enableCoinbase: false,
 })
 
 export const queryClient = new QueryClient({
