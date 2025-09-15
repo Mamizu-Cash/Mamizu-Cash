@@ -162,12 +162,28 @@ export function generateMerkleProof(depositEventsJsonPath: string, leafIndex: nu
   });
   const { pathElements, pathIndices } = tree.path(leafIndex);
 
+  // Ensure pathElements has exactly 10 elements (matching circuit levels)
+  // If tree has fewer levels, pad with zeros
+  const paddedPathElements = [...pathElements];
+  const paddedPathIndices = [...pathIndices];
+
+  while (paddedPathElements.length < 10) {
+    paddedPathElements.push('0');
+    paddedPathIndices.push(0);
+  }
+
   // Debug: log path information
-  console.log('Debug pathIndices:', pathIndices);
-  console.log('Debug pathElements first 3:', pathElements.slice(0, 3));
+  console.log('Debug pathIndices:', paddedPathIndices);
+  console.log('Debug pathElements first 3:', paddedPathElements.slice(0, 3));
+  console.log('Debug pathElements length:', paddedPathElements.length);
+  console.log('Debug pathElements types:', paddedPathElements.map(e => typeof e));
   console.log('Debug tree root:', tree.root);
 
-  return { pathElements, pathIndices, root: tree.root };
+  // Ensure all elements are strings
+  const stringPathElements = paddedPathElements.map(el => el.toString());
+  const stringPathIndices = paddedPathIndices.map(idx => idx.toString());
+
+  return { pathElements: stringPathElements, pathIndices: stringPathIndices, root: tree.root };
 }
 
 /**
@@ -194,6 +210,14 @@ export async function generateInput({
 }) {
   const { root, pathElements, pathIndices } = generateMerkleProof(depositEventsJsonPath, leafIndex);
 
+  // Convert pathElements to array of strings for circom
+  const pathElementsStrings = pathElements.map((el: any) => el.toString());
+  const pathIndicesNumbers = pathIndices.map((idx: any) => Number(idx));
+
+  console.log('generateInput - pathElements length:', pathElementsStrings.length);
+  console.log('generateInput - pathElements:', pathElementsStrings);
+  console.log('generateInput - pathIndices:', pathIndicesNumbers);
+
   return {
     // Public inputs
     root: root,
@@ -205,8 +229,8 @@ export async function generateInput({
     // Private inputs
     nullifier: BigInt(nullifier).toString(),
     secret: BigInt(secret).toString(),
-    pathElements: pathElements,
-    pathIndices: pathIndices,
+    pathElements: pathElementsStrings,
+    pathIndices: pathIndicesNumbers,
   };
 }
 
@@ -236,6 +260,13 @@ export async function generateProof(
   wasmPath: string,
   zkeyPath: string
 ): Promise<{ proof: any; publicSignals: any }> {
+  // Debug: log the input structure
+  console.log('generateProof input pathElements type:', typeof input.pathElements);
+  console.log('generateProof input pathElements isArray:', Array.isArray(input.pathElements));
+  console.log('generateProof input pathElements length:', input.pathElements?.length);
+  console.log('generateProof input pathElements:', input.pathElements);
+  console.log('generateProof full input:', JSON.stringify(input, null, 2));
+
   const { proof, publicSignals } = await snarkjs.groth16.fullProve(
     input,
     wasmPath,
