@@ -55,8 +55,8 @@ export const appKit = createAppKit({
   metadata: {
     name: 'Mamizu Cash',
     description: 'Privacy-focused transaction mixer on Kaigan',
-    url: 'http://localhost:3000',
-    icons: ['http://localhost:3000/icon.png'],
+    url: 'http://mamizu-cash.pages.dev',
+    icons: ['http://mamizu-cash.pages.dev/logo.png'],
   },
 })
 
