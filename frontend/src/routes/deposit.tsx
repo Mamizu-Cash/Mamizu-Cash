@@ -36,7 +36,20 @@ function DepositScreen() {
   const [processingState, setProcessingState] = useState<ProcessingState>("idle");
   const [progress, setProgress] = useState(0);
 
-  const { deposit, isDepositPending, isDepositSuccess, denomination } = useMamizuCash();
+  const {
+    naiveDeposit,
+    compliantDeposit,
+    isNaiveDepositPending,
+    isCompliantDepositPending,
+    isNaiveDepositSuccess,
+    isCompliantDepositSuccess,
+    denomination
+  } = useMamizuCash();
+
+  // For backward compatibility, default to naive deposit
+  const deposit = naiveDeposit;
+  const isDepositPending = isNaiveDepositPending;
+  const isDepositSuccess = isNaiveDepositSuccess;
 
   // Generate unique IDs for accessibility
   const privacyFeaturesId = useId();

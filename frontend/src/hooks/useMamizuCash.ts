@@ -40,44 +40,163 @@ export function useMamizuCash() {
     });
   };
 
-  // Write deposit function
+  // Write functions for naive operations
   const {
-    data: depositTxHash,
-    isPending: isDepositPending,
-    writeContract: deposit,
-    error: depositError,
+    data: naiveDepositTxHash,
+    isPending: isNaiveDepositPending,
+    writeContract: naiveDeposit,
+    error: naiveDepositError,
   } = useWriteContract();
 
-  const { isLoading: isDepositConfirming, isSuccess: isDepositSuccess } =
+  const {
+    data: naiveWithdrawTxHash,
+    isPending: isNaiveWithdrawPending,
+    writeContract: naiveWithdraw,
+    error: naiveWithdrawError,
+  } = useWriteContract();
+
+  // Write functions for compliant operations
+  const {
+    data: compliantDepositTxHash,
+    isPending: isCompliantDepositPending,
+    writeContract: compliantDeposit,
+    error: compliantDepositError,
+  } = useWriteContract();
+
+  const {
+    data: compliantWithdrawTxHash,
+    isPending: isCompliantWithdrawPending,
+    writeContract: compliantWithdraw,
+    error: compliantWithdrawError,
+  } = useWriteContract();
+
+  const { isLoading: isNaiveDepositConfirming, isSuccess: isNaiveDepositSuccess } =
     useWaitForTransactionReceipt({
-      hash: depositTxHash,
+      hash: naiveDepositTxHash,
     });
 
-  const handleDeposit = (commitment: `0x${string}`) => {
+  const { isLoading: isNaiveWithdrawConfirming, isSuccess: isNaiveWithdrawSuccess } =
+    useWaitForTransactionReceipt({
+      hash: naiveWithdrawTxHash,
+    });
+
+  const { isLoading: isCompliantDepositConfirming, isSuccess: isCompliantDepositSuccess } =
+    useWaitForTransactionReceipt({
+      hash: compliantDepositTxHash,
+    });
+
+  const { isLoading: isCompliantWithdrawConfirming, isSuccess: isCompliantWithdrawSuccess } =
+    useWaitForTransactionReceipt({
+      hash: compliantWithdrawTxHash,
+    });
+
+  const handleNaiveDeposit = (commitment: `0x${string}`) => {
     if (!denomination) {
       showError("Deposit failed", "Denomination value not loaded yet.");
       return;
     }
-    deposit({
+    naiveDeposit({
       address: CONTRACT_ADDRESSES.MAMIZU_CASH,
       abi: MamizuCashAbi,
-      functionName: "deposit",
+      functionName: "naiveDeposit",
       args: [commitment],
       value: denomination as bigint,
     });
   };
 
-  useEffect(() => {
-    if (isDepositSuccess) {
-      showSuccess("Deposit successful!", "Your funds have been deposited privately.");
+  const handleCompliantDeposit = (commitment: `0x${string}`) => {
+    if (!denomination) {
+      showError("Deposit failed", "Denomination value not loaded yet.");
+      return;
     }
-  }, [isDepositSuccess, showSuccess]);
+    compliantDeposit({
+      address: CONTRACT_ADDRESSES.MAMIZU_CASH,
+      abi: MamizuCashAbi,
+      functionName: "compliantDeposit",
+      args: [commitment],
+      value: denomination as bigint,
+    });
+  };
+
+  const handleNaiveWithdraw = (
+    proof: `0x${string}`,
+    root: `0x${string}`,
+    nullifierHash: `0x${string}`,
+    recipient: `0x${string}`,
+    relayer: `0x${string}`,
+    fee: bigint
+  ) => {
+    naiveWithdraw({
+      address: CONTRACT_ADDRESSES.MAMIZU_CASH,
+      abi: MamizuCashAbi,
+      functionName: "naiveWithdraw",
+      args: [proof, root, nullifierHash, recipient, relayer, fee],
+    });
+  };
+
+  const handleCompliantWithdraw = (
+    proof: `0x${string}`,
+    root: `0x${string}`,
+    nullifierHash: `0x${string}`,
+    recipient: `0x${string}`,
+    relayer: `0x${string}`,
+    fee: bigint
+  ) => {
+    compliantWithdraw({
+      address: CONTRACT_ADDRESSES.MAMIZU_CASH,
+      abi: MamizuCashAbi,
+      functionName: "compliantWithdraw",
+      args: [proof, root, nullifierHash, recipient, relayer, fee],
+    });
+  };
 
   useEffect(() => {
-    if (depositError) {
-      showError("Deposit failed", depositError.message);
+    if (isNaiveDepositSuccess) {
+      showSuccess("Naive deposit successful!", "Your funds have been deposited privately.");
     }
-  }, [depositError, showError]);
+  }, [isNaiveDepositSuccess, showSuccess]);
+
+  useEffect(() => {
+    if (isCompliantDepositSuccess) {
+      showSuccess("Compliant deposit successful!", "Your funds have been deposited with compliance verification.");
+    }
+  }, [isCompliantDepositSuccess, showSuccess]);
+
+  useEffect(() => {
+    if (isNaiveWithdrawSuccess) {
+      showSuccess("Naive withdraw successful!", "Your funds have been withdrawn privately.");
+    }
+  }, [isNaiveWithdrawSuccess, showSuccess]);
+
+  useEffect(() => {
+    if (isCompliantWithdrawSuccess) {
+      showSuccess("Compliant withdraw successful!", "Your funds have been withdrawn with compliance verification.");
+    }
+  }, [isCompliantWithdrawSuccess, showSuccess]);
+
+  useEffect(() => {
+    if (naiveDepositError) {
+      showError("Naive deposit failed", naiveDepositError.message);
+    }
+  }, [naiveDepositError, showError]);
+
+  useEffect(() => {
+    if (compliantDepositError) {
+      showError("Compliant deposit failed", compliantDepositError.message);
+    }
+  }, [compliantDepositError, showError]);
+
+  useEffect(() => {
+    if (naiveWithdrawError) {
+      showError("Naive withdraw failed", naiveWithdrawError.message);
+    }
+  }, [naiveWithdrawError, showError]);
+
+  useEffect(() => {
+    if (compliantWithdrawError) {
+      showError("Compliant withdraw failed", compliantWithdrawError.message);
+    }
+  }, [compliantWithdrawError, showError]);
 
   return {
     // Read data
@@ -88,12 +207,38 @@ export function useMamizuCash() {
     useIsKnownRoot,
     useIsSpent,
 
-    // Write functions
-    deposit: handleDeposit,
-    isDepositPending: isDepositPending || isDepositConfirming,
-    isDepositSuccess,
-    depositTxHash,
-    depositError,
+    // Naive functions
+    naiveDeposit: handleNaiveDeposit,
+    isNaiveDepositPending: isNaiveDepositPending || isNaiveDepositConfirming,
+    isNaiveDepositSuccess,
+    naiveDepositTxHash,
+    naiveDepositError,
+
+    naiveWithdraw: handleNaiveWithdraw,
+    isNaiveWithdrawPending: isNaiveWithdrawPending || isNaiveWithdrawConfirming,
+    isNaiveWithdrawSuccess,
+    naiveWithdrawTxHash,
+    naiveWithdrawError,
+
+    // Compliant functions
+    compliantDeposit: handleCompliantDeposit,
+    isCompliantDepositPending: isCompliantDepositPending || isCompliantDepositConfirming,
+    isCompliantDepositSuccess,
+    compliantDepositTxHash,
+    compliantDepositError,
+
+    compliantWithdraw: handleCompliantWithdraw,
+    isCompliantWithdrawPending: isCompliantWithdrawPending || isCompliantWithdrawConfirming,
+    isCompliantWithdrawSuccess,
+    compliantWithdrawTxHash,
+    compliantWithdrawError,
+
+    // Backward compatibility (use naive by default)
+    deposit: handleNaiveDeposit,
+    isDepositPending: isNaiveDepositPending || isNaiveDepositConfirming,
+    isDepositSuccess: isNaiveDepositSuccess,
+    depositTxHash: naiveDepositTxHash,
+    depositError: naiveDepositError,
 
     // General info
     contractAddress: CONTRACT_ADDRESSES.MAMIZU_CASH,
