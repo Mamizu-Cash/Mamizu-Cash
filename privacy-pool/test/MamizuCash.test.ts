@@ -249,7 +249,7 @@ describe("MamizuCash", function () {
     });
 
     it("Should successfully withdraw with valid proof", async function () {
-      this.timeout(60000000); // Increase timeout for proof generation
+      this.timeout(300000); // 5 minutes timeout for proof generation
 
       // Generate real deposit using Pedersen hash
       const nullifier = rbigint(31);
@@ -319,13 +319,14 @@ describe("MamizuCash", function () {
       const initialRelayerBalance = await ethers.provider.getBalance(relayer);
 
       // Use the root from witness input instead of contract
-      const witnessRoot = input.root;
+      // Convert root to bytes32 format
+      const witnessRoot = toHex(input.root);
 
       console.log("Expected public signals for Solidity:");
       console.log("  root:", witnessRoot);
-      console.log("  nullifierHash:", BigInt(deposit.nullifierHex).toString());
-      console.log("  recipient:", BigInt(recipient).toString());
-      console.log("  relayer:", BigInt(relayer).toString());
+      console.log("  nullifierHash:", deposit.nullifierHex);
+      console.log("  recipient:", recipient);
+      console.log("  relayer:", relayer);
       console.log("  fee:", fee.toString());
 
       // Execute withdrawal
