@@ -38,15 +38,32 @@ function leIntToBytes(n: bigint, length: number): Uint8Array {
   return out; // little-endian
 }
 
-function pedersenHash(data: Uint8Array): bigint {
+export function pedersenHash(data: Uint8Array): bigint;
+export function pedersenHash(inputs: bigint[]): Promise<bigint>;
+export function pedersenHash(input: Uint8Array | bigint[]): bigint | Promise<bigint> {
   if (!initialized || !babyJub || !pedersenHasher) {
     throw new Error("Circomlib not initialized. Call initializeCircomlib() first.");
   }
-  // circomlibjs pedersen returns a point; take x coord in babyJub field
-  const point = pedersenHasher.hash(data);
+
+  if (Array.isArray(input)) {
+    // For bigint array inputs, convert to bytes and hash
+    return (async () => {
+      const totalBytes = input.length * 31; // 31 bytes per bigint
+      const data = new Uint8Array(totalBytes);
+      for (let i = 0; i < input.length; i++) {
+        const bytes = leIntToBytes(input[i], 31);
+        data.set(bytes, i * 31);
+      }
+      const point = pedersenHasher.hash(data);
+      const unpacked = babyJub.unpackPoint(point);
+      const x = babyJub.F.toObject(unpacked[0]);
+      return typeof x === "bigint" ? x : BigInt(x.toString());
+    })();
+  }
+  // For Uint8Array inputs
+  const point = pedersenHasher.hash(input);
   const unpacked = babyJub.unpackPoint(point);
   const x = babyJub.F.toObject(unpacked[0]);
-  // x is a big integer-like; ensure BigInt type
   return typeof x === "bigint" ? x : BigInt(x.toString());
 }
 

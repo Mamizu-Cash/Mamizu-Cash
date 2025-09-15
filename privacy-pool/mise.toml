@@ -131,6 +131,11 @@ description = "Generate all ABIs for frontend"
 alias = "aa"
 run = "mise run abigen-mamizu"
 
+[tasks.sync-frontend]
+description = "Sync deployment addresses to frontend contracts"
+alias = "sf"
+run = "node scripts/sync-frontend.js"
+
 [tasks.generate-zkey]
 description = "Generate zkey for withdraw circuit"
 alias = "gz"
