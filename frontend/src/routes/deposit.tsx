@@ -38,12 +38,12 @@ function DepositScreen() {
 
   const {
     naiveDeposit,
-    compliantDeposit,
+    compliantDeposit: _compliantDeposit, // TODO: Implement compliant deposit UI
     isNaiveDepositPending,
-    isCompliantDepositPending,
+    isCompliantDepositPending: _isCompliantDepositPending, // TODO: Use for compliant deposit UI
     isNaiveDepositSuccess,
-    isCompliantDepositSuccess,
-    denomination
+    isCompliantDepositSuccess: _isCompliantDepositSuccess, // TODO: Use for compliant deposit UI
+    denomination,
   } = useMamizuCash();
 
   // For backward compatibility, default to naive deposit
@@ -138,7 +138,6 @@ function DepositScreen() {
       });
       return;
     }
-
 
     try {
       // Initialize circomlib and generate a valid Pedersen-based commitment

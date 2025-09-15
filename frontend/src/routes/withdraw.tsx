@@ -13,8 +13,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { type CredentialInfo, getCredential } from "../lib/mockCredentials";
 import { useMamizuCash } from "../hooks/useMamizuCash";
+import { type CredentialInfo, getCredential } from "../lib/mockCredentials";
 
 export const Route = createFileRoute("/withdraw")({
   component: WithdrawScreen,
@@ -29,12 +29,12 @@ function WithdrawScreen() {
   const [withdrawSuccess, setWithdrawSuccess] = useState(false);
 
   const {
-    naiveWithdraw,
-    compliantWithdraw,
-    isNaiveWithdrawPending,
-    isCompliantWithdrawPending,
-    isNaiveWithdrawSuccess,
-    isCompliantWithdrawSuccess
+    naiveWithdraw: _naiveWithdraw, // TODO: Use for naive withdraw implementation
+    compliantWithdraw: _compliantWithdraw, // TODO: Use for compliant withdraw implementation
+    isNaiveWithdrawPending: _isNaiveWithdrawPending, // TODO: Use for withdraw UI state
+    isCompliantWithdrawPending: _isCompliantWithdrawPending, // TODO: Use for withdraw UI state
+    isNaiveWithdrawSuccess: _isNaiveWithdrawSuccess, // TODO: Use for withdraw success handling
+    isCompliantWithdrawSuccess: _isCompliantWithdrawSuccess, // TODO: Use for withdraw success handling
   } = useMamizuCash();
 
   // Mock URL parameters (in real implementation, would parse from URL fragment)
