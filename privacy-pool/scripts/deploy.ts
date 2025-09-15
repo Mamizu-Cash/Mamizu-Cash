@@ -46,8 +46,8 @@ async function main() {
   console.log("\n3. Deploying MamizuCash contract...");
 
   // Configuration
-  const denomination = ethers.parseEther("0.1"); // 0.1 ETH
-  const merkleTreeHeight = 20;
+  const denomination = ethers.parseEther("0.001"); // 0.001 ETH
+  const merkleTreeHeight = 10;
 
   const mamizuCashArtifact = JSON.parse(fs.readFileSync(path.join(__dirname, "../artifacts/contracts/MamizuCash.sol/MamizuCash.json"), "utf8"));
   const mamizuCashFactory = new ethers.ContractFactory(mamizuCashArtifact.abi, mamizuCashArtifact.bytecode, deployer);

@@ -1,29 +1,34 @@
 pragma circom 2.1.2;
 
-include "node_modules/circomlib/circuits/bitify.circom";
 include "node_modules/circomlib/circuits/pedersen.circom";
+include "node_modules/circomlib/circuits/bitify.circom";
 include "merkleTree.circom";
 
-// Pedersen(nullifier + secret) を計算する
+// Pedersen(nullifier, secret) を計算する
 template CommitmentHasher() {
     signal input nullifier;
     signal input secret;
     signal output commitment;
     signal output nullifierHash;
 
-    component commitmentHasher = Pedersen(496);
-    component nullifierHasher = Pedersen(248);
     component nullifierBits = Num2Bits(248);
     component secretBits = Num2Bits(248);
     nullifierBits.in <== nullifier;
     secretBits.in <== secret;
+
+    // commitment = Pedersen(nullifier||secret)
+    component commitmentHasher = Pedersen(496);
     for (var i = 0; i < 248; i++) {
-        nullifierHasher.in[i] <== nullifierBits.out[i];
         commitmentHasher.in[i] <== nullifierBits.out[i];
         commitmentHasher.in[i + 248] <== secretBits.out[i];
     }
-
     commitment <== commitmentHasher.out[0];
+
+    // nullifierHash = Pedersen(nullifier)
+    component nullifierHasher = Pedersen(248);
+    for (var i = 0; i < 248; i++) {
+        nullifierHasher.in[i] <== nullifierBits.out[i];
+    }
     nullifierHash <== nullifierHasher.out[0];
 }
 
@@ -46,9 +51,12 @@ template Withdraw(levels) {
     component hasher = CommitmentHasher();
     hasher.nullifier <== nullifier;
     hasher.secret <== secret;
-    hasher.nullifierHash === nullifierHash;
     log("Input nullifierHash:", nullifierHash);
     log("Computed nullifierHash:", hasher.nullifierHash);
+    log("Input nullifier:", nullifier);
+    log("Input secret:", secret);
+    log("Computed commitment:", hasher.commitment);
+    hasher.nullifierHash === nullifierHash;
 
     component tree = MerkleTreeChecker(levels);
     tree.leaf <== hasher.commitment;
@@ -66,4 +74,4 @@ template Withdraw(levels) {
     relayerSquare <== relayer * relayer;
 }
 
-component main {public [root, nullifierHash, recipient, relayer, fee]} = Withdraw(20);
+component main {public [root, nullifierHash, recipient, relayer, fee]} = Withdraw(10);

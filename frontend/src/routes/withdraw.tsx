@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type CredentialInfo, getCredential } from "../lib/mockCredentials";
+import { useMamizuCash } from "../hooks/useMamizuCash";
 
 export const Route = createFileRoute("/withdraw")({
   component: WithdrawScreen,
@@ -26,6 +27,15 @@ function WithdrawScreen() {
   const [credential, setCredential] = useState<CredentialInfo | null>(null);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState(false);
+
+  const {
+    naiveWithdraw,
+    compliantWithdraw,
+    isNaiveWithdrawPending,
+    isCompliantWithdrawPending,
+    isNaiveWithdrawSuccess,
+    isCompliantWithdrawSuccess
+  } = useMamizuCash();
 
   // Mock URL parameters (in real implementation, would parse from URL fragment)
   const withdrawalInfo = {
@@ -58,7 +68,20 @@ function WithdrawScreen() {
   const handleWithdraw = async () => {
     setIsWithdrawing(true);
 
-    // Mock withdrawal process
+    // Choose withdrawal method based on credential status
+    if (credentialStatus === "valid") {
+      // Use compliant withdraw for verified users
+      // TODO: Replace with actual parameters from URL
+      // compliantWithdraw(proof, root, nullifierHash, recipient, relayer, fee);
+      console.log("Using compliant withdraw");
+    } else {
+      // Use naive withdraw for non-verified users
+      // TODO: Replace with actual parameters from URL
+      // naiveWithdraw(proof, root, nullifierHash, recipient, relayer, fee);
+      console.log("Using naive withdraw");
+    }
+
+    // Mock withdrawal process for now
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     setIsWithdrawing(false);

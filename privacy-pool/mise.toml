@@ -60,7 +60,8 @@ run = '''
 set -euo pipefail
 echo "Building circom circuit..."
 cd circuits
-npm run build
+circom withdraw.circom --r1cs --wasm --sym -o withdraw_js
+echo "Circuit compiled successfully!"
 '''
 
 [tasks.generate-proof]
@@ -129,3 +130,165 @@ echo "  - ../frontend/src/abi/Hasher.abi.json"
 description = "Generate all ABIs for frontend"
 alias = "aa"
 run = "mise run abigen-mamizu"
+
+[tasks.generate-zkey]
+description = "Generate zkey for withdraw circuit"
+alias = "gz"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Generating zkey for withdraw circuit..."
+cd circuits
+
+# Step 1: Setup (compile circuit first if needed)
+if [ ! -f "withdraw.r1cs" ]; then
+  echo "Compiling circuit first..."
+  circom withdraw.circom --r1cs --wasm --sym
+fi
+
+# Step 2: Generate zkey using existing pot16_final.ptau
+echo "Creating zkey..."
+npx snarkjs groth16 setup withdraw.r1cs build/pot16_final.ptau build/withdraw_0000.zkey
+
+# Step 3: Contribute to ceremony
+echo "Contributing to ceremony..."
+echo "random entropy for withdraw circuit height 10" | npx snarkjs zkey contribute build/withdraw_0000.zkey build/withdraw_0001.zkey --name="1st Contributor" -v
+
+# Step 4: Export verification key
+echo "Exporting verification key..."
+npx snarkjs zkey export verificationkey build/withdraw_0001.zkey build/verification_key.json
+
+echo "✓ zkey generated successfully!"
+'''
+
+[tasks.test-deposit]
+description = "Run only deposit tests"
+alias = "td"
+run = 'npx hardhat test --grep "Should successfully deposit"'
+
+[tasks.test-withdraw]
+description = "Run only withdraw tests"
+alias = "tw"
+run = 'npx hardhat test --grep "Should successfully withdraw"'
+
+[tasks.test-simple]
+description = "Manually verify Merkle root calculation"
+alias = "ts"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Testing simple Merkle calculation..."
+node -e "
+const { MerkleTree } = require('fixed-merkle-tree');
+const circomlibjs = require('circomlibjs');
+
+(async () => {
+  const mimcSponge = await circomlibjs.buildMimcSponge();
+
+  const mimcHash = (left, right) => {
+    const result = mimcSponge.multiHash([BigInt(left), BigInt(right)], 0, 1);
+    if (result instanceof Uint8Array) {
+      return require('ffjavascript').utils.leBuff2int(Buffer.from(result)).toString();
+    }
+    return result[0].toString();
+  };
+
+  // Use actual commitment from latest test
+  const commitment = BigInt('0x1e2a7761dd7798184909fbd2d7d3af7a65e3e583d4b23bd07248771c4298f53f').toString();
+  console.log('Testing commitment:', commitment);
+
+  const leaves = [commitment];
+  const tree = new MerkleTree(10, leaves, {
+    hashFunction: mimcHash,
+    zeroElement: '0'
+  });
+
+  const proof = tree.path(0);
+  console.log('JavaScript calculated root:', tree.root);
+  console.log('pathIndices:', proof.pathIndices);
+  console.log('First 3 pathElements:', proof.pathElements.slice(0, 3));
+
+  // Manual verification that matches Circom logic
+  let currentHash = commitment;
+  console.log('\\nManual Circom-style calculation:');
+  console.log('Starting with leaf:', currentHash);
+
+  for(let i = 0; i < 10; i++) {
+    const pathElement = proof.pathElements[i];
+    const pathIndex = proof.pathIndices[i];
+
+    // Circom logic: if pathIndex == 0, leaf is left; if 1, leaf is right
+    let left, right;
+    if (pathIndex === 0) {
+      left = currentHash;
+      right = pathElement;
+    } else {
+      left = pathElement;
+      right = currentHash;
+    }
+
+    currentHash = mimcHash(left, right);
+    console.log(\`Level \${i}: pathIndex=\${pathIndex}, left=\${left.toString().slice(0,10)}..., right=\${right.toString().slice(0,10)}... => \${currentHash.toString().slice(0,15)}...\`);
+  }
+
+  console.log('\\nFinal computed root:', currentHash);
+  console.log('Tree root match:', currentHash === tree.root);
+})().catch(console.error);
+"
+'''
+
+[tasks.debug-merkle]
+description = "Debug Merkle tree computation"
+alias = "dm"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Debugging Merkle tree computation..."
+node -e "
+const { MerkleTree } = require('fixed-merkle-tree');
+const circomlibjs = require('circomlibjs');
+
+(async () => {
+  const mimcSponge = await circomlibjs.buildMimcSponge();
+
+  const mimcHash = (left, right) => {
+    const result = mimcSponge.multiHash([BigInt(left), BigInt(right)], 0, 1);
+    if (result instanceof Uint8Array) {
+      return require('ffjavascript').utils.leBuff2int(Buffer.from(result)).toString();
+    }
+    return result[0].toString();
+  };
+
+  console.log('Testing hash function:');
+  console.log('mimcHash(0, 0):', mimcHash('0', '0'));
+
+  // Test with actual commitment from latest failed test
+  const testCommitment = BigInt('0x003370b241e7d7fba393ac65b1d58ad177c09b830d71d398c1781ad5e6faca67').toString();
+  const leaves = [testCommitment];
+  const tree = new MerkleTree(10, leaves, { hashFunction: mimcHash });
+  console.log('Tree root for test commitment:', tree.root);
+
+  const proof = tree.path(0);
+  console.log('Proof elements length:', proof.pathElements.length);
+  console.log('Leaf:', proof.pathIndices);
+
+  // Manually verify root calculation
+  let currentHash = testCommitment;
+  console.log('Manual root calculation:');
+  console.log('Start with leaf:', currentHash);
+
+  for(let i = 0; i < proof.pathElements.length; i++) {
+    const isLeft = proof.pathIndices[i] === 0;
+    const sibling = proof.pathElements[i];
+    if (isLeft) {
+      currentHash = mimcHash(currentHash, sibling);
+      console.log(\`Level \${i}: hash(\${currentHash.toString().slice(0,10)}..., \${sibling.toString().slice(0,10)}...) = \${currentHash.toString().slice(0,20)}...\`);
+    } else {
+      currentHash = mimcHash(sibling, currentHash);
+      console.log(\`Level \${i}: hash(\${sibling.toString().slice(0,10)}..., \${currentHash.toString().slice(0,10)}...) = \${currentHash.toString().slice(0,20)}...\`);
+    }
+  }
+  console.log('Final root:', currentHash);
+})().catch(console.error);
+"
+'''

@@ -20,21 +20,47 @@ export async function initializeCircomlib() {
   }
 }
 
+/** Convert 31-byte value to little-endian Buffer */
+export const toBE31Buffer = (value: bigint): Buffer => {
+  const buffer = Buffer.alloc(31);
+  let v = value;
+  for (let i = 0; i < 31; i++) {
+    buffer[i] = Number(v & 0xffn);
+    v >>= 8n;
+  }
+  return buffer;
+};
+
+/** Compute Pedersen hash XY coordinates (proper circomlib implementation) */
+export const pedersenHashXY = (data: Buffer): { x: bigint; y: bigint } => {
+  if (!pedersenHasher || !babyJub) {
+    throw new Error('Circomlib not initialized. Call initializeCircomlib() first.');
+  }
+
+  // Use pedersenHasher.hash with Buffer input (returns compressed point)
+  const compressedPoint = pedersenHasher.hash(data);
+
+  // Unpack to get X,Y coordinates
+  const [xField, yField] = babyJub.unpackPoint(compressedPoint);
+
+  // Use F.toObject() for proper field element conversion (no custom mod)
+  const x = babyJub.F.toObject(xField);
+  const y = babyJub.F.toObject(yField);
+
+  return { x, y };
+};
+
+/** Compute Pedersen hash (X coordinate only for compatibility) */
+const pedersenHash = (data: Buffer): bigint => {
+  return pedersenHashXY(data).x;
+};
+
+
 /** Generate random number of specified byte length */
 export const rbigint = (nbytes: number): bigint => {
   return utils.leBuff2int(randomBytes(nbytes));
 };
 
-/** Compute pedersen hash (matches Circom Pedersen component) */
-const pedersenHash = (data: Buffer): any => {
-  if (!pedersenHasher) {
-    throw new Error('Circomlib not initialized. Call initializeCircomlib() first.');
-  }
-  const hash = pedersenHasher.hash(data);
-  const unpacked = babyJub.unpackPoint(hash);
-  // Use F.toObject to get the x coordinate as BigInt (matches Circom out[0])
-  return babyJub.F.toObject(unpacked[0]);
-};
 
 /** Compute MiMC sponge hash for Merkle tree (matches Circom implementation) */
 const mimcSpongeHash = (left: string, right: string): string => {
@@ -47,14 +73,15 @@ const mimcSpongeHash = (left: string, right: string): string => {
   console.log('MiMC hash result:', hash, 'type:', typeof hash, 'isArray:', Array.isArray(hash));
 
   // Handle different return types from mimcSponge.multiHash
-  if (hash instanceof Uint8Array) {
-    // Convert Uint8Array directly to BigInt using little-endian
-    const result = utils.leBuff2int(Buffer.from(hash)).toString();
-    console.log('MiMC result (Uint8Array):', result);
-    return result;
-  } else if (Array.isArray(hash)) {
+  // Prioritize Array format to match Circom implementation
+  if (Array.isArray(hash)) {
     const result = hash[0].toString();
     console.log('MiMC result (Array):', result);
+    return result;
+  } else if (hash instanceof Uint8Array) {
+    // Use F.toString for proper field element conversion to match Circom
+    const result = mimcSponge.F.toString(hash);
+    console.log('MiMC result (Uint8Array via F.toString):', result);
     return result;
   } else {
     const result = hash.toString();
@@ -68,6 +95,9 @@ export function toHex(number: any, length = 32): string {
   let str: string;
   if (number instanceof Buffer) {
     str = number.toString('hex');
+  } else if (Array.isArray(number)) {
+    // Handle array like [46,108,193,89,...]
+    str = BigInt('0x' + Buffer.from(number).toString('hex')).toString(16);
   } else if (typeof number === 'object' && number.toString) {
     // Handle ffjavascript F field element
     str = number.toString(16);
@@ -95,22 +125,26 @@ export function createDeposit({ nullifier, secret }: { nullifier: bigint; secret
     throw new Error('Circomlib not initialized. Call initializeCircomlib() first.');
   }
 
+  const nullifierBuffer = toBE31Buffer(nullifier);
+  const secretBuffer = toBE31Buffer(secret);
+
   const deposit: Deposit = {
     nullifier,
     secret,
-    preimage: Buffer.concat([
-      utils.leInt2Buff(nullifier, 31),
-      utils.leInt2Buff(secret, 31)
-    ]),
+    preimage: Buffer.concat([nullifierBuffer, secretBuffer]),
     commitment: null as any,
     commitmentHex: '',
     nullifierHash: null as any,
     nullifierHex: ''
   };
 
+  // Use Pedersen hash to match reference implementation
+  // commitment = Pedersen(nullifier||secret)
   deposit.commitment = pedersenHash(deposit.preimage);
   deposit.commitmentHex = toHex(deposit.commitment);
-  deposit.nullifierHash = pedersenHash(utils.leInt2Buff(deposit.nullifier, 31));
+
+  // nullifierHash = Pedersen(nullifier)
+  deposit.nullifierHash = pedersenHash(nullifierBuffer);
   deposit.nullifierHex = toHex(deposit.nullifierHash);
 
   return deposit;
@@ -122,10 +156,17 @@ export function createDeposit({ nullifier, secret }: { nullifier: bigint; secret
 export function generateMerkleProof(depositEventsJsonPath: string, leafIndex: number) {
   const depositEventsJson = JSON.parse(readFileSync(depositEventsJsonPath, 'utf8'));
   const leaves = depositEventsJson.commitments.map((commitment: string) => BigInt(commitment).toString());
-  const tree = new MerkleTree(20, leaves, {
-    hashFunction: mimcSpongeHash
+  const tree = new MerkleTree(10, leaves, {
+    hashFunction: mimcSpongeHash,
+    zeroElement: '0'  // Explicitly set zero element
   });
   const { pathElements, pathIndices } = tree.path(leafIndex);
+
+  // Debug: log path information
+  console.log('Debug pathIndices:', pathIndices);
+  console.log('Debug pathElements first 3:', pathElements.slice(0, 3));
+  console.log('Debug tree root:', tree.root);
+
   return { pathElements, pathIndices, root: tree.root };
 }
 
@@ -171,17 +212,20 @@ export async function generateInput({
 
 /**
  * Format proof for Solidity (based on gen_poof_calldata.py)
- * Concatenates proof elements into a single hex string
+ * Returns proof elements as array for uint256[8] encoding
  */
-export function formatProofForSolidity(proof: any): string {
-  // Remove "0x" prefix from each element and concatenate
-  const proofHex =
-    proof.pi_a[0].slice(2) + proof.pi_a[1].slice(2) +
-    proof.pi_b[0][1].slice(2) + proof.pi_b[0][0].slice(2) +
-    proof.pi_b[1][1].slice(2) + proof.pi_b[1][0].slice(2) +
-    proof.pi_c[0].slice(2) + proof.pi_c[1].slice(2);
-
-  return '0x' + proofHex;
+export function formatProofForSolidity(proof: any): string[] {
+  // Return array of 8 proof elements for uint256[8] ABI encoding
+  return [
+    toHex(proof.pi_a[0]),
+    toHex(proof.pi_a[1]),
+    toHex(proof.pi_b[0][1]),
+    toHex(proof.pi_b[0][0]),
+    toHex(proof.pi_b[1][1]),
+    toHex(proof.pi_b[1][0]),
+    toHex(proof.pi_c[0]),
+    toHex(proof.pi_c[1])
+  ];
 }
 
 /**

@@ -7,7 +7,7 @@ import * as circomlibjs from 'circomlibjs';
 import { utils } from 'ffjavascript';
 import { MerkleTree } from 'fixed-merkle-tree';
 
-const MERKLE_TREE_HEIGHT = 20;
+const MERKLE_TREE_HEIGHT = 10;
 
 let babyJub;
 let pedersenHasher;
