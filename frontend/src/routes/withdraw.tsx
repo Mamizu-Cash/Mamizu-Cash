@@ -16,7 +16,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useBusinessVerifier } from "../hooks/useBusinessVerifier";
 import { useMamizuCash } from "../hooks/useMamizuCash";
 import { useMizuhikiSBT } from "../hooks/useMizuhikiSBT";
-import type { CredentialInfo } from "../lib/mockCredentials";
 import {
   formatProofForContract,
   generateWithdrawProof,
@@ -28,22 +27,18 @@ export const Route = createFileRoute("/withdraw")({
   component: WithdrawScreen,
 });
 
-type CredentialStatus = "checking" | "valid" | "invalid" | "none";
-
 function WithdrawScreen() {
-  const [credentialStatus, setCredentialStatus] = useState<CredentialStatus>("checking");
-  const [credential, setCredential] = useState<CredentialInfo | null>(null);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState(false);
   const [withdrawNote, setWithdrawNote] = useState<WithdrawNote | null>(null);
   const [isGeneratingProof, setIsGeneratingProof] = useState(false);
 
   const {
-    naiveWithdraw,
+    naiveWithdraw: _naiveWithdraw, // TODO: Use for naive withdraw option
     compliantWithdraw,
     isNaiveWithdrawPending: _isNaiveWithdrawPending, // TODO: Use for withdraw UI state
     isCompliantWithdrawPending: _isCompliantWithdrawPending, // TODO: Use for withdraw UI state
-    isNaiveWithdrawSuccess,
+    isNaiveWithdrawSuccess: _isNaiveWithdrawSuccess, // TODO: Use for withdraw UI state
     isCompliantWithdrawSuccess,
     userAddress,
   } = useMamizuCash();
@@ -65,43 +60,21 @@ function WithdrawScreen() {
   // Parse note from URL fragment on mount
   useEffect(() => {
     const fragment = window.location.hash.slice(1); // Remove # from hash
+    console.log("URL fragment:", fragment);
     if (fragment) {
       const note = parseNoteFromUrl(fragment);
+      console.log("Parsed note:", note);
       if (note) {
         setWithdrawNote(note);
         setWithdrawalInfo((prev) => ({
           ...prev,
           note: `${note.commitment.toString().slice(0, 10)}...`,
         }));
+      } else {
+        console.error("Failed to parse note from URL");
       }
     }
   }, []);
-
-  // Check stored credentials and user compliance status
-  useEffect(() => {
-    const checkCredentials = async () => {
-      setCredentialStatus("checking");
-
-      // Simulate credential check delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Check actual user credentials instead of mock
-      if (isCompliant) {
-        setCredentialStatus("valid");
-        // Create credential info based on actual SBT/UNTI status
-        setCredential({
-          type: hasSBT ? "mizuhiki" : "unti",
-          tokenId: "123", // Mock for now
-          issuedAt: Date.now(),
-          userInfo: hasSBT ? { name: "User" } : { companyName: "Company" },
-        });
-      } else {
-        setCredentialStatus("invalid");
-      }
-    };
-
-    checkCredentials();
-  }, [isCompliant, hasSBT, hasUNTI]);
 
   const handleWithdraw = async () => {
     if (!withdrawNote) {
@@ -154,28 +127,15 @@ function WithdrawScreen() {
         fee: fee.toString(),
       });
 
-      // Choose withdrawal method based on credential status
-      if (credentialStatus === "valid" && isCompliant) {
-        // Use compliant withdraw for verified users
-        compliantWithdraw(
-          formattedProof,
-          `0x${root.toString(16).padStart(64, "0")}` as `0x${string}`,
-          `0x${nullifierHash.toString(16).padStart(64, "0")}` as `0x${string}`,
-          recipient,
-          relayer,
-          fee,
-        );
-      } else {
-        // Use naive withdraw for non-verified users
-        naiveWithdraw(
-          formattedProof,
-          `0x${root.toString(16).padStart(64, "0")}` as `0x${string}`,
-          `0x${nullifierHash.toString(16).padStart(64, "0")}` as `0x${string}`,
-          recipient,
-          relayer,
-          fee,
-        );
-      }
+      // Use compliant withdraw only
+      compliantWithdraw(
+        formattedProof,
+        `0x${root.toString(16).padStart(64, "0")}` as `0x${string}`,
+        `0x${nullifierHash.toString(16).padStart(64, "0")}` as `0x${string}`,
+        recipient,
+        relayer,
+        fee,
+      );
     } catch (error) {
       console.error("Withdrawal failed:", error);
       setIsWithdrawing(false);
@@ -185,12 +145,12 @@ function WithdrawScreen() {
 
   // Handle withdrawal success
   useEffect(() => {
-    if (isNaiveWithdrawSuccess || isCompliantWithdrawSuccess) {
+    if (isCompliantWithdrawSuccess) {
       setIsWithdrawing(false);
       setIsGeneratingProof(false);
       setWithdrawSuccess(true);
     }
-  }, [isNaiveWithdrawSuccess, isCompliantWithdrawSuccess]);
+  }, [isCompliantWithdrawSuccess]);
 
   if (withdrawSuccess) {
     return <WithdrawSuccessScreen />;
@@ -311,29 +271,16 @@ function WithdrawScreen() {
             {/* Credential Verification */}
             <Alert
               className={`${
-                credentialStatus === "valid"
-                  ? "border-success bg-success/5"
-                  : credentialStatus === "invalid"
-                    ? "border-destructive bg-destructive/5"
-                    : "border-warning bg-warning/5"
+                isCompliant ? "border-success bg-success/5" : "border-destructive bg-destructive/5"
               }`}
             >
               <div className="mb-4 flex items-center gap-3">
-                {credentialStatus === "checking" && (
-                  <>
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-warning border-t-transparent" />
-                    <AlertTitle className="text-warning-foreground">
-                      Verifying Credentials...
-                    </AlertTitle>
-                  </>
-                )}
-                {credentialStatus === "valid" && (
+                {isCompliant ? (
                   <>
                     <CheckCircle size={20} className="text-success" />
                     <AlertTitle className="text-success">Credentials Verified</AlertTitle>
                   </>
-                )}
-                {credentialStatus === "invalid" && (
+                ) : (
                   <>
                     <XCircle size={20} className="text-destructive" />
                     <AlertTitle className="text-destructive">Invalid Credentials</AlertTitle>
@@ -341,14 +288,10 @@ function WithdrawScreen() {
                 )}
               </div>
 
-              {credentialStatus === "checking" && (
-                <AlertDescription>Mizuhiki SBTまたはUNTI資格を確認中...</AlertDescription>
-              )}
-
-              {credentialStatus === "valid" && credential && (
+              {isCompliant && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
-                    {credential.type === "mizuhiki" ? (
+                    {hasSBT ? (
                       <User size={16} className="text-success" />
                     ) : (
                       <Building size={16} className="text-success" />
@@ -357,44 +300,16 @@ function WithdrawScreen() {
                       variant="secondary"
                       className="border-success/30 bg-success/20 text-success"
                     >
-                      {credential.type === "mizuhiki"
-                        ? "Mizuhiki Verified SBT"
-                        : "UNTI (Corporate KYB)"}
+                      {hasSBT ? "Mizuhiki Verified SBT" : "UNTI (Corporate KYB)"}
                     </Badge>
                   </div>
                   <AlertDescription className="text-success">
                     プライベート受取の資格が確認されました
                   </AlertDescription>
-                  <Card className="border-success/30 bg-success/10">
-                    <CardContent className="space-y-2 pt-4 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-success">Token ID:</span>
-                        <span className="font-mono text-success-foreground">
-                          {credential.tokenId}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-success">
-                          {credential.type === "mizuhiki" ? "Name:" : "Company:"}
-                        </span>
-                        <span className="text-success-foreground">
-                          {credential.type === "mizuhiki"
-                            ? credential.userInfo?.name
-                            : credential.userInfo?.companyName}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-success">Issued:</span>
-                        <span className="text-success-foreground">
-                          {new Date(credential.issuedAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
                 </div>
               )}
 
-              {credentialStatus === "invalid" && (
+              {!isCompliant && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <AlertTriangle size={16} className="text-destructive" />
@@ -434,10 +349,10 @@ function WithdrawScreen() {
             {/* Withdraw Button */}
             <Button
               onClick={handleWithdraw}
-              disabled={!withdrawNote || credentialStatus !== "valid" || isWithdrawing}
+              disabled={!withdrawNote || !userAddress || !isCompliant || isWithdrawing}
               size="lg"
               className={`w-full py-6 font-semibold text-lg transition-all ${
-                !withdrawNote || credentialStatus !== "valid" || isWithdrawing
+                !withdrawNote || !userAddress || !isCompliant || isWithdrawing
                   ? "cursor-not-allowed"
                   : "bg-primary hover:bg-primary/90"
               }`}
@@ -449,13 +364,15 @@ function WithdrawScreen() {
                 </>
               ) : !withdrawNote ? (
                 "Invalid Withdrawal Note"
-              ) : credentialStatus === "valid" ? (
+              ) : !userAddress ? (
+                "Connect Wallet"
+              ) : !isCompliant ? (
+                "Compliance Verification Required"
+              ) : (
                 <>
                   <Download size={20} className="mr-2" />
-                  Withdraw {withdrawalInfo.amount}
+                  Compliant Withdraw {withdrawalInfo.amount}
                 </>
-              ) : (
-                "Credential Verification Required"
               )}
             </Button>
 
