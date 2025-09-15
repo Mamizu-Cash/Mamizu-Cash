@@ -15,6 +15,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type CredentialInfo, getCredential } from "../lib/mockCredentials";
 import { useMamizuCash } from "../hooks/useMamizuCash";
+import { prepareWithdraw, parseNote } from "../lib/withdraw";
+import { useToastHelpers } from "../components/ui/Toast";
+import { getCommitments, isNullifierSpent, findCommitmentIndex } from "../lib/fetchCommitments";
 
 export const Route = createFileRoute("/withdraw")({
   component: WithdrawScreen,
@@ -27,21 +30,84 @@ function WithdrawScreen() {
   const [credential, setCredential] = useState<CredentialInfo | null>(null);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState(false);
+  const [withdrawalInfo, setWithdrawalInfo] = useState<{
+    amount: string;
+    pool: string;
+    note: string;
+  } | null>(null);
+  const [commitments, setCommitments] = useState<string[]>([]);
+  const [isLoadingCommitments, setIsLoadingCommitments] = useState(false);
+  const [commitmentError, setCommitmentError] = useState<string | null>(null);
 
+  const { showError, showSuccess } = useToastHelpers();
   const {
     naiveWithdraw,
     compliantWithdraw,
     isNaiveWithdrawPending,
     isCompliantWithdrawPending,
     isNaiveWithdrawSuccess,
-    isCompliantWithdrawSuccess
+    isCompliantWithdrawSuccess,
+    userAddress
   } = useMamizuCash();
 
-  // Mock URL parameters (in real implementation, would parse from URL fragment)
-  const withdrawalInfo = {
-    amount: "1 ETH",
-    pool: "0xabcdef...",
-    note: "0x84f7b5a23d4e6c18...",
+  // Parse URL fragment for withdrawal information
+  useEffect(() => {
+    const parseUrlFragment = async () => {
+      try {
+        const fragment = window.location.hash.slice(1); // Remove #
+        if (!fragment) {
+          // For demo purposes, use mock data
+          setWithdrawalInfo({
+            amount: "1 ETH",
+            pool: "0xabcdef...",
+            note: "mamizucash-mainnet-1eth-0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+          });
+          return;
+        }
+
+        // Parse the URL fragment (expected format: note=<note>&pool=<pool>&amount=<amount>)
+        const params = new URLSearchParams(fragment);
+        const note = params.get('note');
+        const pool = params.get('pool');
+        const amount = params.get('amount');
+
+        if (note && pool && amount) {
+          setWithdrawalInfo({
+            amount,
+            pool,
+            note
+          });
+        }
+
+        // Fetch actual commitments from the contract
+        await loadCommitments();
+      } catch (error) {
+        console.error('Failed to parse URL fragment:', error);
+        showError('Invalid URL', 'The withdrawal link appears to be invalid.');
+      }
+    };
+
+    parseUrlFragment();
+  }, [showError]);
+
+  // Load commitments from the contract
+  const loadCommitments = async () => {
+    if (isLoadingCommitments) return;
+
+    setIsLoadingCommitments(true);
+    setCommitmentError(null);
+
+    try {
+      const contractCommitments = await getCommitments();
+      setCommitments(contractCommitments);
+      console.log(`Loaded ${contractCommitments.length} commitments from contract`);
+    } catch (error: any) {
+      const errorMessage = error.message || 'Failed to load commitments';
+      setCommitmentError(errorMessage);
+      showError('Failed to load data', errorMessage);
+    } finally {
+      setIsLoadingCommitments(false);
+    }
   };
 
   // Check stored credentials
@@ -66,27 +132,87 @@ function WithdrawScreen() {
   }, []);
 
   const handleWithdraw = async () => {
-    setIsWithdrawing(true);
-
-    // Choose withdrawal method based on credential status
-    if (credentialStatus === "valid") {
-      // Use compliant withdraw for verified users
-      // TODO: Replace with actual parameters from URL
-      // compliantWithdraw(proof, root, nullifierHash, recipient, relayer, fee);
-      console.log("Using compliant withdraw");
-    } else {
-      // Use naive withdraw for non-verified users
-      // TODO: Replace with actual parameters from URL
-      // naiveWithdraw(proof, root, nullifierHash, recipient, relayer, fee);
-      console.log("Using naive withdraw");
+    if (!withdrawalInfo || !userAddress) {
+      showError("Cannot withdraw", "Missing withdrawal information or wallet not connected");
+      return;
     }
 
-    // Mock withdrawal process for now
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    setIsWithdrawing(true);
 
-    setIsWithdrawing(false);
-    setWithdrawSuccess(true);
+    try {
+      // Ensure commitments are loaded
+      if (commitments.length === 0) {
+        showError("No commitments", "No deposits found in the contract. Please make a deposit first.");
+        setIsWithdrawing(false);
+        return;
+      }
+
+      // Parse note to validate it exists in the tree
+      const { nullifier } = parseNote(withdrawalInfo.note);
+
+      // Check if nullifier is already spent
+      try {
+        const nullifierHash = '0x' + nullifier.toString(16).padStart(64, '0');
+        const isSpent = await isNullifierSpent(nullifierHash);
+        if (isSpent) {
+          showError("Already withdrawn", "This note has already been used for withdrawal.");
+          setIsWithdrawing(false);
+          return;
+        }
+      } catch (error) {
+        console.warn('Could not check nullifier status:', error);
+      }
+
+      // Prepare withdrawal parameters
+      const withdrawParams = await prepareWithdraw({
+        note: withdrawalInfo.note,
+        commitments: commitments,
+        recipient: userAddress,
+        relayerAddress: '0x0000000000000000000000000000000000000000', // No relayer for now
+        fee: '0',
+        wasmPath: '/withdraw.wasm',
+        zkeyPath: '/withdraw_0001.zkey'
+      });
+
+      // Encode proof for contract
+      const encodedProof = '0x' + withdrawParams.proof.map(p => p.slice(2)).join('');
+
+      // Choose withdrawal method based on credential status
+      if (credentialStatus === "valid") {
+        // Use compliant withdraw for verified users
+        compliantWithdraw(
+          encodedProof as `0x${string}`,
+          withdrawParams.root as `0x${string}`,
+          withdrawParams.nullifierHash as `0x${string}`,
+          withdrawParams.recipient as `0x${string}`,
+          withdrawParams.relayer as `0x${string}`,
+          withdrawParams.fee
+        );
+      } else {
+        // Use naive withdraw for non-verified users
+        naiveWithdraw(
+          encodedProof as `0x${string}`,
+          withdrawParams.root as `0x${string}`,
+          withdrawParams.nullifierHash as `0x${string}`,
+          withdrawParams.recipient as `0x${string}`,
+          withdrawParams.relayer as `0x${string}`,
+          withdrawParams.fee
+        );
+      }
+    } catch (error: any) {
+      console.error('Withdrawal failed:', error);
+      showError("Withdrawal failed", error.message || "An unexpected error occurred");
+      setIsWithdrawing(false);
+    }
   };
+
+  // Monitor withdrawal success
+  useEffect(() => {
+    if (isNaiveWithdrawSuccess || isCompliantWithdrawSuccess) {
+      setWithdrawSuccess(true);
+      setIsWithdrawing(false);
+    }
+  }, [isNaiveWithdrawSuccess, isCompliantWithdrawSuccess]);
 
   if (withdrawSuccess) {
     return <WithdrawSuccessScreen />;
@@ -178,12 +304,12 @@ function WithdrawScreen() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">受取金額:</span>
-                  <span className="font-bold text-xl">{withdrawalInfo.amount}</span>
+                  <span className="font-bold text-xl">{withdrawalInfo?.amount || "Loading..."}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">プール:</span>
                   <span className="font-mono text-muted-foreground text-sm">
-                    {withdrawalInfo.pool}
+                    {withdrawalInfo?.pool || "Loading..."}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -346,7 +472,7 @@ function WithdrawScreen() {
               ) : credentialStatus === "valid" ? (
                 <>
                   <Download size={20} className="mr-2" />
-                  Withdraw {withdrawalInfo.amount}
+                  Withdraw {withdrawalInfo?.amount || ""}
                 </>
               ) : (
                 "Credential Verification Required"
