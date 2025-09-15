@@ -124,7 +124,7 @@ export function useMamizuCash() {
     nullifierHash: `0x${string}`,
     recipient: `0x${string}`,
     relayer: `0x${string}`,
-    fee: bigint
+    fee: bigint,
   ) => {
     naiveWithdraw({
       address: CONTRACT_ADDRESSES.MAMIZU_CASH,
@@ -140,7 +140,7 @@ export function useMamizuCash() {
     nullifierHash: `0x${string}`,
     recipient: `0x${string}`,
     relayer: `0x${string}`,
-    fee: bigint
+    fee: bigint,
   ) => {
     compliantWithdraw({
       address: CONTRACT_ADDRESSES.MAMIZU_CASH,
@@ -158,7 +158,10 @@ export function useMamizuCash() {
 
   useEffect(() => {
     if (isCompliantDepositSuccess) {
-      showSuccess("Compliant deposit successful!", "Your funds have been deposited with compliance verification.");
+      showSuccess(
+        "Compliant deposit successful!",
+        "Your funds have been deposited with compliance verification.",
+      );
     }
   }, [isCompliantDepositSuccess, showSuccess]);
 
@@ -170,7 +173,10 @@ export function useMamizuCash() {
 
   useEffect(() => {
     if (isCompliantWithdrawSuccess) {
-      showSuccess("Compliant withdraw successful!", "Your funds have been withdrawn with compliance verification.");
+      showSuccess(
+        "Compliant withdraw successful!",
+        "Your funds have been withdrawn with compliance verification.",
+      );
     }
   }, [isCompliantWithdrawSuccess, showSuccess]);
 

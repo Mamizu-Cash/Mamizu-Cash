@@ -41,7 +41,9 @@
       "Bash(npx tsc:*)",
       "WebFetch(domain:www.npmjs.com)",
       "Bash(npx snarkjs zkey export solidityverifier:*)",
-      "Bash(timeout 60 npx hardhat test --grep \"Should successfully withdraw\")"
+      "Bash(timeout 60 npx hardhat test --grep \"Should successfully withdraw\")",
+      "Bash(timeout 60 npx hardhat test --grep \"Should successfully withdraw with valid proof\")",
+      "Bash(timeout 120 npx hardhat test --grep \"Should successfully withdraw with valid proof\")"
     ],
     "deny": [],
     "ask": []
