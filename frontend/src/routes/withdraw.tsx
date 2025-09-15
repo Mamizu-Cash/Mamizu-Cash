@@ -13,144 +13,258 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useBusinessVerifier } from "../hooks/useBusinessVerifier";
+import { type CredentialInfo, getCredential } from "../lib/mockCredentials";
 import { useMamizuCash } from "../hooks/useMamizuCash";
 import { useMizuhikiSBT } from "../hooks/useMizuhikiSBT";
-import {
-  formatProofForContract,
-  generateWithdrawProof,
-  parseNoteFromUrl,
-  type WithdrawNote,
-} from "../lib/zk/withdraw";
+import { useBusinessVerifier } from "../hooks/useBusinessVerifier";
+import { prepareWithdraw, parseNote } from "../lib/withdraw";
+import { useToastHelpers } from "../components/ui/Toast";
+import { getCommitments, isNullifierSpent, findCommitmentIndex } from "../lib/fetchCommitments";
 
 export const Route = createFileRoute("/withdraw")({
   component: WithdrawScreen,
 });
 
+type CredentialStatus = "checking" | "valid" | "invalid" | "none";
+
 function WithdrawScreen() {
+  const [credentialStatus, setCredentialStatus] = useState<CredentialStatus>("checking");
+  const [credential, setCredential] = useState<CredentialInfo | null>(null);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState(false);
-  const [withdrawNote, setWithdrawNote] = useState<WithdrawNote | null>(null);
-  const [isGeneratingProof, setIsGeneratingProof] = useState(false);
+  const [withdrawalInfo, setWithdrawalInfo] = useState<{
+    amount: string;
+    pool: string;
+    note: string;
+  } | null>(null);
+  const [commitments, setCommitments] = useState<string[]>([]);
+  const [isLoadingCommitments, setIsLoadingCommitments] = useState(false);
+  const [commitmentError, setCommitmentError] = useState<string | null>(null);
 
+  const { showError, showSuccess } = useToastHelpers();
   const {
-    naiveWithdraw: _naiveWithdraw, // TODO: Use for naive withdraw option
+    naiveWithdraw,
     compliantWithdraw,
-    isNaiveWithdrawPending: _isNaiveWithdrawPending, // TODO: Use for withdraw UI state
-    isCompliantWithdrawPending: _isCompliantWithdrawPending, // TODO: Use for withdraw UI state
-    isNaiveWithdrawSuccess: _isNaiveWithdrawSuccess, // TODO: Use for withdraw UI state
+    isNaiveWithdrawPending,
+    isCompliantWithdrawPending,
+    isNaiveWithdrawSuccess,
     isCompliantWithdrawSuccess,
-    userAddress,
+    userAddress
   } = useMamizuCash();
 
-  // Check user credentials for compliant withdraw
+  // Check real SBT/UNTI status
   const { hasSBT } = useMizuhikiSBT();
   const { isEligible: hasUNTI } = useBusinessVerifier();
 
-  // Determine if user is eligible for compliant operations
-  const isCompliant = hasSBT || hasUNTI;
-
-  // Parse withdrawal info from URL fragment
-  const [withdrawalInfo, setWithdrawalInfo] = useState({
-    amount: "0.001 ETH",
-    pool: "MamizuCash",
-    note: "",
-  });
-
-  // Parse note from URL fragment on mount
+  // Parse URL fragment for withdrawal information
   useEffect(() => {
-    const fragment = window.location.hash.slice(1); // Remove # from hash
-    console.log("URL fragment:", fragment);
-    if (fragment) {
-      const note = parseNoteFromUrl(fragment);
-      console.log("Parsed note:", note);
-      if (note) {
-        setWithdrawNote(note);
-        setWithdrawalInfo((prev) => ({
-          ...prev,
-          note: `${note.commitment.toString().slice(0, 10)}...`,
-        }));
-      } else {
-        console.error("Failed to parse note from URL");
+    const parseUrlFragment = async () => {
+      try {
+        const fragment = window.location.hash.slice(1); // Remove #
+        if (!fragment) {
+          // For demo purposes, use mock data
+          setWithdrawalInfo({
+            amount: "0.001 ETH",
+            pool: "MamizuCash",
+            note: "mamizucash-mainnet-1eth-0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+          });
+          return;
+        }
+
+        // Base64 decode the URL fragment
+        const decoded = atob(fragment);
+        const noteData = JSON.parse(decoded);
+
+        console.log('Parsed note data from URL:', noteData);
+
+        // Create note string in the format expected by withdraw.ts
+        const noteString = JSON.stringify({
+          nullifier: noteData.n,
+          secret: noteData.s,
+          commitment: noteData.c
+        });
+
+        // Base64 encode for storage
+        const encodedNote = btoa(noteString);
+
+        setWithdrawalInfo({
+          amount: "0.001 ETH",
+          pool: "MamizuCash",
+          note: encodedNote
+        });
+
+        // Fetch actual commitments from the contract
+        await loadCommitments();
+      } catch (error) {
+        console.error('Failed to parse URL fragment:', error);
+        showError('Invalid URL', 'The withdrawal link appears to be invalid.');
       }
+    };
+
+    parseUrlFragment();
+  }, [showError]);
+
+  // Load commitments from the contract
+  const loadCommitments = async () => {
+    if (isLoadingCommitments) return;
+
+    setIsLoadingCommitments(true);
+    setCommitmentError(null);
+
+    try {
+      const contractCommitments = await getCommitments();
+      setCommitments(contractCommitments);
+      console.log(`Loaded ${contractCommitments.length} commitments from contract`);
+    } catch (error: any) {
+      const errorMessage = error.message || 'Failed to load commitments';
+      setCommitmentError(errorMessage);
+      showError('Failed to load data', errorMessage);
+    } finally {
+      setIsLoadingCommitments(false);
     }
-  }, []);
+  };
+
+  // Check real blockchain credentials
+  useEffect(() => {
+    const checkCredentials = async () => {
+      setCredentialStatus("checking");
+
+      // Wait a moment for hooks to initialize
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Check if user has real SBT or UNTI
+      if (hasSBT || hasUNTI) {
+        setCredentialStatus("valid");
+
+        // Create credential info based on what user has
+        const credentialInfo: CredentialInfo = {
+          type: hasSBT ? "mizuhiki" : "unti",
+          issuedAt: Date.now(),
+          tokenId: "real-blockchain-token",
+          userInfo: hasSBT
+            ? { name: "Verified User" }
+            : { companyName: "Verified Company" }
+        };
+
+        setCredential(credentialInfo);
+      } else {
+        setCredentialStatus("invalid");
+        setCredential(null);
+      }
+    };
+
+    checkCredentials();
+  }, [hasSBT, hasUNTI]);
+
+  // Determine if user is compliant based on credential status
+  const isCompliant = credentialStatus === "valid";
 
   const handleWithdraw = async () => {
-    if (!withdrawNote) {
-      console.error("No withdrawal note found");
-      return;
-    }
-
-    if (!userAddress) {
-      console.error("User not connected");
+    if (!withdrawalInfo || !userAddress) {
+      showError("Cannot withdraw", "Missing withdrawal information or wallet not connected");
       return;
     }
 
     setIsWithdrawing(true);
-    setIsGeneratingProof(true);
 
     try {
-      // TODO: Get actual commitments from contract events or indexer
-      // For now, use a mock list with our commitment
-      const mockCommitments = [withdrawNote.commitment];
-
-      // Generate withdrawal proof
-      const proof = await generateWithdrawProof(
-        withdrawNote,
-        userAddress, // recipient
-        userAddress, // relayer (self-relay for now)
-        0n, // fee
-        mockCommitments,
-      );
-
-      if (!proof) {
-        throw new Error("Failed to generate proof");
+      // Ensure commitments are loaded
+      console.log(`📋 Loaded ${commitments.length} commitments from contract`);
+      if (commitments.length === 0) {
+        showError("No commitments", "No deposits found in the contract. Please make a deposit first.");
+        setIsWithdrawing(false);
+        return;
       }
 
-      setIsGeneratingProof(false);
-
-      // Format proof for contract call
-      const formattedProof = formatProofForContract(proof);
-      const root = BigInt(proof.publicSignals[0]);
-      const nullifierHash = BigInt(proof.publicSignals[1]);
-      const recipient = proof.publicSignals[2] as `0x${string}`;
-      const relayer = proof.publicSignals[3] as `0x${string}`;
-      const fee = BigInt(proof.publicSignals[4]);
-
-      console.log("Calling withdraw with:", {
-        proof: formattedProof,
-        root: root.toString(),
-        nullifierHash: nullifierHash.toString(),
-        recipient,
-        relayer,
-        fee: fee.toString(),
+      // Parse note to validate it exists in the tree
+      console.log('🔍 Parsing withdrawal note:', withdrawalInfo.note);
+      const { nullifier, secret, commitment } = parseNote(withdrawalInfo.note);
+      console.log('📝 Parsed note:', {
+        nullifier: nullifier.toString(16),
+        secret: secret.toString(16),
+        commitment
       });
 
-      // Use compliant withdraw only
-      compliantWithdraw(
-        formattedProof,
-        `0x${root.toString(16).padStart(64, "0")}` as `0x${string}`,
-        `0x${nullifierHash.toString(16).padStart(64, "0")}` as `0x${string}`,
-        recipient,
-        relayer,
-        fee,
-      );
-    } catch (error) {
-      console.error("Withdrawal failed:", error);
+      // Check if nullifier is already spent
+      try {
+        const nullifierHash = '0x' + nullifier.toString(16).padStart(64, '0');
+        console.log('🔍 Checking nullifier hash:', nullifierHash);
+        const isSpent = await isNullifierSpent(nullifierHash);
+        if (isSpent) {
+          showError("Already withdrawn", "This note has already been used for withdrawal.");
+          setIsWithdrawing(false);
+          return;
+        }
+        console.log('✅ Nullifier not spent, proceeding with withdrawal');
+      } catch (error) {
+        console.warn('Could not check nullifier status:', error);
+      }
+
+      // Prepare withdrawal parameters
+      console.log('⚙️ Preparing withdrawal parameters...');
+      const withdrawParams = await prepareWithdraw({
+        note: withdrawalInfo.note,
+        commitments: commitments,
+        recipient: userAddress,
+        relayerAddress: '0x0000000000000000000000000000000000000000', // No relayer for now
+        fee: '0',
+        wasmPath: '/circuits/withdraw.wasm',
+        zkeyPath: '/circuits/withdraw_0001.zkey'
+      });
+
+      console.log('🎯 Withdrawal parameters generated:', {
+        root: withdrawParams.root,
+        nullifierHash: withdrawParams.nullifierHash,
+        recipient: withdrawParams.recipient,
+        proofLength: withdrawParams.proof.length
+      });
+
+      // Encode proof for contract
+      const encodedProof = '0x' + withdrawParams.proof.map(p => p.slice(2)).join('');
+      console.log('📦 Encoded proof length:', encodedProof.length);
+
+      // Choose withdrawal method based on credential status
+      if (credentialStatus === "valid") {
+        console.log('🏛️ Using compliant withdraw (SBT/UNTI verified)');
+        showSuccess("Transaction submitted", "Your compliant withdrawal is being processed...");
+        // Use compliant withdraw for verified users
+        compliantWithdraw(
+          encodedProof as `0x${string}`,
+          withdrawParams.root as `0x${string}`,
+          withdrawParams.nullifierHash as `0x${string}`,
+          withdrawParams.recipient as `0x${string}`,
+          withdrawParams.relayer as `0x${string}`,
+          BigInt(withdrawParams.fee)
+        );
+      } else {
+        console.log('📤 Using naive withdraw (no verification)');
+        showSuccess("Transaction submitted", "Your withdrawal is being processed...");
+        // Use naive withdraw for non-verified users
+        naiveWithdraw(
+          encodedProof as `0x${string}`,
+          withdrawParams.root as `0x${string}`,
+          withdrawParams.nullifierHash as `0x${string}`,
+          withdrawParams.recipient as `0x${string}`,
+          withdrawParams.relayer as `0x${string}`,
+          BigInt(withdrawParams.fee)
+        );
+      }
+    } catch (error: any) {
+      console.error('❌ Withdrawal failed:', error);
+      showError("Withdrawal failed", error.message || "An unexpected error occurred");
       setIsWithdrawing(false);
-      setIsGeneratingProof(false);
     }
   };
 
-  // Handle withdrawal success
+  // Monitor withdrawal success
   useEffect(() => {
-    if (isCompliantWithdrawSuccess) {
-      setIsWithdrawing(false);
-      setIsGeneratingProof(false);
+    if (isNaiveWithdrawSuccess || isCompliantWithdrawSuccess) {
+      console.log('🎉 Withdrawal successful!');
+      showSuccess("Withdrawal completed", "Your funds have been successfully withdrawn!");
       setWithdrawSuccess(true);
+      setIsWithdrawing(false);
     }
-  }, [isCompliantWithdrawSuccess]);
+  }, [isNaiveWithdrawSuccess, isCompliantWithdrawSuccess, showSuccess]);
 
   if (withdrawSuccess) {
     return <WithdrawSuccessScreen />;
@@ -242,12 +356,12 @@ function WithdrawScreen() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">受取金額:</span>
-                  <span className="font-bold text-xl">{withdrawalInfo.amount}</span>
+                  <span className="font-bold text-xl">{withdrawalInfo?.amount || "Loading..."}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">プール:</span>
                   <span className="font-mono text-muted-foreground text-sm">
-                    {withdrawalInfo.pool}
+                    {withdrawalInfo?.pool || "Loading..."}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -270,9 +384,8 @@ function WithdrawScreen() {
 
             {/* Credential Verification */}
             <Alert
-              className={`${
-                isCompliant ? "border-success bg-success/5" : "border-destructive bg-destructive/5"
-              }`}
+              className={`${isCompliant ? "border-success bg-success/5" : "border-destructive bg-destructive/5"
+                }`}
             >
               <div className="mb-4 flex items-center gap-3">
                 {isCompliant ? (
@@ -291,7 +404,7 @@ function WithdrawScreen() {
               {isCompliant && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
-                    {hasSBT ? (
+                    {credential ? (
                       <User size={16} className="text-success" />
                     ) : (
                       <Building size={16} className="text-success" />
@@ -300,7 +413,7 @@ function WithdrawScreen() {
                       variant="secondary"
                       className="border-success/30 bg-success/20 text-success"
                     >
-                      {hasSBT ? "Mizuhiki Verified SBT" : "UNTI (Corporate KYB)"}
+                      {credential?.type === "mizuhiki" ? "Mizuhiki Verified SBT" : "UNTI (Corporate KYB)"}
                     </Badge>
                   </div>
                   <AlertDescription className="text-success">
@@ -349,30 +462,25 @@ function WithdrawScreen() {
             {/* Withdraw Button */}
             <Button
               onClick={handleWithdraw}
-              disabled={!withdrawNote || !userAddress || !isCompliant || isWithdrawing}
+              disabled={credentialStatus !== "valid" || isWithdrawing}
               size="lg"
-              className={`w-full py-6 font-semibold text-lg transition-all ${
-                !withdrawNote || !userAddress || !isCompliant || isWithdrawing
+              className={`w-full py-6 font-semibold text-lg transition-all ${credentialStatus !== "valid" || isWithdrawing
                   ? "cursor-not-allowed"
                   : "bg-primary hover:bg-primary/90"
-              }`}
+                }`}
             >
               {isWithdrawing ? (
                 <>
                   <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  {isGeneratingProof ? "Generating ZK Proof..." : "Broadcasting Transaction..."}
+                  Generating ZK Proof...
                 </>
-              ) : !withdrawNote ? (
-                "Invalid Withdrawal Note"
-              ) : !userAddress ? (
-                "Connect Wallet"
-              ) : !isCompliant ? (
-                "Compliance Verification Required"
-              ) : (
+              ) : credentialStatus === "valid" ? (
                 <>
                   <Download size={20} className="mr-2" />
-                  Compliant Withdraw {withdrawalInfo.amount}
+                  Withdraw {withdrawalInfo?.amount || ""}
                 </>
+              ) : (
+                "Credential Verification Required"
               )}
             </Button>
 
@@ -381,18 +489,12 @@ function WithdrawScreen() {
               <Alert className="border-warning/30 bg-warning/5">
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-warning border-t-transparent" />
                 <AlertTitle className="text-warning-foreground">
-                  {isGeneratingProof ? "Generating ZK proof..." : "Broadcasting transaction..."}
+                  Processing withdrawal...
                 </AlertTitle>
                 <AlertDescription className="space-y-1 text-warning-foreground">
-                  <div className={isGeneratingProof ? "font-semibold" : ""}>
-                    • {isGeneratingProof ? "Generating" : "✓ Generated"} zero-knowledge proof
-                  </div>
-                  <div className={!isGeneratingProof ? "font-semibold" : ""}>
-                    • {isGeneratingProof ? "Pending" : "Verifying"} nullifier uniqueness
-                  </div>
-                  <div className={!isGeneratingProof ? "font-semibold" : ""}>
-                    • {isGeneratingProof ? "Pending" : "Submitting"} anonymous transaction
-                  </div>
+                  <div>• Generating zero-knowledge proof</div>
+                  <div>• Verifying nullifier uniqueness</div>
+                  <div>• Submitting anonymous transaction</div>
                 </AlertDescription>
               </Alert>
             )}
