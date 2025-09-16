@@ -1,4 +1,4 @@
-import { createPublicClient, http, defineChain } from 'viem';
+import { createPublicClient, http, defineChain, parseAbiItem } from 'viem';
 import { CONTRACT_ADDRESSES } from './web3/contracts';
 
 // Kaigan chain configuration
@@ -61,19 +61,18 @@ export async function getCommitments(): Promise<string[]> {
   try {
     const client = getPublicClient();
 
+    // Parse event ABI using parseAbiItem
+    const depositEvent = parseAbiItem(
+      'event Deposit(bytes32 indexed commitment, uint32 leafIndex, uint256 timestamp)'
+    );
+
+    console.log('Fetching deposits from:', CONTRACT_ADDRESSES.MAMIZU_CASH);
+
     // Get all Deposit events from the contract
     const logs = await client.getLogs({
       address: CONTRACT_ADDRESSES.MAMIZU_CASH,
-      event: {
-        type: 'event',
-        name: 'Deposit',
-        inputs: [
-          { type: 'bytes32', name: 'commitment' },
-          { type: 'uint32', name: 'leafIndex' },
-          { type: 'uint256', name: 'timestamp' }
-        ]
-      },
-      fromBlock: 'earliest',
+      event: depositEvent,
+      fromBlock: 0n,
       toBlock: 'latest'
     });
 

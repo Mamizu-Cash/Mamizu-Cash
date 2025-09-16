@@ -106,17 +106,34 @@ export async function generateMerkleProof(
 }> {
   await initializeCircomlib();
 
-  // Create merkle tree with all commitments
-  const tree = new MerkleTree(MERKLE_TREE_HEIGHT, commitments as any[], {
+  // Normalize commitments to lowercase for comparison
+  const normalizedCommitments = commitments.map(c => c.toLowerCase());
+  const normalizedCommitment = commitment.toLowerCase();
+
+  console.log('Looking for commitment:', normalizedCommitment);
+  console.log('Available commitments:', normalizedCommitments);
+
+  // Find commitment index
+  const leafIndex = normalizedCommitments.indexOf(normalizedCommitment);
+  if (leafIndex === -1) {
+    console.error('Commitment not found!');
+    console.error('Target:', normalizedCommitment);
+    console.error('Available:', normalizedCommitments);
+    throw new Error('Commitment not found in tree');
+  }
+
+  console.log(`Found commitment at index ${leafIndex}`);
+
+  // Convert to BigInt strings as expected by fixed-merkle-tree
+  const leaves = normalizedCommitments.map(c => BigInt(c).toString());
+
+  // Create merkle tree with BigInt strings (matching privacy-pool implementation)
+  const tree = new MerkleTree(MERKLE_TREE_HEIGHT, leaves, {
     hashFunction: mimcSpongeHash,
     zeroElement: ZERO_VALUE
   });
 
-  // Find commitment index
-  const leafIndex = commitments.indexOf(commitment);
-  if (leafIndex === -1) {
-    throw new Error('Commitment not found in tree');
-  }
+  console.log(`Tree created with ${leaves.length} leaves, requesting proof for index ${leafIndex}`);
 
   // Generate proof
   const proof = tree.proof(leafIndex);
