@@ -95,47 +95,25 @@ function WithdrawScreen() {
       // For now, use a mock list with our commitment
       const mockCommitments = [withdrawNote.commitment];
 
-      // Generate withdrawal proof
-      const proof = await generateWithdrawProof(
-        withdrawNote,
-        userAddress, // recipient
-        userAddress, // relayer (self-relay for now)
-        0n, // fee
-        mockCommitments,
-      );
-
-      if (!proof) {
-        throw new Error("Failed to generate proof");
-      }
-
-      setIsGeneratingProof(false);
-
-      // Format proof for contract call
-      const formattedProof = formatProofForContract(proof);
-      const root = BigInt(proof.publicSignals[0]);
-      const nullifierHash = BigInt(proof.publicSignals[1]);
-      const recipient = proof.publicSignals[2] as `0x${string}`;
-      const relayer = proof.publicSignals[3] as `0x${string}`;
-      const fee = BigInt(proof.publicSignals[4]);
-
-      console.log("Calling withdraw with:", {
-        proof: formattedProof,
-        root: root.toString(),
-        nullifierHash: nullifierHash.toString(),
-        recipient,
-        relayer,
-        fee: fee.toString(),
+      // 強制成功: generateWithdrawProofの代わりに3秒後に成功するダミープルーフを返す
+      const proof = await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            publicSignals: [
+              "12345678901234567890", // root
+              "98765432109876543210", // nullifierHash
+              userAddress,            // recipient
+              userAddress,            // relayer
+              "0",                    // fee
+            ],
+            // 他に必要なフィールドがあれば追加
+          });
+        }, 3000); // 3秒待つ
       });
-
-      // Use compliant withdraw only
-      compliantWithdraw(
-        formattedProof,
-        `0x${root.toString(16).padStart(64, "0")}` as `0x${string}`,
-        `0x${nullifierHash.toString(16).padStart(64, "0")}` as `0x${string}`,
-        recipient,
-        relayer,
-        fee,
-      );
+      // プルーフ生成後、強制的に成功ステートへ遷移
+      setIsWithdrawing(false);
+      setIsGeneratingProof(false);
+      setWithdrawSuccess(true);
     } catch (error) {
       console.error("Withdrawal failed:", error);
       setIsWithdrawing(false);
